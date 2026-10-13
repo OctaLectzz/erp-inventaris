@@ -51,6 +51,10 @@
       "status": "Status",
       "actions": "Actions"
     },
+    "viewOptions": "View Columns",
+    "rowsPerPage": "Rows per page",
+    "quickRestock": "Restock",
+    "viewAllMovements": "View All Movements",
     "pagination": {
       "previous": "Previous",
       "next": "Next",

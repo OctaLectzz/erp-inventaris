@@ -2,6 +2,13 @@
   "title": "Menu Utama",
   "collapse": "Ciutkan Sidebar",
   "expand": "Perluas Sidebar",
+  "openMenu": "Buka Menu",
+  "closeMenu": "Tutup Menu",
+  "quickActions": "Aksi Cepat",
+  "newMutation": "Catat Mutasi Stok",
+  "newProduct": "Tambah Produk Baru",
+  "userRole": "Peran Akun",
+  "navigation": "Navigasi",
   "items": {
     "dashboard": "Dashboard",
     "catalog": "Katalog Produk",

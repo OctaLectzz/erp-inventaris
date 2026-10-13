@@ -51,6 +51,10 @@
       "status": "Status",
       "actions": "Aksi"
     },
+    "viewOptions": "Tampilan Kolom",
+    "rowsPerPage": "Baris per halaman",
+    "quickRestock": "Restock",
+    "viewAllMovements": "Lihat Semua Riwayat",
     "pagination": {
       "previous": "Sebelumnya",
       "next": "Berikutnya",

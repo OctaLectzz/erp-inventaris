@@ -2,6 +2,13 @@
   "title": "Main Menu",
   "collapse": "Collapse Sidebar",
   "expand": "Expand Sidebar",
+  "openMenu": "Open Menu",
+  "closeMenu": "Close Menu",
+  "quickActions": "Quick Actions",
+  "newMutation": "Record Stock Mutation",
+  "newProduct": "Add New Product",
+  "userRole": "Account Role",
+  "navigation": "Navigation",
   "items": {
     "dashboard": "Dashboard",
     "catalog": "Product Catalog",

@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function MovementsLoading() {
   return (
@@ -6,36 +6,40 @@ export default function MovementsLoading() {
       {/* Header Skeleton */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-2">
-          <div className="bg-muted h-8 w-64 rounded" />
-          <div className="bg-muted/60 h-4 w-96 rounded" />
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-80" />
         </div>
-        <div className="bg-muted/50 h-8 w-36 rounded-full" />
+        <Skeleton className="h-7 w-40 rounded-full" />
       </div>
 
-      {/* Filter Card Skeleton */}
-      <Card className="border-border">
-        <CardContent className="space-y-3 p-4">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="bg-muted/60 h-9 flex-1 rounded" />
-            <div className="flex gap-2">
-              <div className="bg-muted/60 h-9 w-28 rounded" />
-              <div className="bg-muted/60 h-9 w-36 rounded" />
-              <div className="bg-muted/60 h-9 w-36 rounded" />
-              <div className="bg-muted/60 h-9 w-32 rounded" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Control Bar Skeleton */}
+      <Skeleton className="h-20 w-full rounded-xl" />
 
       {/* Table Skeleton */}
-      <Card className="border-border">
-        <div className="space-y-3 p-4">
-          <div className="bg-muted/50 h-8 w-full rounded" />
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-muted/30 h-12 w-full rounded" />
-          ))}
+      <div className="border-border space-y-3 rounded-lg border p-4">
+        <div className="border-border flex items-center justify-between border-b pb-2">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-4 w-36" />
+          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-4 w-28" />
         </div>
-      </Card>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="border-border/50 flex items-center justify-between border-b py-2">
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-4 w-44" />
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        ))}
+      </div>
+
+      {/* Pagination Skeleton */}
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-4 w-36" />
+        <Skeleton className="h-8 w-48" />
+      </div>
     </div>
   )
 }
