@@ -3,7 +3,11 @@
   "email": "Invalid email address format.",
   "positiveInteger": "Value must be a positive integer.",
   "minQuantity": "Minimum quantity is 1.",
-  "maxQuantity": "Quantity exceeds maximum allowed limit.",
-  "insufficientStock": "Insufficient stock for outbound movement.",
-  "skuUnique": "SKU is already in use by another product."
+  "maxQuantity": "Quantity exceeds the maximum allowed limit.",
+  "insufficientStock": "Insufficient stock for OUT movement.",
+  "skuUnique": "SKU is already in use by another product.",
+  "emailRequired": "Email address is required.",
+  "emailInvalid": "Invalid email address format.",
+  "passwordRequired": "Password is required.",
+  "passwordMinLength": "Password must be at least 6 characters."
 }

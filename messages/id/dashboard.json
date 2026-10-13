@@ -1,6 +1,14 @@
 {
   "title": "Dashboard Inventaris",
   "subtitle": "Ringkasan metrik inventaris dan aktivitas gudang",
+  "welcome": "Selamat datang kembali",
+  "valuation": "Total Valuasi Stok",
+  "roleCardTitle": "Status Otorisasi Peran (RBAC)",
+  "adminCapabilitiesTitle": "Hak Akses Operasional Penuh",
+  "adminCapabilitiesDesc": "Peran Admin Gudang memiliki hak akses penuh untuk melakukan mutasi stok masuk (IN), mutasi keluar (OUT), dan penyesuaian fisik inventaris.",
+  "ownerCapabilitiesTitle": "Hak Akses Audit Eksekutif (Hanya-Baca)",
+  "ownerCapabilitiesDesc": "Peran Pemilik Usaha dibatasi hanya untuk pemantauan katalog, valuasi inventaris, dan audit riwayat transaksi tanpa hak mutasi.",
+  "phase5Badge": "Fase 5 Terverifikasi: Autentikasi & RBAC Aktif",
   "kpi": {
     "totalProducts": "Total Produk",
     "totalStock": "Total Unit Stok",
