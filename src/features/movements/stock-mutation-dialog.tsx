@@ -1,8 +1,8 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { AlertTriangle, ArrowDownRight, ArrowUpRight, CheckCircle2, Package } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 
 import { recordStockMovementAction } from '@/app/actions/stock-actions'
@@ -136,7 +136,7 @@ export function StockMutationDialog({ open, onOpenChange, products = [], presele
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-lg">
               <Package className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
@@ -147,7 +147,7 @@ export function StockMutationDialog({ open, onOpenChange, products = [], presele
         </DialogHeader>
 
         {serverError && (
-          <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+          <div className="border-destructive/30 bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg border p-3 text-xs">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <p className="font-medium">{serverError}</p>
           </div>
@@ -170,7 +170,7 @@ export function StockMutationDialog({ open, onOpenChange, products = [], presele
               id="productId"
               {...register('productId', { required: 'invalidProductId' })}
               disabled={isSubmitting}
-              className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground shadow-xs focus:ring-1 focus:outline-hidden"
+              className="border-input bg-background text-foreground h-9 w-full rounded-md border px-3 text-xs shadow-xs focus:ring-1 focus:outline-hidden"
               aria-invalid={Boolean(errors.productId)}
             >
               {products.map((p) => (
@@ -179,7 +179,7 @@ export function StockMutationDialog({ open, onOpenChange, products = [], presele
                 </option>
               ))}
             </select>
-            {errors.productId && <p className="text-[11px] text-destructive">{getTranslatedError(errors.productId.message)}</p>}
+            {errors.productId && <p className="text-destructive text-[11px]">{getTranslatedError(errors.productId.message)}</p>}
           </div>
 
           {/* Movement Type Radio Cards */}
@@ -230,7 +230,7 @@ export function StockMutationDialog({ open, onOpenChange, products = [], presele
               <Label htmlFor="quantity" className="text-xs font-semibold">
                 {t('mutationDialog.quantityLabel')} <span className="text-destructive">*</span>
               </Label>
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
                 <span>{t('mutationDialog.currentStock')}:</span>
                 <Badge variant="outline" className="font-mono text-[11px] font-bold">
                   {currentStock} {selectedProduct?.unit || 'pcs'}
@@ -253,11 +253,11 @@ export function StockMutationDialog({ open, onOpenChange, products = [], presele
               className="font-mono text-sm"
               aria-invalid={Boolean(errors.quantity || isOverdraft)}
             />
-            {errors.quantity && <p className="text-[11px] text-destructive">{getTranslatedError(errors.quantity.message)}</p>}
+            {errors.quantity && <p className="text-destructive text-[11px]">{getTranslatedError(errors.quantity.message)}</p>}
 
             {/* Overdraft Warning Banner */}
             {isOverdraft && (
-              <div className="flex items-start gap-1.5 rounded-md border border-destructive/30 bg-destructive/10 p-2 text-[11px] text-destructive">
+              <div className="border-destructive/30 bg-destructive/10 text-destructive flex items-start gap-1.5 rounded-md border p-2 text-[11px]">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span>{t('mutationDialog.overdraftWarning')}</span>
               </div>
@@ -265,7 +265,7 @@ export function StockMutationDialog({ open, onOpenChange, products = [], presele
 
             {/* Stock Calculation Indicator */}
             {selectedProduct && parsedQty > 0 && !isOverdraft && (
-              <div className="flex items-center justify-between rounded-md border border-border bg-muted/40 px-3 py-1.5 text-[11px]">
+              <div className="border-border bg-muted/40 flex items-center justify-between rounded-md border px-3 py-1.5 text-[11px]">
                 <span className="text-muted-foreground">{t('mutationDialog.resultingStock')}:</span>
                 <div className="flex items-center gap-1.5 font-mono font-semibold">
                   <span className="text-muted-foreground">{currentStock}</span>
@@ -273,7 +273,7 @@ export function StockMutationDialog({ open, onOpenChange, products = [], presele
                     {selectedType === 'IN' ? `+${parsedQty}` : `-${parsedQty}`}
                   </span>
                   <span>=</span>
-                  <span className="font-bold text-primary">{estimatedStockAfter} unit</span>
+                  <span className="text-primary font-bold">{estimatedStockAfter} unit</span>
                 </div>
               </div>
             )}
@@ -297,7 +297,7 @@ export function StockMutationDialog({ open, onOpenChange, products = [], presele
               className="text-xs"
               aria-invalid={Boolean(errors.note)}
             />
-            {errors.note && <p className="text-[11px] text-destructive">{getTranslatedError(errors.note.message)}</p>}
+            {errors.note && <p className="text-destructive text-[11px]">{getTranslatedError(errors.note.message)}</p>}
           </div>
 
           <DialogFooter className="gap-2 pt-2">

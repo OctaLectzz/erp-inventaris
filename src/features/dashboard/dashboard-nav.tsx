@@ -1,9 +1,9 @@
 'use client'
 
-import { ArrowLeftRight, LayoutDashboard, Package } from 'lucide-react'
-import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { ArrowLeftRight, LayoutDashboard, Package } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface DashboardNavProps {
   locale: string

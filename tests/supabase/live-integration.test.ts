@@ -1,6 +1,6 @@
+import { createClient } from '@supabase/supabase-js'
 import * as fs from 'fs'
 import * as path from 'path'
-import { createClient } from '@supabase/supabase-js'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import type { Database } from '@/types/database'
@@ -407,6 +407,51 @@ describe.runIf(hasLiveCredentials)('Live Supabase Integration & Security Gates',
 
       expect(prod?.stock).toBe(calculatedStock)
       expect(prod?.stock).toBe(12)
+    })
+
+    it('Scenario 10: handles concurrent mutations with pessimistic row lock preventing lost updates and overdrafts', async () => {
+      // Current stock is 12. We fire 3 concurrent OUT requests of 5 units each in parallel.
+      // Total requested is 15 > 12. Exactly two must succeed (12 - 5 - 5 = 2) and one must be rejected.
+      const mutationPromises = [
+        adminClient.rpc('record_stock_movement', {
+          p_product_id: testProductId,
+          p_type: 'OUT',
+          p_quantity: 5,
+          p_note: 'Concurrent OUT request A'
+        }),
+        adminClient.rpc('record_stock_movement', {
+          p_product_id: testProductId,
+          p_type: 'OUT',
+          p_quantity: 5,
+          p_note: 'Concurrent OUT request B'
+        }),
+        adminClient.rpc('record_stock_movement', {
+          p_product_id: testProductId,
+          p_type: 'OUT',
+          p_quantity: 5,
+          p_note: 'Concurrent OUT request C'
+        })
+      ]
+
+      const results = await Promise.all(mutationPromises)
+
+      const successCount = results.filter((r) => (r.data as unknown as RpcResponseEnvelope)?.success === true).length
+      const failureCount = results.filter((r) => {
+        const envelope = r.data as unknown as RpcResponseEnvelope
+        return !envelope || envelope.success === false || envelope.error === 'INSUFFICIENT_STOCK'
+      }).length
+
+      expect(successCount).toBe(2)
+      expect(failureCount).toBe(1)
+
+      // Verify database stock is strictly 2
+      const { data: prod } = await adminClient.from('products').select('stock').eq('id', testProductId).single()
+      expect(prod?.stock).toBe(2)
+
+      // Verify total ledger records match exactly 5 movements (1 initial + 2 previous + 2 concurrent)
+      const { data: allMovements } = await adminClient.from('stock_movements').select('type, quantity').eq('product_id', testProductId)
+
+      expect(allMovements?.length).toBe(5)
     })
   })
 

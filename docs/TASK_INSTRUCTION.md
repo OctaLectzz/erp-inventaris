@@ -439,25 +439,25 @@ Report test results and manual verification outcomes. Wait for approval before P
 
 ### Tasks
 
-- [ ] Run full test suite and verify all tests pass.
-- [ ] Run `npm run build` and verify no errors.
-- [ ] Run `npm run lint` and verify no errors.
-- [ ] Test all assessment scenarios end-to-end.
-- [ ] Review and update `docs/README.md`:
+- [x] Run full test suite and verify all tests pass.
+- [x] Run `npm run build` and verify no errors.
+- [x] Run `npm run lint` and verify no errors.
+- [x] Test all assessment scenarios end-to-end.
+- [x] Review and update `docs/README.md` and root `README.md`:
   - Verified setup instructions.
   - Demo account credentials.
   - Test commands.
   - Architecture summary.
   - Assumptions and known limitations.
   - AI usage disclosure (how AI was used, what was reviewed, one mistake example).
-- [ ] Update `docs/CHANGELOG.md` with implemented features.
-- [ ] Review Git history for logical, staged commits.
-- [ ] Verify no secrets in Git history.
-- [ ] Verify responsive design on mobile and desktop.
-- [ ] Verify both locales (ID/EN).
-- [ ] Verify all three theme modes (light/dark/system).
-- [ ] Verify empty states and error states.
-- [ ] Take a final screenshot or recording for demo purposes.
+- [x] Update `docs/CHANGELOG.md` with implemented features.
+- [x] Review Git history for logical, staged commits.
+- [x] Verify no secrets in Git history.
+- [x] Verify responsive design on mobile and desktop.
+- [x] Verify both locales (ID/EN).
+- [x] Verify all three theme modes (light/dark/system).
+- [x] Verify empty states and error states.
+- [x] Complete browser QA flow verification via subagent recording.
 
 ### Acceptance Criteria
 
