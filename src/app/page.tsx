@@ -11,8 +11,9 @@ const pageCopy = {
   subtitle:
     'Solusi pemantauan stok real-time, pencatatan mutasi barang masuk & keluar, serta audit trail pergerakan inventaris yang transparan untuk PT. Syailendra Bumi Investama (DDistillers).',
   actions: {
-    primary: 'Masuk ke Dashboard',
-    secondary: 'Dokumentasi Arsitektur'
+    primary: 'Masuk ke Dashboard (Segera Hadir)',
+    primaryTooltip: 'Fitur autentikasi dan login pengguna akan aktif pada Fase 5.',
+    secondary: 'Lihat Pratinjau Fondasi'
   },
   card: {
     title: 'Status Fondasi Sistem (Fase 1)',
@@ -98,7 +99,7 @@ export default function Home() {
             <p className="text-muted-foreground mx-auto max-w-2xl text-base leading-relaxed sm:text-lg">{pageCopy.subtitle}</p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-              <Button size="lg" className="gap-2 font-semibold shadow-sm">
+              <Button size="lg" disabled aria-disabled="true" title={pageCopy.actions.primaryTooltip} className="gap-2 font-semibold shadow-sm">
                 <span>{pageCopy.actions.primary}</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Button>
