@@ -1,10 +1,10 @@
 'use client'
 
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, CheckCircle2, Eye, EyeOff, KeyRound, Loader2, Lock, Mail, Shield, UserCheck } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { signInAction, signInDemoAction } from '@/app/actions/auth-actions'
@@ -87,11 +87,11 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
     <div className="w-full max-w-md space-y-6">
       <Card className="border-border bg-card shadow-lg">
         <CardHeader className="space-y-2 pb-6 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+          <div className="bg-primary text-primary-foreground mx-auto flex h-12 w-12 items-center justify-center rounded-xl shadow-sm">
             <Lock className="h-6 w-6" aria-hidden="true" />
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight text-primary">{tAuth('login.title')}</CardTitle>
-          <CardDescription className="text-sm text-muted-foreground">{tAuth('login.subtitle')}</CardDescription>
+          <CardTitle className="text-primary text-2xl font-bold tracking-tight">{tAuth('login.title')}</CardTitle>
+          <CardDescription className="text-muted-foreground text-sm">{tAuth('login.subtitle')}</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-6">
@@ -100,7 +100,7 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
             <div
               role="alert"
               aria-live="polite"
-              className="flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/10 p-3.5 text-sm text-destructive"
+              className="border-destructive/30 bg-destructive/10 text-destructive flex items-start gap-3 rounded-lg border p-3.5 text-sm"
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <p className="flex-1 font-medium">{errorMessage}</p>
@@ -111,11 +111,11 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             {/* Email Field */}
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-semibold text-foreground">
+              <Label htmlFor="email" className="text-foreground text-xs font-semibold">
                 {tAuth('login.emailLabel')}
               </Label>
               <div className="relative">
-                <Mail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                <Mail className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" aria-hidden="true" />
                 <Input
                   id="email"
                   type="email"
@@ -129,7 +129,7 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
                 />
               </div>
               {errors.email && (
-                <p id="email-error" className="text-xs font-medium text-destructive">
+                <p id="email-error" className="text-destructive text-xs font-medium">
                   {errors.email.message === 'emailRequired' ? tValidation('emailRequired') : tValidation('emailInvalid')}
                 </p>
               )}
@@ -138,12 +138,12 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
             {/* Password Field */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-xs font-semibold text-foreground">
+                <Label htmlFor="password" className="text-foreground text-xs font-semibold">
                   {tAuth('login.passwordLabel')}
                 </Label>
               </div>
               <div className="relative">
-                <KeyRound className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                <KeyRound className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" aria-hidden="true" />
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -159,14 +159,14 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isPending}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground focus:outline-none"
+                  className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors focus:outline-none"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
                 </button>
               </div>
               {errors.password && (
-                <p id="password-error" className="text-xs font-medium text-destructive">
+                <p id="password-error" className="text-destructive text-xs font-medium">
                   {errors.password.message === 'passwordRequired' ? tValidation('passwordRequired') : tValidation('passwordMinLength')}
                 </p>
               )}
@@ -188,10 +188,10 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
           {/* Divider */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-border" />
+              <span className="border-border w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 font-medium text-muted-foreground">{tAuth('login.demoTitle')}</span>
+              <span className="bg-card text-muted-foreground px-2 font-medium">{tAuth('login.demoTitle')}</span>
             </div>
           </div>
 
@@ -202,17 +202,17 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
               type="button"
               disabled={isPending}
               onClick={() => handleDemoLogin('admin_gudang')}
-              className="flex flex-col items-start gap-1 rounded-lg border border-border bg-secondary/40 p-3 text-left transition-all hover:border-accent hover:bg-secondary/70 focus:ring-2 focus:ring-accent focus:outline-none disabled:opacity-60"
+              className="border-border bg-secondary/40 hover:border-accent hover:bg-secondary/70 focus:ring-accent flex flex-col items-start gap-1 rounded-lg border p-3 text-left transition-all focus:ring-2 focus:outline-none disabled:opacity-60"
             >
               <div className="flex w-full items-center justify-between">
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary">
-                  <Shield className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+                <span className="text-primary inline-flex items-center gap-1.5 text-xs font-bold">
+                  <Shield className="text-accent h-3.5 w-3.5" aria-hidden="true" />
                   {tAuth('roles.admin_gudang')}
                 </span>
-                {isPending && activeDemoRole === 'admin_gudang' && <Loader2 className="h-3.5 w-3.5 animate-spin text-accent" aria-hidden="true" />}
+                {isPending && activeDemoRole === 'admin_gudang' && <Loader2 className="text-accent h-3.5 w-3.5 animate-spin" aria-hidden="true" />}
               </div>
-              <p className="line-clamp-1 font-mono text-[11px] text-muted-foreground">admin@inventra.demo</p>
-              <p className="mt-1 line-clamp-2 text-[10px] text-muted-foreground/80">{tAuth('roles.adminDesc')}</p>
+              <p className="text-muted-foreground line-clamp-1 font-mono text-[11px]">admin@inventra.demo</p>
+              <p className="text-muted-foreground/80 mt-1 line-clamp-2 text-[10px]">{tAuth('roles.adminDesc')}</p>
             </button>
 
             {/* Owner Demo Button */}
@@ -220,23 +220,23 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
               type="button"
               disabled={isPending}
               onClick={() => handleDemoLogin('owner')}
-              className="flex flex-col items-start gap-1 rounded-lg border border-border bg-secondary/40 p-3 text-left transition-all hover:border-accent hover:bg-secondary/70 focus:ring-2 focus:ring-accent focus:outline-none disabled:opacity-60"
+              className="border-border bg-secondary/40 hover:border-accent hover:bg-secondary/70 focus:ring-accent flex flex-col items-start gap-1 rounded-lg border p-3 text-left transition-all focus:ring-2 focus:outline-none disabled:opacity-60"
             >
               <div className="flex w-full items-center justify-between">
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary">
-                  <UserCheck className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+                <span className="text-primary inline-flex items-center gap-1.5 text-xs font-bold">
+                  <UserCheck className="text-accent h-3.5 w-3.5" aria-hidden="true" />
                   {tAuth('roles.owner')}
                 </span>
-                {isPending && activeDemoRole === 'owner' && <Loader2 className="h-3.5 w-3.5 animate-spin text-accent" aria-hidden="true" />}
+                {isPending && activeDemoRole === 'owner' && <Loader2 className="text-accent h-3.5 w-3.5 animate-spin" aria-hidden="true" />}
               </div>
-              <p className="line-clamp-1 font-mono text-[11px] text-muted-foreground">owner@inventra.demo</p>
-              <p className="mt-1 line-clamp-2 text-[10px] text-muted-foreground/80">{tAuth('roles.ownerDesc')}</p>
+              <p className="text-muted-foreground line-clamp-1 font-mono text-[11px]">owner@inventra.demo</p>
+              <p className="text-muted-foreground/80 mt-1 line-clamp-2 text-[10px]">{tAuth('roles.ownerDesc')}</p>
             </button>
           </div>
 
           {/* Phase Notice Footer */}
-          <div className="flex items-center gap-2 rounded-lg bg-secondary/30 p-2.5 text-xs text-muted-foreground">
-            <CheckCircle2 className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+          <div className="bg-secondary/30 text-muted-foreground flex items-center gap-2 rounded-lg p-2.5 text-xs">
+            <CheckCircle2 className="text-accent h-4 w-4 shrink-0" aria-hidden="true" />
             <p className="leading-tight">{tAuth('login.phaseNotice')}</p>
           </div>
         </CardContent>

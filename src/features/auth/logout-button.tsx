@@ -1,8 +1,8 @@
 'use client'
 
+import { useTransition } from 'react'
 import { LogOut } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useTransition } from 'react'
 
 import { signOutAction } from '@/app/actions/auth-actions'
 import { Button } from '@/components/ui/button'
@@ -27,7 +27,7 @@ export function LogoutButton({ locale }: LogoutButtonProps) {
       size="sm"
       onClick={handleSignOut}
       disabled={isPending}
-      className="h-9 gap-1.5 border-border bg-background/80 text-xs font-medium shadow-2xs hover:border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
+      className="border-border bg-background/80 hover:border-destructive/30 hover:bg-destructive/10 hover:text-destructive h-9 gap-1.5 text-xs font-medium shadow-2xs"
       aria-label={t('button')}
     >
       <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
