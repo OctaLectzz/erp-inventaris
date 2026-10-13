@@ -1,5 +1,6 @@
 import { AlertTriangle, Banknote, Boxes, CheckCircle2, Package, ShieldAlert, ShieldCheck, Sparkles } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { connection } from 'next/server'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { KpiStatCard } from '@/features/dashboard/kpi-stat-card'
@@ -29,6 +30,7 @@ export async function generateMetadata({ params }: DashboardPageProps): Promise<
 }
 
 export default async function DashboardPage({ params }: DashboardPageProps) {
+  await connection()
   const { locale } = await params
   setRequestLocale(locale)
 

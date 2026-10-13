@@ -1,7 +1,7 @@
-import { Geist_Mono, Inter } from 'next/font/google'
-import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale } from 'next-intl/server'
+import { Geist_Mono, Inter } from 'next/font/google'
+import { notFound } from 'next/navigation'
 
 import { ThemeProvider } from '@/components/theme-provider'
 import { routing } from '@/i18n/routing'
@@ -73,7 +73,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning className={cn('h-full font-sans antialiased', inter.variable, geistMono.variable)}>
-      <body className="bg-background text-foreground flex min-h-full flex-col">
+      <body suppressHydrationWarning className="flex min-h-full flex-col bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
           <NextIntlClientProvider locale={locale} messages={messages}>
             {children}

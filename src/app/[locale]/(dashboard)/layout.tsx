@@ -1,4 +1,5 @@
 import { setRequestLocale } from 'next-intl/server'
+import { connection } from 'next/server'
 
 import { DashboardShell } from '@/components/shared/dashboard-shell'
 import { requireAuth } from '@/services/auth-service'
@@ -13,6 +14,7 @@ interface DashboardLayoutProps {
 }
 
 export default async function DashboardLayout({ children, params }: DashboardLayoutProps) {
+  await connection()
   const { locale } = await params
   setRequestLocale(locale)
 

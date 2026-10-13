@@ -1,5 +1,6 @@
 import { Layers, Sparkles } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { connection } from 'next/server'
 
 import { CatalogTable } from '@/features/catalog/catalog-table'
 import { createClient } from '@/lib/supabase/server'
@@ -25,6 +26,7 @@ export async function generateMetadata({ params }: InventoryPageProps): Promise<
 }
 
 export default async function InventoryPage({ params }: InventoryPageProps) {
+  await connection()
   const { locale } = await params
   setRequestLocale(locale)
 
