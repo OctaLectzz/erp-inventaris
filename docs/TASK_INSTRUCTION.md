@@ -59,12 +59,12 @@ Report changed files, assumptions, and unresolved questions. Wait for explicit u
 
 ### Tasks
 
-- [ ] Map brand colors (Navy `#0F2D4A`, Teal `#14B8A6`, Surface `#E6F4F2`, Text `#1F2937`) to shadcn CSS variables in `globals.css`.
-- [ ] Update both `:root` (light) and `.dark` (dark mode) palettes.
-- [ ] Verify Inter font is the primary `--font-sans` (already configured).
-- [ ] Remove default Next.js boilerplate from `page.tsx`.
-- [ ] Create a minimal landing page or redirect to `/login`.
-- [ ] Verify `npm run build` and `npm run lint` pass.
+- [x] Map brand colors (Navy `#0F2D4A`, Teal `#14B8A6`, Surface `#E6F4F2`, Text `#1F2937`) to shadcn CSS variables in `globals.css`.
+- [x] Update both `:root` (light) and `.dark` (dark mode) palettes.
+- [x] Verify Inter font is the primary `--font-sans` (already configured).
+- [x] Remove default Next.js boilerplate from `page.tsx`.
+- [x] Create a minimal landing page or redirect to `/login`.
+- [x] Verify `npm run build` and `npm run lint` pass.
 
 ### Acceptance Criteria
 
