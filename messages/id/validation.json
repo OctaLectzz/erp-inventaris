@@ -22,5 +22,10 @@
   "invalidProductId": "ID produk tidak valid.",
   "skuDuplicate": "SKU ini sudah terdaftar dalam sistem. Gunakan kode SKU yang berbeda.",
   "forbiddenOwner": "Operasi ini hanya diizinkan untuk peran Admin Gudang.",
-  "unauthorized": "Sesi tidak valid atau telah berakhir. Silakan masuk kembali."
+  "unauthorized": "Sesi tidak valid atau telah berakhir. Silakan masuk kembali.",
+  "invalidMovementType": "Tipe mutasi harus bernilai IN atau OUT.",
+  "quantityMustBeInteger": "Kuantitas mutasi harus berupa bilangan bulat.",
+  "quantityMustBePositive": "Kuantitas mutasi harus lebih besar dari 0.",
+  "noteMinLength": "Catatan mutasi minimal 3 karakter.",
+  "noteMaxLength": "Catatan mutasi maksimal 500 karakter."
 }

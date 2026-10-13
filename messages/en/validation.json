@@ -22,5 +22,10 @@
   "invalidProductId": "Invalid product ID.",
   "skuDuplicate": "This SKU is already registered in the system. Please use a unique SKU code.",
   "forbiddenOwner": "This operation is only allowed for the Warehouse Admin role.",
-  "unauthorized": "Your session has expired or is invalid. Please log in again."
+  "unauthorized": "Your session has expired or is invalid. Please log in again.",
+  "invalidMovementType": "Movement type must be strictly IN or OUT.",
+  "quantityMustBeInteger": "Movement quantity must be a whole integer.",
+  "quantityMustBePositive": "Movement quantity must be greater than zero.",
+  "noteMinLength": "Movement note must be at least 3 characters.",
+  "noteMaxLength": "Movement note cannot exceed 500 characters."
 }

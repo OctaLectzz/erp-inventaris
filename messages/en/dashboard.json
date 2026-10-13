@@ -86,5 +86,58 @@
     "saving": "Saving...",
     "successCreated": "Product successfully added to catalog.",
     "successUpdated": "Product details successfully updated."
+  },
+  "movements": {
+    "title": "Stock Movement History",
+    "subtitle": "Traceable audit log of inventory stock IN and OUT movements",
+    "recordMutation": "Record Stock Movement",
+    "searchPlaceholder": "Search by SKU or product name...",
+    "allTypes": "All Types",
+    "typeIn": "Stock IN",
+    "typeOut": "Stock OUT",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "showingResults": "Showing {count} of {total} movement records",
+    "resetFilter": "Reset Filter",
+    "emptySearch": "No stock movement records found.",
+    "emptySubtitle": "Adjust your search filter criteria or record a new stock movement.",
+    "readOnlyNotice": "Audit Mode (Read-Only): You have permission to monitor history without stock mutation rights.",
+    "columns": {
+      "timestamp": "Timestamp",
+      "sku": "SKU",
+      "product": "Product Name",
+      "type": "Type",
+      "quantity": "Quantity",
+      "stockBeforeAfter": "Stock (Before → After)",
+      "user": "User",
+      "note": "Note / Reference"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {current} of {total}"
+    }
+  },
+  "mutationDialog": {
+    "title": "Record Stock Movement",
+    "subtitle": "Record atomic inventory IN or OUT movements to the database",
+    "productLabel": "Select Product",
+    "productPlaceholder": "-- Select Product from Catalog --",
+    "typeLabel": "Movement Type",
+    "typeInTitle": "Stock IN",
+    "typeInDesc": "Physical goods received from supplier or manufacturing",
+    "typeOutTitle": "Stock OUT",
+    "typeOutDesc": "Physical goods issued for customer orders or distribution",
+    "currentStock": "Current Stock",
+    "quantityLabel": "Unit Quantity",
+    "quantityPlaceholder": "e.g. 10",
+    "resultingStock": "Estimated Resulting Stock",
+    "noteLabel": "Reason / Reference Note",
+    "notePlaceholder": "e.g. Batch receipt PO-2026-001 from supplier",
+    "cancel": "Cancel",
+    "submit": "Confirm Movement",
+    "submitting": "Processing Movement...",
+    "success": "Stock movement successfully recorded in the system.",
+    "overdraftWarning": "Quantity exceeds currently available stock."
   }
 }

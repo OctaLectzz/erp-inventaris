@@ -8,18 +8,18 @@ import { Card, CardContent } from '@/components/ui/card'
 export default function InventoryError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <div className="flex min-h-[50vh] items-center justify-center p-4">
-      <Card className="max-w-md border-destructive/30 text-center shadow-lg">
+      <Card className="border-destructive/30 max-w-md text-center shadow-lg">
         <CardContent className="space-y-4 p-6">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+          <div className="bg-destructive/10 text-destructive mx-auto flex h-12 w-12 items-center justify-center rounded-full">
             <AlertTriangle className="h-6 w-6" aria-hidden="true" />
           </div>
 
           <div className="space-y-1.5">
-            <h2 className="text-lg font-bold text-foreground">Gagal Memuat Katalog Inventaris</h2>
-            <p className="text-xs leading-relaxed text-muted-foreground">
+            <h2 className="text-foreground text-lg font-bold">Gagal Memuat Katalog Inventaris</h2>
+            <p className="text-muted-foreground text-xs leading-relaxed">
               Terjadi kendala saat mengambil data produk dari server database. Silakan coba kembali.
             </p>
-            {error.message && <p className="mt-2 rounded bg-muted p-2 font-mono text-[11px] text-muted-foreground">{error.message}</p>}
+            {error.message && <p className="bg-muted text-muted-foreground mt-2 rounded p-2 font-mono text-[11px]">{error.message}</p>}
           </div>
 
           <Button onClick={reset} size="sm" className="gap-1.5 text-xs">

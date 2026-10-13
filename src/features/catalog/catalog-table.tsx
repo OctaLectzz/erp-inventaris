@@ -1,8 +1,8 @@
 'use client'
 
+import { useMemo, useState } from 'react'
 import { AlertTriangle, CheckCircle2, Filter, Package, PackageX, Pencil, Plus, RotateCcw, Search, ShieldAlert } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useMemo, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -114,9 +114,9 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
     <div className="space-y-4">
       {/* Read-Only Notice for Owner */}
       {!isAdmin && (
-        <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-secondary/50 p-3.5 text-xs text-foreground">
+        <div className="border-primary/20 bg-secondary/50 text-foreground flex items-center justify-between rounded-lg border p-3.5 text-xs">
           <div className="flex items-center gap-2">
-            <ShieldAlert className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            <ShieldAlert className="text-primary h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{t('catalog.readOnlyNotice')}</span>
           </div>
           <Badge variant="outline" className="text-[11px]">
@@ -131,7 +131,7 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             {/* Search Input */}
             <div className="relative flex-1">
-              <Search className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              <Search className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" aria-hidden="true" />
               <Input
                 placeholder={t('catalog.searchPlaceholder')}
                 value={searchQuery}
@@ -147,14 +147,14 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
             <div className="flex flex-wrap items-center gap-2.5">
               {/* Category Filter */}
               <div className="flex items-center gap-1.5">
-                <Filter className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                <Filter className="text-muted-foreground h-3.5 w-3.5" aria-hidden="true" />
                 <select
                   value={selectedCategory}
                   onChange={(e) => {
                     setSelectedCategory(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="h-9 rounded-md border border-input bg-background px-2.5 text-xs text-foreground shadow-xs focus:ring-1 focus:outline-hidden"
+                  className="border-input bg-background text-foreground h-9 rounded-md border px-2.5 text-xs shadow-xs focus:ring-1 focus:outline-hidden"
                   aria-label="Filter kategori"
                 >
                   <option value="all">{t('catalog.allCategories')}</option>
@@ -173,7 +173,7 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
                   setStockFilter(e.target.value as 'all' | 'low_stock' | 'normal')
                   setCurrentPage(1)
                 }}
-                className="h-9 rounded-md border border-input bg-background px-2.5 text-xs text-foreground shadow-xs focus:ring-1 focus:outline-hidden"
+                className="border-input bg-background text-foreground h-9 rounded-md border px-2.5 text-xs shadow-xs focus:ring-1 focus:outline-hidden"
                 aria-label="Filter status stok"
               >
                 <option value="all">{t('catalog.allStatuses')}</option>
@@ -192,10 +192,10 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
           </div>
 
           {/* Results Summary & Active Filters */}
-          <div className="mt-3 flex items-center justify-between border-t pt-2.5 text-xs text-muted-foreground">
+          <div className="text-muted-foreground mt-3 flex items-center justify-between border-t pt-2.5 text-xs">
             <span>{t('catalog.showingResults', { count: paginatedProducts.length, total: filteredProducts.length })}</span>
             {(searchQuery || selectedCategory !== 'all' || stockFilter !== 'all') && (
-              <Button variant="ghost" size="xs" onClick={handleResetFilters} className="h-6 gap-1 text-[11px] text-primary hover:underline">
+              <Button variant="ghost" size="xs" onClick={handleResetFilters} className="text-primary h-6 gap-1 text-[11px] hover:underline">
                 <RotateCcw className="h-3 w-3" aria-hidden="true" />
                 <span>{t('catalog.resetFilter')}</span>
               </Button>
@@ -208,11 +208,11 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
       {filteredProducts.length === 0 ? (
         <Card className="border-border">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+            <div className="bg-secondary text-muted-foreground mb-3 flex h-12 w-12 items-center justify-center rounded-full">
               <PackageX className="h-6 w-6" aria-hidden="true" />
             </div>
-            <h3 className="text-sm font-semibold text-foreground">{t('catalog.emptySearch')}</h3>
-            <p className="mt-1 max-w-sm text-xs text-muted-foreground">
+            <h3 className="text-foreground text-sm font-semibold">{t('catalog.emptySearch')}</h3>
+            <p className="text-muted-foreground mt-1 max-w-sm text-xs">
               Cobalah sesuaikan kata kunci pencarian atau ubah filter kategori dan status stok.
             </p>
             <Button variant="outline" size="sm" onClick={handleResetFilters} className="mt-4 gap-1.5 text-xs">
@@ -224,10 +224,10 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
       ) : (
         <>
           {/* Desktop & Tablet Table */}
-          <div className="hidden overflow-x-auto rounded-lg border border-border bg-card shadow-xs md:block">
+          <div className="border-border bg-card hidden overflow-x-auto rounded-lg border shadow-xs md:block">
             <table className="w-full border-collapse text-left text-xs">
               <thead>
-                <tr className="border-b border-border bg-muted/50 font-semibold text-muted-foreground">
+                <tr className="border-border bg-muted/50 text-muted-foreground border-b font-semibold">
                   <th className="px-4 py-3">{t('catalog.columns.sku')}</th>
                   <th className="px-4 py-3">{t('catalog.columns.product')}</th>
                   <th className="px-4 py-3">{t('catalog.columns.category')}</th>
@@ -238,14 +238,14 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
                   {isAdmin && <th className="px-4 py-3 text-right">{t('catalog.columns.actions')}</th>}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-border divide-y">
                 {paginatedProducts.map((p) => {
                   const isLow = p.stock < LOW_STOCK_THRESHOLD
                   return (
-                    <tr key={p.id} className="transition-colors hover:bg-muted/30">
+                    <tr key={p.id} className="hover:bg-muted/30 transition-colors">
                       {/* SKU */}
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <span className="font-mono text-xs font-bold text-primary">{p.sku}</span>
+                        <span className="text-primary font-mono text-xs font-bold">{p.sku}</span>
                       </td>
 
                       {/* Product Name */}
@@ -256,17 +256,17 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
                             <img
                               src={p.imageUrl}
                               alt={p.name}
-                              className="h-8 w-8 shrink-0 rounded-md border border-border object-cover"
+                              className="border-border h-8 w-8 shrink-0 rounded-md border object-cover"
                               loading="lazy"
                             />
                           ) : (
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-secondary text-muted-foreground">
+                            <div className="border-border bg-secondary text-muted-foreground flex h-8 w-8 shrink-0 items-center justify-center rounded-md border">
                               <Package className="h-4 w-4" aria-hidden="true" />
                             </div>
                           )}
                           <div className="min-w-0">
-                            <p className="max-w-xs truncate font-semibold text-foreground">{p.name}</p>
-                            {p.description && <p className="max-w-xs truncate text-[11px] text-muted-foreground">{p.description}</p>}
+                            <p className="text-foreground max-w-xs truncate font-semibold">{p.name}</p>
+                            {p.description && <p className="text-muted-foreground max-w-xs truncate text-[11px]">{p.description}</p>}
                           </div>
                         </div>
                       </td>
@@ -279,10 +279,10 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
                       </td>
 
                       {/* Unit */}
-                      <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">{p.unit}</td>
+                      <td className="text-muted-foreground px-4 py-3 whitespace-nowrap">{p.unit}</td>
 
                       {/* Price */}
-                      <td className="px-4 py-3 text-right font-medium whitespace-nowrap text-foreground">{formatCurrency(p.price)}</td>
+                      <td className="text-foreground px-4 py-3 text-right font-medium whitespace-nowrap">{formatCurrency(p.price)}</td>
 
                       {/* Stock Units */}
                       <td className="px-4 py-3 text-right font-mono text-sm font-bold whitespace-nowrap">
@@ -337,15 +337,15 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
                       <div className="flex items-center gap-2">
                         {p.imageUrl ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
-                          <img src={p.imageUrl} alt={p.name} className="h-10 w-10 shrink-0 rounded-md border border-border object-cover" />
+                          <img src={p.imageUrl} alt={p.name} className="border-border h-10 w-10 shrink-0 rounded-md border object-cover" />
                         ) : (
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-border bg-secondary text-muted-foreground">
+                          <div className="border-border bg-secondary text-muted-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-md border">
                             <Package className="h-5 w-5" aria-hidden="true" />
                           </div>
                         )}
                         <div>
-                          <span className="font-mono text-xs font-bold text-primary">{p.sku}</span>
-                          <h4 className="line-clamp-1 font-semibold text-foreground">{p.name}</h4>
+                          <span className="text-primary font-mono text-xs font-bold">{p.sku}</span>
+                          <h4 className="text-foreground line-clamp-1 font-semibold">{p.name}</h4>
                         </div>
                       </div>
 
@@ -365,11 +365,11 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
                     <div className="grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
                       <div>
                         <span className="text-muted-foreground">Kategori: </span>
-                        <span className="font-medium text-foreground uppercase">{p.category}</span>
+                        <span className="text-foreground font-medium uppercase">{p.category}</span>
                       </div>
                       <div className="text-right">
                         <span className="text-muted-foreground">Harga: </span>
-                        <span className="font-bold text-foreground">{formatCurrency(p.price)}</span>
+                        <span className="text-foreground font-bold">{formatCurrency(p.price)}</span>
                       </div>
                     </div>
 

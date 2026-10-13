@@ -86,5 +86,58 @@
     "saving": "Menyimpan...",
     "successCreated": "Produk berhasil ditambahkan ke katalog.",
     "successUpdated": "Data produk berhasil diperbarui."
+  },
+  "movements": {
+    "title": "Riwayat Pergerakan Stok",
+    "subtitle": "Catatan audit mutasi stok masuk dan keluar yang dapat ditelusuri",
+    "recordMutation": "Catat Mutasi Stok",
+    "searchPlaceholder": "Cari berdasarkan SKU atau nama produk...",
+    "allTypes": "Semua Tipe",
+    "typeIn": "Masuk (IN)",
+    "typeOut": "Keluar (OUT)",
+    "startDate": "Tanggal Mulai",
+    "endDate": "Tanggal Akhir",
+    "showingResults": "Menampilkan {count} dari {total} catatan mutasi",
+    "resetFilter": "Reset Filter",
+    "emptySearch": "Tidak ada catatan pergerakan stok yang cocok.",
+    "emptySubtitle": "Sesuaikan filter pencarian atau rekam transaksi mutasi stok baru.",
+    "readOnlyNotice": "Mode Audit (Hanya-Baca): Anda memiliki akses memantau riwayat tanpa hak mencatat mutasi stok.",
+    "columns": {
+      "timestamp": "Waktu Transaksi",
+      "sku": "SKU",
+      "product": "Nama Produk",
+      "type": "Tipe",
+      "quantity": "Kuantitas",
+      "stockBeforeAfter": "Stok (Sebelum → Sesudah)",
+      "user": "Pengguna",
+      "note": "Catatan / Referensi"
+    },
+    "pagination": {
+      "previous": "Sebelumnya",
+      "next": "Berikutnya",
+      "page": "Halaman {current} dari {total}"
+    }
+  },
+  "mutationDialog": {
+    "title": "Catat Mutasi Stok",
+    "subtitle": "Rekam pergerakan stok masuk atau keluar secara atomik ke basis data",
+    "productLabel": "Pilih Produk",
+    "productPlaceholder": "-- Pilih Produk dari Katalog --",
+    "typeLabel": "Tipe Mutasi",
+    "typeInTitle": "Stok Masuk (IN)",
+    "typeInDesc": "Penerimaan barang fisik dari supplier atau produksi",
+    "typeOutTitle": "Stok Keluar (OUT)",
+    "typeOutDesc": "Pengeluaran barang fisik untuk pesanan atau distribusi",
+    "currentStock": "Stok Saat Ini",
+    "quantityLabel": "Kuantitas Unit",
+    "quantityPlaceholder": "contoh: 10",
+    "resultingStock": "Estimasi Stok Akhir",
+    "noteLabel": "Catatan / Referensi Mutasi",
+    "notePlaceholder": "contoh: Penerimaan batch PO-2026-001 dari supplier",
+    "cancel": "Batal",
+    "submit": "Konfirmasi Mutasi",
+    "submitting": "Memproses Mutasi...",
+    "success": "Mutasi stok berhasil direkam ke dalam sistem.",
+    "overdraftWarning": "Kuantitas melebihi stok yang tersedia saat ini."
   }
 }

@@ -197,3 +197,54 @@ export interface ProductCatalogFilter {
   category?: string
   stockStatus?: 'all' | 'low_stock' | 'normal'
 }
+
+/**
+ * Detailed stock movement with linked product information and user attribution.
+ */
+export interface StockMovementWithDetails {
+  id: string
+  productId: string
+  userId: string
+  type: MovementType
+  quantity: number
+  stockBefore: number
+  stockAfter: number
+  note: string
+  createdAt: string
+  product: {
+    id: string
+    sku: string
+    name: string
+    category: string
+    unit: string
+  }
+  user?: {
+    id: string
+    fullName: string
+    email?: string
+    role?: string
+  }
+}
+
+/**
+ * Filter parameters for searching and filtering stock movement history.
+ */
+export interface StockMovementFilters {
+  search?: string
+  type?: 'ALL' | 'IN' | 'OUT'
+  startDate?: string
+  endDate?: string
+  page?: number
+  pageSize?: number
+}
+
+/**
+ * Paginated result of stock movements query.
+ */
+export interface StockMovementListResult {
+  movements: StockMovementWithDetails[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+}

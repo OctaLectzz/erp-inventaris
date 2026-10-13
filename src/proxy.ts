@@ -37,7 +37,7 @@ export default async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl
   const locale = extractLocale(pathname)
 
-  // Protected route check: /dashboard, /inventory or /(id|en)/(dashboard|inventory)(/.*)?
+  // Protected route check: /dashboard, /inventory, /movements or /(id|en)/(dashboard|inventory|movements)(/.*)?
   const isProtectedAppRoute =
     pathname === '/dashboard' ||
     pathname.startsWith('/dashboard/') ||
@@ -46,7 +46,11 @@ export default async function proxy(request: NextRequest) {
     pathname === '/inventory' ||
     pathname.startsWith('/inventory/') ||
     pathname === `/${locale}/inventory` ||
-    pathname.startsWith(`/${locale}/inventory/`)
+    pathname.startsWith(`/${locale}/inventory/`) ||
+    pathname === '/movements' ||
+    pathname.startsWith('/movements/') ||
+    pathname === `/${locale}/movements` ||
+    pathname.startsWith(`/${locale}/movements/`)
 
   // Auth route check: /login or /(id|en)/login
   const isLoginRoute = pathname === '/login' || pathname === `/${locale}/login`

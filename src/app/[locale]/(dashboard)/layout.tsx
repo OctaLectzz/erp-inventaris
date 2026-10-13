@@ -1,6 +1,6 @@
+import Link from 'next/link'
 import { Boxes, Shield, UserCheck } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import Link from 'next/link'
 
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
@@ -30,19 +30,19 @@ export default async function DashboardLayout({ children, params }: DashboardLay
   const isAdmin = profile.role === 'admin_gudang'
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
+    <div className="bg-background text-foreground flex min-h-screen flex-col">
       {/* Dashboard Top Navigation */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xs">
+      <header className="border-border bg-background/95 sticky top-0 z-50 border-b backdrop-blur-xs">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Brand & Active Area */}
           <div className="flex items-center gap-4">
             <Link href={`/${locale}/dashboard`} className="flex items-center gap-3 transition-opacity hover:opacity-85">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
+              <div className="bg-primary text-primary-foreground flex h-10 w-10 items-center justify-center rounded-lg shadow-xs">
                 <Boxes className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
-                <span className="text-lg font-bold tracking-tight text-primary">{tCommon('brand.name')}</span>
-                <span className="hidden text-xs text-muted-foreground sm:ml-2 sm:inline-block">• {tCommon('brand.subtitle')}</span>
+                <span className="text-primary text-lg font-bold tracking-tight">{tCommon('brand.name')}</span>
+                <span className="text-muted-foreground hidden text-xs sm:ml-2 sm:inline-block">• {tCommon('brand.subtitle')}</span>
               </div>
             </Link>
 
@@ -57,9 +57,9 @@ export default async function DashboardLayout({ children, params }: DashboardLay
                 title={isAdmin ? tAuth('roles.adminDesc') : tAuth('roles.ownerDesc')}
               >
                 {isAdmin ? (
-                  <Shield className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+                  <Shield className="text-accent h-3.5 w-3.5" aria-hidden="true" />
                 ) : (
-                  <UserCheck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                  <UserCheck className="text-primary h-3.5 w-3.5" aria-hidden="true" />
                 )}
                 <span>{isAdmin ? tAuth('roles.admin_gudang') : tAuth('roles.owner')}</span>
               </span>
@@ -74,8 +74,8 @@ export default async function DashboardLayout({ children, params }: DashboardLay
           <div className="flex items-center gap-2.5">
             {/* Identity details (hidden on small screens) */}
             <div className="hidden flex-col items-end text-right md:flex">
-              <span className="text-xs font-semibold text-foreground">{profile.fullName}</span>
-              <span className="font-mono text-[11px] text-muted-foreground">{profile.email}</span>
+              <span className="text-foreground text-xs font-semibold">{profile.fullName}</span>
+              <span className="text-muted-foreground font-mono text-[11px]">{profile.email}</span>
             </div>
 
             <div className="flex items-center gap-1.5">
@@ -88,7 +88,7 @@ export default async function DashboardLayout({ children, params }: DashboardLay
       </header>
 
       {/* Mobile Sub-Navigation Bar */}
-      <div className="border-b border-border bg-background/90 px-4 py-2 md:hidden">
+      <div className="border-border bg-background/90 border-b px-4 py-2 md:hidden">
         <DashboardNav locale={locale} />
       </div>
 
@@ -98,11 +98,11 @@ export default async function DashboardLayout({ children, params }: DashboardLay
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border py-4 text-center text-xs text-muted-foreground">
+      <footer className="border-border text-muted-foreground border-t py-4 text-center text-xs">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <span>Inventra &copy; 2026 PT. Syailendra Bumi Investama</span>
           <span className="font-mono text-[11px]">
-            Role: <strong className="font-semibold text-primary">{profile.role}</strong>
+            Role: <strong className="text-primary font-semibold">{profile.role}</strong>
           </span>
         </div>
       </footer>

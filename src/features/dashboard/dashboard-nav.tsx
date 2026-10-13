@@ -1,6 +1,6 @@
 'use client'
 
-import { LayoutDashboard, Package } from 'lucide-react'
+import { ArrowLeftRight, LayoutDashboard, Package } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -15,6 +15,7 @@ export function DashboardNav({ locale }: DashboardNavProps) {
 
   const isDashboardActive = pathname === `/${locale}/dashboard` || pathname === '/dashboard'
   const isCatalogActive = pathname.startsWith(`/${locale}/inventory`) || pathname.startsWith('/inventory')
+  const isMovementsActive = pathname.startsWith(`/${locale}/movements`) || pathname.startsWith('/movements')
 
   return (
     <nav className="flex items-center gap-1 sm:gap-2" aria-label="Menu navigasi utama">
@@ -36,6 +37,16 @@ export function DashboardNav({ locale }: DashboardNavProps) {
       >
         <Package className="h-3.5 w-3.5" aria-hidden="true" />
         <span>{tNav('links.catalog')}</span>
+      </Link>
+
+      <Link
+        href={`/${locale}/movements`}
+        className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
+          isMovementsActive ? 'bg-primary text-primary-foreground shadow-xs' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+        }`}
+      >
+        <ArrowLeftRight className="h-3.5 w-3.5" aria-hidden="true" />
+        <span>{tNav('links.movements')}</span>
       </Link>
     </nav>
   )
