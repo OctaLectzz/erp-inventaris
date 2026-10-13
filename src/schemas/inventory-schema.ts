@@ -37,3 +37,39 @@ export const productInputSchema = z.object({
 })
 
 export type ProductInput = z.infer<typeof productInputSchema>
+
+/**
+ * Validation schema for product catalog creation (Phase 7).
+ * STRICT RULE: Completely omits the stock field.
+ * Operational stock cannot be mutated via catalog management operations.
+ * New products start with stock = 0 by database default.
+ */
+export const productCatalogInputSchema = z.object({
+  sku: z
+    .string()
+    .trim()
+    .min(3, { message: 'skuTooShort' })
+    .max(50, { message: 'skuTooLong' })
+    .regex(/^[A-Z0-9-]+$/, { message: 'skuInvalidFormat' }),
+  name: z.string().trim().min(1, { message: 'nameRequired' }),
+  category: z.string().trim().min(1, { message: 'categoryRequired' }),
+  unit: z.string().trim().min(1, { message: 'unitRequired' }),
+  price: z.number().int({ message: 'priceMustBeInteger' }).nonnegative({ message: 'priceMustBeNonNegative' }),
+  description: z.string().nullable().optional(),
+  imageUrl: z
+    .union([z.string().trim().url({ message: 'imageUrlInvalid' }), z.literal('')])
+    .nullable()
+    .optional()
+})
+
+export type ProductCatalogInput = z.infer<typeof productCatalogInputSchema>
+
+/**
+ * Validation schema for product catalog updates (Phase 7).
+ * Requires the product UUID id, and omits the stock field entirely.
+ */
+export const productCatalogUpdateSchema = productCatalogInputSchema.extend({
+  id: z.string().uuid({ message: 'invalidProductId' })
+})
+
+export type ProductCatalogUpdate = z.infer<typeof productCatalogUpdateSchema>

@@ -9,5 +9,18 @@
   "emailRequired": "Email wajib diisi.",
   "emailInvalid": "Format alamat email tidak valid.",
   "passwordRequired": "Kata sandi wajib diisi.",
-  "passwordMinLength": "Kata sandi minimal 6 karakter."
+  "passwordMinLength": "Kata sandi minimal 6 karakter.",
+  "skuTooShort": "SKU minimal terdiri dari 3 karakter.",
+  "skuTooLong": "SKU maksimal terdiri dari 50 karakter.",
+  "skuInvalidFormat": "SKU hanya boleh memuat huruf kapital, angka, dan tanda hubung (-).",
+  "nameRequired": "Nama produk wajib diisi.",
+  "categoryRequired": "Kategori produk wajib diisi.",
+  "unitRequired": "Satuan produk wajib diisi.",
+  "priceMustBeInteger": "Harga harus berupa bilangan bulat.",
+  "priceMustBeNonNegative": "Harga tidak boleh bernilai negatif.",
+  "imageUrlInvalid": "URL gambar harus berupa URL web yang valid.",
+  "invalidProductId": "ID produk tidak valid.",
+  "skuDuplicate": "SKU ini sudah terdaftar dalam sistem. Gunakan kode SKU yang berbeda.",
+  "forbiddenOwner": "Operasi ini hanya diizinkan untuk peran Admin Gudang.",
+  "unauthorized": "Sesi tidak valid atau telah berakhir. Silakan masuk kembali."
 }

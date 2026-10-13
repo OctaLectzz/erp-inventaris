@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
+import { NextResponse } from 'next/server'
 
 import { routing } from './i18n/routing'
 import { updateSession } from './lib/supabase/middleware'
@@ -37,18 +37,22 @@ export default async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl
   const locale = extractLocale(pathname)
 
-  // Protected route check: /dashboard or /(id|en)/dashboard(/.*)?
-  const isDashboardRoute =
+  // Protected route check: /dashboard, /inventory or /(id|en)/(dashboard|inventory)(/.*)?
+  const isProtectedAppRoute =
     pathname === '/dashboard' ||
     pathname.startsWith('/dashboard/') ||
     pathname === `/${locale}/dashboard` ||
-    pathname.startsWith(`/${locale}/dashboard/`)
+    pathname.startsWith(`/${locale}/dashboard/`) ||
+    pathname === '/inventory' ||
+    pathname.startsWith('/inventory/') ||
+    pathname === `/${locale}/inventory` ||
+    pathname.startsWith(`/${locale}/inventory/`)
 
   // Auth route check: /login or /(id|en)/login
   const isLoginRoute = pathname === '/login' || pathname === `/${locale}/login`
 
-  // Scenario 1: Unauthenticated access to protected dashboard route
-  if (isDashboardRoute && !user) {
+  // Scenario 1: Unauthenticated access to protected dashboard or inventory route
+  if (isProtectedAppRoute && !user) {
     const redirectUrl = new URL(`/${locale}/login`, request.url)
     const currentPath = request.nextUrl.pathname + request.nextUrl.search
     if (isSafeRelativeUrl(currentPath)) {

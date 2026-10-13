@@ -18,5 +18,73 @@
   "tables": {
     "recentActivity": "Recent Stock Movement Activity",
     "emptyState": "No inventory movement records recorded yet."
+  },
+  "watchlist": {
+    "title": "Low Stock Watchlist (< 5 Units)",
+    "subtitle": "Products with current stock below the safety stock threshold",
+    "empty": "All products currently have safe stock levels (≥ 5 units).",
+    "viewCatalog": "View in Catalog",
+    "badgeWarning": "Needs Restock",
+    "unitsLeft": "{count} units left"
+  },
+  "catalog": {
+    "title": "Product Inventory Catalog",
+    "subtitle": "Manage product master data and monitor stock inventory status",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "searchPlaceholder": "Search by SKU or product name...",
+    "allCategories": "All Categories",
+    "allStatuses": "All Stock Statuses",
+    "statusLowStock": "Low Stock (< 5)",
+    "statusNormal": "Normal Stock (≥ 5)",
+    "showingResults": "Showing {count} of {total} products",
+    "emptySearch": "No products match the search criteria.",
+    "resetFilter": "Reset Filter",
+    "readOnlyNotice": "Audit Mode (Read-Only): You have viewing access without catalog modification permissions.",
+    "columns": {
+      "sku": "SKU",
+      "product": "Product Name",
+      "category": "Category",
+      "unit": "Unit",
+      "price": "Reference Price",
+      "stock": "Stock",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {current} of {total}"
+    }
+  },
+  "dialog": {
+    "createTitle": "Add New Product",
+    "createSubtitle": "Add a new item to the warehouse master catalog",
+    "editTitle": "Edit Product Details",
+    "editSubtitle": "Update product catalog details (SKU, name, price, description)",
+    "stockNoticeCreate": "Initial stock for new products is 0 units. Physical stock additions are recorded via stock IN mutations.",
+    "stockNoticeEdit": "Product stock quantities are managed independently via movement history and cannot be edited directly from the catalog form.",
+    "fields": {
+      "sku": "SKU Code",
+      "skuPlaceholder": "e.g. PROD-001",
+      "name": "Product Name",
+      "namePlaceholder": "e.g. Aluminium Laptop Stand",
+      "category": "Category",
+      "categoryPlaceholder": "e.g. accessories",
+      "unit": "Unit of Measure",
+      "unitPlaceholder": "pcs, box, unit",
+      "price": "Reference Price (IDR)",
+      "pricePlaceholder": "0",
+      "description": "Description (Optional)",
+      "descriptionPlaceholder": "Brief product description...",
+      "imageUrl": "Image URL (Optional)",
+      "imageUrlPlaceholder": "https://..."
+    },
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "create": "Save Product",
+    "saving": "Saving...",
+    "successCreated": "Product successfully added to catalog.",
+    "successUpdated": "Product details successfully updated."
   }
 }

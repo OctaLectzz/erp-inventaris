@@ -188,3 +188,12 @@ export function toStockMovement(row: StockMovementRow): StockMovement {
     createdAt: row.created_at
   }
 }
+
+/**
+ * Filter parameters for searching and filtering the product catalog.
+ */
+export interface ProductCatalogFilter {
+  search?: string
+  category?: string
+  stockStatus?: 'all' | 'low_stock' | 'normal'
+}

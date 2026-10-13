@@ -18,5 +18,73 @@
   "tables": {
     "recentActivity": "Aktivitas Mutasi Terbaru",
     "emptyState": "Belum ada catatan mutasi inventaris."
+  },
+  "watchlist": {
+    "title": "Daftar Pantau Stok Menipis (< 5 Unit)",
+    "subtitle": "Produk dengan kuantitas stok di bawah batas aman minimum",
+    "empty": "Semua produk saat ini memiliki stok aman (≥ 5 unit).",
+    "viewCatalog": "Lihat di Katalog",
+    "badgeWarning": "Perlu Restock",
+    "unitsLeft": "{count} unit tersisa"
+  },
+  "catalog": {
+    "title": "Katalog Inventaris Produk",
+    "subtitle": "Kelola master data produk dan pantau status persediaan stok",
+    "addProduct": "Tambah Produk",
+    "editProduct": "Edit Produk",
+    "searchPlaceholder": "Cari berdasarkan SKU atau nama produk...",
+    "allCategories": "Semua Kategori",
+    "allStatuses": "Semua Status Stok",
+    "statusLowStock": "Stok Menipis (< 5)",
+    "statusNormal": "Stok Aman (≥ 5)",
+    "showingResults": "Menampilkan {count} dari {total} produk",
+    "emptySearch": "Tidak ada produk yang cocok dengan kriteria pencarian.",
+    "resetFilter": "Reset Pencarian",
+    "readOnlyNotice": "Mode Audit (Hanya-Baca): Anda memiliki akses melihat data tanpa hak modifikasi katalog.",
+    "columns": {
+      "sku": "SKU",
+      "product": "Nama Produk",
+      "category": "Kategori",
+      "unit": "Satuan",
+      "price": "Harga Referensi",
+      "stock": "Stok",
+      "status": "Status",
+      "actions": "Aksi"
+    },
+    "pagination": {
+      "previous": "Sebelumnya",
+      "next": "Berikutnya",
+      "page": "Halaman {current} dari {total}"
+    }
+  },
+  "dialog": {
+    "createTitle": "Tambah Produk Baru",
+    "createSubtitle": "Tambahkan item baru ke dalam master data katalog gudang",
+    "editTitle": "Edit Data Produk",
+    "editSubtitle": "Perbarui informasi katalog produk (SKU, nama, harga, deskripsi)",
+    "stockNoticeCreate": "Stok awal produk baru adalah 0 unit. Penambahan stok fisik dilakukan melalui pencatatan mutasi stok masuk.",
+    "stockNoticeEdit": "Kuantitas stok produk dikelola secara independen melalui riwayat mutasi dan tidak dapat diubah langsung dari form katalog.",
+    "fields": {
+      "sku": "Kode SKU",
+      "skuPlaceholder": "contoh: PROD-001",
+      "name": "Nama Produk",
+      "namePlaceholder": "contoh: Laptop Stand Aluminium",
+      "category": "Kategori",
+      "categoryPlaceholder": "contoh: aksesoris",
+      "unit": "Satuan Unit",
+      "unitPlaceholder": "pcs, box, unit",
+      "price": "Harga Referensi (IDR)",
+      "pricePlaceholder": "0",
+      "description": "Deskripsi (Opsional)",
+      "descriptionPlaceholder": "Deskripsi singkat produk...",
+      "imageUrl": "URL Gambar (Opsional)",
+      "imageUrlPlaceholder": "https://..."
+    },
+    "cancel": "Batal",
+    "save": "Simpan Perubahan",
+    "create": "Simpan Produk",
+    "saving": "Menyimpan...",
+    "successCreated": "Produk berhasil ditambahkan ke katalog.",
+    "successUpdated": "Data produk berhasil diperbarui."
   }
 }

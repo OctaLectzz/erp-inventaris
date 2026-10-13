@@ -9,5 +9,18 @@
   "emailRequired": "Email address is required.",
   "emailInvalid": "Invalid email address format.",
   "passwordRequired": "Password is required.",
-  "passwordMinLength": "Password must be at least 6 characters."
+  "passwordMinLength": "Password must be at least 6 characters.",
+  "skuTooShort": "SKU must be at least 3 characters.",
+  "skuTooLong": "SKU cannot exceed 50 characters.",
+  "skuInvalidFormat": "SKU may only contain uppercase letters, numbers, and hyphens (-).",
+  "nameRequired": "Product name is required.",
+  "categoryRequired": "Product category is required.",
+  "unitRequired": "Product unit is required.",
+  "priceMustBeInteger": "Price must be a whole integer.",
+  "priceMustBeNonNegative": "Price cannot be negative.",
+  "imageUrlInvalid": "Image URL must be a valid web URL.",
+  "invalidProductId": "Invalid product ID.",
+  "skuDuplicate": "This SKU is already registered in the system. Please use a unique SKU code.",
+  "forbiddenOwner": "This operation is only allowed for the Warehouse Admin role.",
+  "unauthorized": "Your session has expired or is invalid. Please log in again."
 }
