@@ -1,0 +1,28 @@
+{
+  // Remove warning @theme, @custom-variant, dll.
+  "css.lint.unknownAtRules": "ignore",
+
+  // Prettier
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // (Prettier + Headwind + Organize Imports)
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll"],
+
+  // Headwind
+  "headwind.runOnSave": true,
+
+  // Tailwind IntelliSense
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  },
+
+  // 🧪 (Opsional) Show class sorting order in tooltip
+  "headwind.classRegex": {
+    "html": "class\\s*=\\s*\"([^\"]+)\"",
+    "javascript": "(?<=class(Name)?=\\{?\"?)([^\"{]*)(?=\"?\\}?)",
+    "typescriptreact": "(?<=class(Name)?=\\{?\"?)([^\"{]*)(?=\"?\\}?)"
+  },
+  "typescript.tsdk": "node_modules\\typescript\\lib"
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json.schemastore.org/prettierrc",
+  "plugins": ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+  "printWidth": 150,
+  "semi": false,
+  "singleQuote": true,
+  "htmlWhitespaceSensitivity": "ignore",
+  "trailingComma": "none",
+  "bracketSpacing": true,
+  "importOrder": [
+    "^(react/(.*)$)|^(react$)",
+    "^(next/(.*)$)|^(next$)",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^@/",
+    "",
+    "^[../]",
+    "^[./]",
+    "",
+    "<TYPES>",
+    "<TYPES>^[.]",
+    "",
+    "^(.*)\\.(css|scss|tailwind)$",
+    "^(.*)\\.(png|jpe?g|svg|webp|avif)$"
+  ],
+  "importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy"],
+  "importOrderTypeScriptVersion": "5.0.0"
+}
