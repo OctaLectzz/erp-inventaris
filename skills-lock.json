@@ -61,6 +61,12 @@
       "skillPath": ".claude/skills/markdown-doc-writer/SKILL.md",
       "computedHash": "580ba724e3352a62c1c9fb4ce8dc58938a75d7755ba5fbf6dc9ba39b589dd839"
     },
+    "next-intl-add-language": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "skillPath": "skills/next-intl-add-language/SKILL.md",
+      "computedHash": "6b30075c5f43a4498782729f129c513ca28db37d93032a81a07e444d4db575c5"
+    },
     "nextjs-react-typescript": {
       "source": "mindrally/skills",
       "sourceType": "github",

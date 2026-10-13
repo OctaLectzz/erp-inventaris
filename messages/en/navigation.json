@@ -1,0 +1,17 @@
+{
+  "skipLink": "Skip to main content",
+  "language": {
+    "label": "Select Language",
+    "id": "Bahasa Indonesia",
+    "en": "English",
+    "switchToEn": "Switch to English",
+    "switchToId": "Switch to Indonesian"
+  },
+  "links": {
+    "home": "Home",
+    "preview": "Preview",
+    "dashboard": "Dashboard",
+    "catalog": "Product Catalog",
+    "movements": "Stock Movements"
+  }
+}

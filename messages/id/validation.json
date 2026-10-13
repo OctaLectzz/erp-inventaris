@@ -1,0 +1,9 @@
+{
+  "required": "Bidang ini wajib diisi.",
+  "email": "Format alamat email tidak valid.",
+  "positiveInteger": "Nilai harus berupa bilangan bulat positif.",
+  "minQuantity": "Jumlah minimum adalah 1.",
+  "maxQuantity": "Jumlah melebihi batas maksimum yang diizinkan.",
+  "insufficientStock": "Stok tidak mencukupi untuk mutasi keluar.",
+  "skuUnique": "SKU sudah digunakan oleh produk lain."
+}

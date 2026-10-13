@@ -1,0 +1,13 @@
+{
+  "title": "Main Menu",
+  "collapse": "Collapse Sidebar",
+  "expand": "Expand Sidebar",
+  "items": {
+    "dashboard": "Dashboard",
+    "catalog": "Product Catalog",
+    "stockIn": "Stock IN",
+    "stockOut": "Stock OUT",
+    "history": "Movement History",
+    "settings": "Settings"
+  }
+}

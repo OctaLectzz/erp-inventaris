@@ -1,0 +1,14 @@
+{
+  "title": "Dashboard Inventaris",
+  "subtitle": "Ringkasan metrik inventaris dan aktivitas gudang",
+  "kpi": {
+    "totalProducts": "Total Produk",
+    "totalStock": "Total Unit Stok",
+    "lowStockAlerts": "Peringatan Stok Menipis",
+    "recentMovements": "Mutasi Terkini"
+  },
+  "tables": {
+    "recentActivity": "Aktivitas Mutasi Terbaru",
+    "emptyState": "Belum ada catatan mutasi inventaris."
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "badge": "Mini ERP Inventaris Gudang",
+  "title": "Sistem Manajemen Inventaris Terpadu",
+  "subtitle": "Solusi pemantauan stok real-time, pencatatan mutasi barang masuk & keluar, serta audit trail pergerakan inventaris yang transparan untuk PT. Syailendra Bumi Investama (DDistillers).",
+  "actions": {
+    "primary": "Masuk ke Dashboard (Segera Hadir)",
+    "primaryTooltip": "Fitur autentikasi dan login pengguna akan aktif pada Fase 5.",
+    "secondary": "Lihat Pratinjau Fondasi"
+  },
+  "card": {
+    "title": "Status Fondasi Sistem (Fase 2)",
+    "description": "Spesifikasi token warna semantik, skala tipografi, dukungan dwibahasa, dan tema terpadu yang telah terkonfigurasi.",
+    "tokensSection": "Palet Token Warna Terdaftar",
+    "featuresSection": "Fondasi Teknis Terverifikasi",
+    "tokens": {
+      "navy": {
+        "name": "Primary Navy",
+        "desc": "Navigasi, tajuk utama, dan aksi primer"
+      },
+      "teal": {
+        "name": "Accent Teal",
+        "desc": "Sorotan aktif, indikator fokus, dan CTA"
+      },
+      "surface": {
+        "name": "Pale Surface",
+        "desc": "Permukaan kontras lembut dan badge netral"
+      }
+    },
+    "features": {
+      "typography": {
+        "title": "Tipografi Inter & Geist Mono",
+        "detail": "Hierarki tipe data reguler dan monospaced SKU"
+      },
+      "styling": {
+        "title": "Tailwind CSS v4 + Radix",
+        "detail": "Variabel CSS modern dengan dukungan mode gelap"
+      },
+      "typeSafety": {
+        "title": "Strict Type Safety",
+        "detail": "TypeScript strict mode tanpa kompromi"
+      },
+      "i18n": {
+        "title": "Dukungan Dwibahasa (next-intl)",
+        "detail": "Bahasa Indonesia bawaan dan rute bahasa Inggris (/en)"
+      }
+    },
+    "footer": "Inventra v0.1.0-dev • Fase 2 Terverifikasi",
+    "techStack": "Next.js 16 • Tailwind v4 • next-intl"
+  },
+  "footerText": "© 2026 PT. Syailendra Bumi Investama (DDistillers). Seluruh hak cipta dilindungi."
+}

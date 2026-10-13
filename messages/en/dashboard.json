@@ -1,0 +1,14 @@
+{
+  "title": "Inventory Dashboard",
+  "subtitle": "Overview of warehouse metrics and inventory activity",
+  "kpi": {
+    "totalProducts": "Total Products",
+    "totalStock": "Total Stock Units",
+    "lowStockAlerts": "Low Stock Alerts",
+    "recentMovements": "Recent Movements"
+  },
+  "tables": {
+    "recentActivity": "Recent Movement Activity",
+    "emptyState": "No inventory movement records available."
+  }
+}

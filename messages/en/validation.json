@@ -1,0 +1,9 @@
+{
+  "required": "This field is required.",
+  "email": "Invalid email address format.",
+  "positiveInteger": "Value must be a positive integer.",
+  "minQuantity": "Minimum quantity is 1.",
+  "maxQuantity": "Quantity exceeds maximum allowed limit.",
+  "insufficientStock": "Insufficient stock for outbound movement.",
+  "skuUnique": "SKU is already in use by another product."
+}

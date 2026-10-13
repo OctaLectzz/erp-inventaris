@@ -1,0 +1,13 @@
+{
+  "title": "Menu Utama",
+  "collapse": "Ciutkan Sidebar",
+  "expand": "Perluas Sidebar",
+  "items": {
+    "dashboard": "Dashboard",
+    "catalog": "Katalog Produk",
+    "stockIn": "Stok Masuk",
+    "stockOut": "Stok Keluar",
+    "history": "Riwayat Mutasi",
+    "settings": "Pengaturan"
+  }
+}

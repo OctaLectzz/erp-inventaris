@@ -1,0 +1,36 @@
+{
+  "brand": {
+    "name": "Inventra",
+    "subtitle": "DDistillers Warehouse ERP"
+  },
+  "phases": {
+    "phase1": "Fase 1 Fondasi",
+    "phase2": "Fase 2 Multibahasa"
+  },
+  "actions": {
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "edit": "Ubah",
+    "close": "Tutup",
+    "back": "Kembali",
+    "refresh": "Segarkan",
+    "filter": "Saring",
+    "search": "Cari...",
+    "confirm": "Konfirmasi"
+  },
+  "status": {
+    "loading": "Memuat...",
+    "success": "Berhasil",
+    "error": "Terjadi kesalahan",
+    "active": "Aktif",
+    "inactive": "Tidak Aktif"
+  },
+  "theme": {
+    "light": "Mode Terang",
+    "dark": "Mode Gelap",
+    "toggle": "Alihkan Tema",
+    "switchToDark": "Alihkan ke mode gelap",
+    "switchToLight": "Alihkan ke mode terang"
+  }
+}

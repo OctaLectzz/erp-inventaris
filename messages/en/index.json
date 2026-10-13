@@ -1,0 +1,51 @@
+{
+  "badge": "Mini Warehouse ERP Inventory",
+  "title": "Unified Inventory Management System",
+  "subtitle": "Real-time stock monitoring, inbound & outbound mutation logging, and transparent inventory movement audit trail for PT. Syailendra Bumi Investama (DDistillers).",
+  "actions": {
+    "primary": "Enter Dashboard (Coming Soon)",
+    "primaryTooltip": "User authentication and login features will be activated in Phase 5.",
+    "secondary": "View Foundation Preview"
+  },
+  "card": {
+    "title": "System Foundation Status (Phase 2)",
+    "description": "Configured specifications for semantic color tokens, typography scale, bilingual support, and unified theming.",
+    "tokensSection": "Registered Color Token Palette",
+    "featuresSection": "Verified Technical Foundation",
+    "tokens": {
+      "navy": {
+        "name": "Primary Navy",
+        "desc": "Navigation, main headers, and primary actions"
+      },
+      "teal": {
+        "name": "Accent Teal",
+        "desc": "Active highlights, focus indicators, and CTAs"
+      },
+      "surface": {
+        "name": "Pale Surface",
+        "desc": "Soft contrast surface and neutral badges"
+      }
+    },
+    "features": {
+      "typography": {
+        "title": "Inter & Geist Mono Typography",
+        "detail": "Data hierarchy for regular text and monospaced SKUs"
+      },
+      "styling": {
+        "title": "Tailwind CSS v4 + Radix",
+        "detail": "Modern CSS variables with dark mode support"
+      },
+      "typeSafety": {
+        "title": "Strict Type Safety",
+        "detail": "Uncompromising TypeScript strict mode"
+      },
+      "i18n": {
+        "title": "Bilingual Support (next-intl)",
+        "detail": "Default Indonesian and dedicated English route (/en)"
+      }
+    },
+    "footer": "Inventra v0.1.0-dev • Phase 2 Verified",
+    "techStack": "Next.js 16 • Tailwind v4 • next-intl"
+  },
+  "footerText": "© 2026 PT. Syailendra Bumi Investama (DDistillers). All rights reserved."
+}

@@ -1,0 +1,17 @@
+{
+  "skipLink": "Lewati ke konten utama",
+  "language": {
+    "label": "Pilih Bahasa",
+    "id": "Bahasa Indonesia",
+    "en": "English",
+    "switchToEn": "Ganti ke Bahasa Inggris",
+    "switchToId": "Ganti ke Bahasa Indonesia"
+  },
+  "links": {
+    "home": "Beranda",
+    "preview": "Pratinjau",
+    "dashboard": "Dashboard",
+    "catalog": "Katalog Produk",
+    "movements": "Mutasi Stok"
+  }
+}
