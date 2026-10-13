@@ -80,21 +80,26 @@ CREATE TRIGGER trg_protect_profile_role
 -- ------------------------------------------------------------------------------
 -- 2b. Trigger: Prevent Direct Stock Modification via SQL API
 -- ------------------------------------------------------------------------------
--- Defense-in-depth alongside column-level privileges.
--- Ensures that stock mutations can ONLY happen via public.record_stock_movement.
-CREATE OR REPLACE FUNCTION public.prevent_direct_stock_update()
+-- Secondary defense-in-depth alongside PostgreSQL column-level privileges.
+-- Rejects any direct stock change executed in the context of application roles (anon, authenticated).
+-- Rejects INSERTs by application roles where stock <> 0 (initial stock must start at zero).
+-- SECURITY DEFINER functions executing as table owner (e.g. public.record_stock_movement)
+-- and administrative service_role execute with elevated current_user and bypass this trigger safely,
+-- eliminating any dependency on ambient or forgeable session configuration tokens.
+CREATE OR REPLACE FUNCTION public.prevent_direct_stock_modification()
 RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 AS $$
 BEGIN
-  IF NEW.stock IS DISTINCT FROM OLD.stock THEN
-    -- Block direct stock alteration unless authorized within record_stock_movement RPC
-    -- or executed by service_role (e.g. administrative demo reset)
-    IF (SELECT auth.role()) IN ('anon', 'authenticated')
-       AND current_setting('inventra.authorized_stock_mutation', true) IS DISTINCT FROM 'true' THEN
+  IF TG_OP = 'UPDATE' THEN
+    IF NEW.stock IS DISTINCT FROM OLD.stock AND current_user IN ('anon', 'authenticated') THEN
       RAISE EXCEPTION 'Direct stock modification is forbidden. Inventory mutations must be recorded via public.record_stock_movement RPC.';
+    END IF;
+  ELSIF TG_OP = 'INSERT' THEN
+    IF NEW.stock <> 0 AND current_user IN ('anon', 'authenticated') THEN
+      RAISE EXCEPTION 'Initial product stock must be zero. Record stock additions via public.record_stock_movement RPC.';
     END IF;
   END IF;
   RETURN NEW;
@@ -102,13 +107,13 @@ END;
 $$;
 
 -- Revoke direct execution from application roles
-REVOKE EXECUTE ON FUNCTION public.prevent_direct_stock_update() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.prevent_direct_stock_modification() FROM PUBLIC, anon, authenticated;
 
 DROP TRIGGER IF EXISTS trg_protect_product_stock ON public.products;
 CREATE TRIGGER trg_protect_product_stock
-  BEFORE UPDATE ON public.products
+  BEFORE INSERT OR UPDATE ON public.products
   FOR EACH ROW
-  EXECUTE FUNCTION public.prevent_direct_stock_update();
+  EXECUTE FUNCTION public.prevent_direct_stock_modification();
 
 -- ------------------------------------------------------------------------------
 -- 3. Trigger: Automatic Profile Provisioning on User Creation

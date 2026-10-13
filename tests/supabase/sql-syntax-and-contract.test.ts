@@ -90,9 +90,10 @@ describe('Supabase Migrations & Security Contract Static Audit', () => {
     })
 
     it('implements defensive trigger to prevent direct stock modification via SQL API', () => {
-      expect(content).toContain('CREATE OR REPLACE FUNCTION public.prevent_direct_stock_update()')
+      expect(content).toContain('CREATE OR REPLACE FUNCTION public.prevent_direct_stock_modification()')
       expect(content).toContain('CREATE TRIGGER trg_protect_product_stock')
-      expect(content).toContain('REVOKE EXECUTE ON FUNCTION public.prevent_direct_stock_update() FROM PUBLIC, anon, authenticated;')
+      expect(content).toContain('REVOKE EXECUTE ON FUNCTION public.prevent_direct_stock_modification() FROM PUBLIC, anon, authenticated;')
+      expect(content).not.toContain('inventra.authorized_stock_mutation')
     })
 
     it('protects profile roles from self-elevation via triggers and column grants', () => {
@@ -155,8 +156,9 @@ describe('Supabase Migrations & Security Contract Static Audit', () => {
       expect(content).toContain('IF v_current_stock < p_quantity THEN')
     })
 
-    it('authorizes stock mutation for trigger defense and revokes execution from PUBLIC and anon', () => {
-      expect(content).toContain("PERFORM set_config('inventra.authorized_stock_mutation', 'true', true);")
+    it('executes atomic mutations without forgeable session tokens and revokes execution from PUBLIC and anon', () => {
+      expect(content).not.toContain('set_config')
+      expect(content).not.toContain('inventra.authorized_stock_mutation')
       expect(content).toContain('REVOKE EXECUTE ON FUNCTION public.record_stock_movement(uuid, text, integer, text) FROM PUBLIC, anon;')
       expect(content).toContain('GRANT EXECUTE ON FUNCTION public.record_stock_movement(uuid, text, integer, text) TO authenticated;')
     })

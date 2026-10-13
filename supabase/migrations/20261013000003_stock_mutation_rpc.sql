@@ -119,10 +119,8 @@ BEGIN
     v_new_stock := v_current_stock - p_quantity;
   END IF;
 
-  -- Authorize transaction-scoped stock mutation for trigger defense
-  PERFORM set_config('inventra.authorized_stock_mutation', 'true', true);
-
   -- 6. Atomic Dual Mutation (Product stock update + ledger entry append)
+  -- Operates with table owner authority (SECURITY DEFINER) without forgeable session tokens
   UPDATE public.products
   SET stock = v_new_stock, updated_at = now()
   WHERE id = p_product_id;

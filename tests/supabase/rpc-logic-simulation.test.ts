@@ -69,6 +69,39 @@ class MockDatabaseEngine {
     return product
   }
 
+  // Simulate direct SQL INSERT on public.products (column privileges + trg_protect_product_stock)
+  insertProductDirectly(callingUserId: string, productData: Omit<ProductRecord, 'id' | 'stock'> & { id?: string; stock?: number }): ProductRecord {
+    const role = this.getUserRole(callingUserId, callingUserId)
+    if (role !== 'admin_gudang') {
+      throw new Error('FORBIDDEN: Only warehouse administrators can insert products')
+    }
+
+    // Column privilege & trigger defense: stock cannot be set directly on INSERT (must be 0)
+    if (productData.stock !== undefined && productData.stock !== 0) {
+      throw new Error('Initial product stock must be zero. Record stock additions via public.record_stock_movement RPC.')
+    }
+
+    const id = productData.id || `prod-${Date.now()}`
+    const record: ProductRecord = {
+      ...productData,
+      id,
+      stock: 0
+    }
+    this.products.set(id, record)
+    return record
+  }
+
+  // Simulate direct SQL INSERT/UPDATE/DELETE on public.stock_movements (privileges revoked)
+  insertStockMovementDirectly(): void {
+    throw new Error('PERMISSION_DENIED: Direct write access to stock_movements is revoked.')
+  }
+  updateStockMovementDirectly(): void {
+    throw new Error('PERMISSION_DENIED: Direct update access to stock_movements is revoked.')
+  }
+  deleteStockMovementDirectly(): void {
+    throw new Error('PERMISSION_DENIED: Direct delete access to stock_movements is revoked.')
+  }
+
   // Simulate atomic public.record_stock_movement RPC function
   recordStockMovement(
     callingUserId: string | null,
@@ -369,6 +402,56 @@ describe('Stock Mutation RPC & Security Logic State Simulation', () => {
     // service_role can change role for administrative provisioning
     db.updateProfile(ownerId, 'admin_gudang', 'service_role')
     expect(db.profiles.get(ownerId)?.role).toBe('admin_gudang')
+  })
+
+  it('enforces initial stock = 0 on product insertion and rejects non-zero stock', () => {
+    const db = createTestDb()
+    // admin_gudang attempts to insert with initial stock = 50
+    expect(() => {
+      db.insertProductDirectly(adminId, {
+        sku: 'TEST-PROD-001',
+        name: 'Test Product',
+        category: 'groceries',
+        price: 50000,
+        stock: 50
+      })
+    }).toThrow('Initial product stock must be zero. Record stock additions via public.record_stock_movement RPC.')
+
+    // admin_gudang inserts with stock = 0 or omitted
+    const created = db.insertProductDirectly(adminId, {
+      sku: 'TEST-PROD-001',
+      name: 'Test Product',
+      category: 'groceries',
+      price: 50000
+    })
+    expect(created.stock).toBe(0)
+    expect(db.products.get(created.id)?.stock).toBe(0)
+
+    // owner cannot insert products
+    expect(() => {
+      db.insertProductDirectly(ownerId, {
+        sku: 'TEST-PROD-002',
+        name: 'Owner Product',
+        category: 'groceries',
+        price: 25000
+      })
+    }).toThrow('FORBIDDEN')
+  })
+
+  it('rejects direct INSERT, UPDATE, and DELETE on stock_movements table for application roles', () => {
+    const db = createTestDb()
+    expect(() => db.insertStockMovementDirectly()).toThrow('PERMISSION_DENIED')
+    expect(() => db.updateStockMovementDirectly()).toThrow('PERMISSION_DENIED')
+    expect(() => db.deleteStockMovementDirectly()).toThrow('PERMISSION_DENIED')
+  })
+
+  it('executes stock mutations purely via RPC without requiring forgeable GUC tokens', () => {
+    const db = createTestDb()
+    // Normal RPC call without any session configuration setting
+    const result = db.recordStockMovement(adminId, prodId, 'IN', 15, 'Restock without token')
+    expect(result.success).toBe(true)
+    expect(db.products.get(prodId)?.stock).toBe(35)
+    expect(db.movements.length).toBe(1)
   })
 
   it('verifies IDR price conversion and safe integer range boundaries', () => {
