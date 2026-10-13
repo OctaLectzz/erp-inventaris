@@ -29,23 +29,23 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## 2. Tech Stack
 
-| Concern              | Technology                                      |
-| :------------------- | :---------------------------------------------- |
-| **Language**         | TypeScript (strict mode)                        |
-| **Framework**        | Next.js 16 App Router                           |
-| **Styling**          | Tailwind CSS v4                                 |
-| **UI Library**       | shadcn/ui with Radix UI                         |
-| **Database**         | PostgreSQL (Supabase)                           |
-| **Auth**             | Supabase Auth                                   |
-| **SSR Auth**         | `@supabase/ssr`                                 |
-| **i18n**             | `next-intl` (ID default, EN support)            |
-| **Theme**            | `next-themes` (light, dark, system)             |
-| **State Management** | Zustand (client-side UI state only)             |
+| Concern              | Technology                                            |
+| :------------------- | :---------------------------------------------------- |
+| **Language**         | TypeScript (strict mode)                              |
+| **Framework**        | Next.js 16 App Router                                 |
+| **Styling**          | Tailwind CSS v4                                       |
+| **UI Library**       | shadcn/ui with Radix UI                               |
+| **Database**         | PostgreSQL (Supabase)                                 |
+| **Auth**             | Supabase Auth                                         |
+| **SSR Auth**         | `@supabase/ssr`                                       |
+| **i18n**             | `next-intl` (ID default, EN support)                  |
+| **Theme**            | `next-themes` (light, dark, system)                   |
+| **State Management** | Zustand (client-side UI state only)                   |
 | **Validation**       | Zod schemas + React Hook Form + `@hookform/resolvers` |
-| **Testing**          | Vitest                                          |
-| **HTTP**             | Native `fetch` (no Axios)                       |
-| **Package Manager**  | npm (never use yarn, pnpm, or bun)              |
-| **Deployment**       | Vercel (planned)                                |
+| **Testing**          | Vitest                                                |
+| **HTTP**             | Native `fetch` (no Axios)                             |
+| **Package Manager**  | npm (never use yarn, pnpm, or bun)                    |
+| **Deployment**       | Vercel (planned)                                      |
 
 **Explicitly excluded:** Prisma, Axios, TanStack Query, any ORM.
 
@@ -147,20 +147,20 @@ inventra/
 
 The project documentation resides in the `docs/` directory. All agents must consult the corresponding document for in-depth requirements and specifications:
 
-| Document | Purpose & Scope |
-| :--- | :--- |
-| [Project README](docs/README.md) | High-level system overview, prerequisites, setup instructions, architecture summary, and assessment scope |
-| [Product Requirements](docs/PRD.md) | Target personas (`admin_gudang`, `owner`), core inventory features, out-of-scope boundaries, and JTBD value propositions |
-| [Architecture](docs/ARCHITECTURE.md) | Layered architecture, Server Components/Actions, state hierarchy, i18n, theming, and data flow diagrams |
-| [Design System](docs/DESIGN.md) | Brand tokens (Deep Navy, Electric Teal, Warm Surface), typography, responsive layout, and accessible UI patterns |
-| [Security](docs/SECURITY.md) | Supabase Auth, Row-Level Security (RLS) policies, RBAC, input validation boundaries, and audit logging limitations |
-| [Testing](docs/TESTING.md) | Vitest configuration, unit/integration test specifications, edge-case test matrix, and honesty policy |
-| [Deployment](docs/DEPLOYMENT.md) | Local development setup, environment variables, production build verification, and Vercel deployment procedures |
-| [Task Roadmap](docs/TASK_INSTRUCTION.md) | Phased implementation roadmap (Phases 0–10) with prerequisites, tasks, acceptance criteria, and stop conditions |
-| [Database](docs/DATABASE.md) | PostgreSQL schema (`profiles`, `products`, `stock_movements`), indexes, RLS policies, and atomic mutation RPC function |
-| [API Contracts](docs/API.md) | Server Action interfaces, input schemas, return envelopes (`{ success, data, error }`), and atomicity guarantees |
-| [Contributing](docs/CONTRIBUTING.md) | Contribution standards, code style, naming conventions, Prettier formatting, testing, and Git workflow |
-| [Changelog](docs/CHANGELOG.md) | Chronological log of changes, versions, and assessment milestones |
+| Document                                 | Purpose & Scope                                                                                                          |
+| :--------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
+| [Project README](docs/README.md)         | High-level system overview, prerequisites, setup instructions, architecture summary, and assessment scope                |
+| [Product Requirements](docs/PRD.md)      | Target personas (`admin_gudang`, `owner`), core inventory features, out-of-scope boundaries, and JTBD value propositions |
+| [Architecture](docs/ARCHITECTURE.md)     | Layered architecture, Server Components/Actions, state hierarchy, i18n, theming, and data flow diagrams                  |
+| [Design System](docs/DESIGN.md)          | Brand tokens (Deep Navy, Electric Teal, Warm Surface), typography, responsive layout, and accessible UI patterns         |
+| [Security](docs/SECURITY.md)             | Supabase Auth, Row-Level Security (RLS) policies, RBAC, input validation boundaries, and audit logging limitations       |
+| [Testing](docs/TESTING.md)               | Vitest configuration, unit/integration test specifications, edge-case test matrix, and honesty policy                    |
+| [Deployment](docs/DEPLOYMENT.md)         | Local development setup, environment variables, production build verification, and Vercel deployment procedures          |
+| [Task Roadmap](docs/TASK_INSTRUCTION.md) | Phased implementation roadmap (Phases 0–10) with prerequisites, tasks, acceptance criteria, and stop conditions          |
+| [Database](docs/DATABASE.md)             | PostgreSQL schema (`profiles`, `products`, `stock_movements`), indexes, RLS policies, and atomic mutation RPC function   |
+| [API Contracts](docs/API.md)             | Server Action interfaces, input schemas, return envelopes (`{ success, data, error }`), and atomicity guarantees         |
+| [Contributing](docs/CONTRIBUTING.md)     | Contribution standards, code style, naming conventions, Prettier formatting, testing, and Git workflow                   |
+| [Changelog](docs/CHANGELOG.md)           | Chronological log of changes, versions, and assessment milestones                                                        |
 
 ---
 
@@ -183,19 +183,19 @@ All AI agents must strictly follow this sequential execution protocol for every 
 
 The following represents the verified implementation status against the project roadmap in [docs/TASK_INSTRUCTION.md](docs/TASK_INSTRUCTION.md):
 
-| Phase | Description | Status | Verification & Evidence |
-| :--- | :--- | :--- | :--- |
-| **Phase 0** | Documentation & Standards | ✅ Completed | All 12 project documents created and organized under `docs/`; root `AGENTS.md` active as project hub. Verified via report at `docs/reports/Phase 0 - Documentation and Engineering Standards/phase0_completion_report.md`. |
-| **Phase 1** | Foundation (Tokens, Layout) | ✅ Completed | Brand tokens (#0F2D4A, #14B8A6, #E6F4F2, #1F2937) mapped in `globals.css`, Inter font set in `layout.tsx`, shadcn Card added, foundation landing preview in `page.tsx`. Verified via `tsc`, `lint`, and `build`. |
-| **Phase 2** | Internationalization (`next-intl`) | ✅ Completed | Bilingual dictionary architecture (ID/EN) across 7 namespaces, canonical Next.js 16 proxy at `src/proxy.ts`, dynamic segment at `src/app/[locale]/`, 30 Vitest tests passed. Verified via report at `docs/reports/Phase 2 - Internationalization and Theme/phase2_completion_report.md`. |
-| **Phase 3** | Theme Provider (`next-themes`) | ✅ Completed | `next-themes` integrated with `attribute="class"`, default light theme enforced, dark mode persistence in `localStorage` verified, OKLCH high-contrast tokens, mobile `touch-manipulation`. Verified via report at `docs/reports/Phase 3 - Theme Provider and Dark Mode Polish/phase3_completion_report.md`. |
-| **Phase 4** | Supabase Clients, Schema, RLS | ⏳ Planned | Awaiting Phase 3 completion and user approval. |
-| **Phase 5** | Auth & Role-Based Route Protection | ⏳ Planned | Awaiting Phase 4 completion and user approval. |
-| **Phase 6** | Vitest & Core Unit Tests | ⏳ Planned | Awaiting Phase 5 completion and user approval. |
-| **Phase 7** | Dashboard & Inventory Catalog | ⏳ Planned | Awaiting Phase 6 completion and user approval. |
-| **Phase 8** | Stock IN/OUT & Movement History | ⏳ Planned | Awaiting Phase 7 completion and user approval. |
-| **Phase 9** | QA, Final Docs & Assessment Submission | ⏳ Planned | Awaiting Phase 8 completion and user approval. |
-| **Phase 10** | Optional Enhancements (AI Integration) | ⏳ Planned | Stretch goal; strictly optional and pending user approval. |
+| Phase        | Description                            | Status       | Verification & Evidence                                                                                                                                                                                                                                                                                                               |
+| :----------- | :------------------------------------- | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Phase 0**  | Documentation & Standards              | ✅ Completed | All 12 project documents created and organized under `docs/`; root `AGENTS.md` active as project hub. Verified via report at `docs/reports/Phase 0 - Documentation and Engineering Standards/phase0_completion_report.md`.                                                                                                            |
+| **Phase 1**  | Foundation (Tokens, Layout)            | ✅ Completed | Brand tokens (#0F2D4A, #14B8A6, #E6F4F2, #1F2937) mapped in `globals.css`, Inter font set in `layout.tsx`, shadcn Card added, foundation landing preview in `page.tsx`. Verified via `tsc`, `lint`, and `build`.                                                                                                                      |
+| **Phase 2**  | Internationalization (`next-intl`)     | ✅ Completed | Bilingual dictionary architecture (ID/EN) across 7 namespaces, canonical Next.js 16 proxy at `src/proxy.ts`, dynamic segment at `src/app/[locale]/`, 30 Vitest tests passed. Verified via report at `docs/reports/Phase 2 - Internationalization and Theme/phase2_completion_report.md`.                                              |
+| **Phase 3**  | Theme Provider (`next-themes`)         | ✅ Completed | `next-themes` integrated with `attribute="class"`, default light theme enforced, dark mode persistence in `localStorage` verified, OKLCH high-contrast tokens, mobile `touch-manipulation`. Verified via report at `docs/reports/Phase 3 - Theme Provider and Dark Mode Polish/phase3_completion_report.md`.                          |
+| **Phase 4**  | Supabase Integration & RLS             | ✅ Completed | Schema migrations (001, 002, 003) applied to live Supabase (`vwzlvsggpuvmkubkzfzp`); SSR and admin client factories implemented; 30 DummyJSON products synced with stock protection; demo accounts provisioned; 95 Vitest tests passed. Verified via report at `docs/reports/Phase 4 - Supabase Integration/phase4_batch2_report.md`. |
+| **Phase 5**  | Auth & Role-Based Route Protection     | ⏳ Planned   | Awaiting Phase 4 review and user approval.                                                                                                                                                                                                                                                                                            |
+| **Phase 6**  | Vitest & Core Unit Tests               | ⏳ Planned   | Awaiting Phase 5 completion and user approval.                                                                                                                                                                                                                                                                                        |
+| **Phase 7**  | Dashboard & Inventory Catalog          | ⏳ Planned   | Awaiting Phase 6 completion and user approval.                                                                                                                                                                                                                                                                                        |
+| **Phase 8**  | Stock IN/OUT & Movement History        | ⏳ Planned   | Awaiting Phase 7 completion and user approval.                                                                                                                                                                                                                                                                                        |
+| **Phase 9**  | QA, Final Docs & Assessment Submission | ⏳ Planned   | Awaiting Phase 8 completion and user approval.                                                                                                                                                                                                                                                                                        |
+| **Phase 10** | Optional Enhancements (AI Integration) | ⏳ Planned   | Stretch goal; strictly optional and pending user approval.                                                                                                                                                                                                                                                                            |
 
 ---
 
@@ -205,13 +205,13 @@ The following represents the verified implementation status against the project 
 
 Inspection of the repository revealed the following agent and tooling directories:
 
-| Directory | Purpose Based on Content | Key Files & Registries |
-| :--- | :--- | :--- |
-| `.agents/` | Workspace customization root for AI coding agents (Antigravity, Cursor) | Contains `skills/` with 24 specialized skill packages |
-| `.claude/` | Claude Code agent workspace configuration | Contains `skills/` mirroring skill packages for Claude environments |
-| `.hermes/` | Hermes agent runtime workspace configuration | Contains `skills/` including extended reference guides under `supabase-postgres-best-practices/references/` |
-| `skills/` | Project-level skills directory | Contains 23 skill packages tracked in `skills-lock.json` |
-| `.vscode/` | VS Code workspace configuration | Contains [settings.json](.vscode/settings.json) with Tailwind IntelliSense, Prettier, Headwind, class regex, and TypeScript SDK settings |
+| Directory  | Purpose Based on Content                                                | Key Files & Registries                                                                                                                   |
+| :--------- | :---------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| `.agents/` | Workspace customization root for AI coding agents (Antigravity, Cursor) | Contains `skills/` with 24 specialized skill packages                                                                                    |
+| `.claude/` | Claude Code agent workspace configuration                               | Contains `skills/` mirroring skill packages for Claude environments                                                                      |
+| `.hermes/` | Hermes agent runtime workspace configuration                            | Contains `skills/` including extended reference guides under `supabase-postgres-best-practices/references/`                              |
+| `skills/`  | Project-level skills directory                                          | Contains 23 skill packages tracked in `skills-lock.json`                                                                                 |
+| `.vscode/` | VS Code workspace configuration                                         | Contains [settings.json](.vscode/settings.json) with Tailwind IntelliSense, Prettier, Headwind, class regex, and TypeScript SDK settings |
 
 ### Discovered Skill Resources
 
@@ -240,7 +240,7 @@ The following skills are installed and available in the workspace (located under
 - **TypeScript Pro:** [.agents/skills/typescript-pro/SKILL.md](.agents/skills/typescript-pro/SKILL.md) — Type guards, branded types, and strict type safety.
 - **UI/UX Pro Max:** [.agents/skills/ui-ux-pro-max/SKILL.md](.agents/skills/ui-ux-pro-max/SKILL.md) — Design intelligence, accessibility, responsive systems, and layout tokens.
 - **Vitest Testing:** [.agents/skills/vitest/SKILL.md](.agents/skills/vitest/SKILL.md) — Vitest configuration, unit/mock testing, and test runner management.
-- *(Note on Prisma)*: [.agents/skills/prisma-next-supabase/SKILL.md](.agents/skills/prisma-next-supabase/SKILL.md) exists in the skill bundle, but Prisma is **explicitly excluded** from this project by architectural decision.
+- _(Note on Prisma)_: [.agents/skills/prisma-next-supabase/SKILL.md](.agents/skills/prisma-next-supabase/SKILL.md) exists in the skill bundle, but Prisma is **explicitly excluded** from this project by architectural decision.
 
 ### Instruction Precedence Rules
 

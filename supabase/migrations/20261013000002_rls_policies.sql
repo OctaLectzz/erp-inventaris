@@ -60,8 +60,10 @@ SECURITY DEFINER
 SET search_path = ''
 AS $$
 BEGIN
-  -- Only service_role (e.g. backend admin provisioning scripts) may alter user roles
-  IF (SELECT auth.role()) IS DISTINCT FROM 'service_role' AND NEW.role IS DISTINCT FROM OLD.role THEN
+  -- Only service_role or administrative database owners may alter user roles
+  IF (SELECT auth.role()) IS DISTINCT FROM 'service_role'
+     AND current_user NOT IN ('postgres', 'supabase_admin')
+     AND NEW.role IS DISTINCT FROM OLD.role THEN
     RAISE EXCEPTION 'Modifying user roles directly is forbidden.';
   END IF;
   RETURN NEW;
@@ -147,6 +149,7 @@ BEGIN
   ON CONFLICT (id) DO UPDATE
     SET email = EXCLUDED.email,
         full_name = EXCLUDED.full_name,
+        role = EXCLUDED.role,
         updated_at = now();
 
   RETURN NEW;
@@ -158,7 +161,7 @@ REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authentic
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
+  AFTER INSERT OR UPDATE OF raw_app_meta_data ON auth.users
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_new_user();
 
