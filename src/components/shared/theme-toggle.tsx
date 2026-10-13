@@ -21,7 +21,7 @@ export function ThemeToggle() {
   if (!mounted) {
     // Render a neutral placeholder with exact dimensions (36x36px) to avoid layout shift
     return (
-      <Button variant="ghost" size="icon" disabled aria-hidden="true" className="h-9 w-9 opacity-50">
+      <Button variant="ghost" size="icon" disabled aria-hidden="true" className="h-9 w-9 touch-manipulation opacity-50">
         <Sun className="h-4 w-4" />
       </Button>
     )
@@ -33,7 +33,7 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon"
-      className="h-9 w-9"
+      className="h-9 w-9 touch-manipulation"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
       aria-label={isDark ? t('switchToLight') : t('switchToDark')}
       title={isDark ? t('light') : t('dark')}

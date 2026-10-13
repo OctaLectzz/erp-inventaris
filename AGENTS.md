@@ -187,8 +187,8 @@ The following represents the verified implementation status against the project 
 | :--- | :--- | :--- | :--- |
 | **Phase 0** | Documentation & Standards | ✅ Completed | All 12 project documents created and organized under `docs/`; root `AGENTS.md` active as project hub. Verified via report at `docs/reports/Phase 0 - Documentation and Engineering Standards/phase0_completion_report.md`. |
 | **Phase 1** | Foundation (Tokens, Layout) | ✅ Completed | Brand tokens (#0F2D4A, #14B8A6, #E6F4F2, #1F2937) mapped in `globals.css`, Inter font set in `layout.tsx`, shadcn Card added, foundation landing preview in `page.tsx`. Verified via `tsc`, `lint`, and `build`. |
-| **Phase 2** | Internationalization (`next-intl`) | ⏳ Planned | Awaiting Phase 1 completion and user approval. |
-| **Phase 3** | Theme Provider (`next-themes`) | ⏳ Planned | Awaiting Phase 2 completion and user approval. |
+| **Phase 2** | Internationalization (`next-intl`) | ✅ Completed | Bilingual dictionary architecture (ID/EN) across 7 namespaces, canonical Next.js 16 proxy at `src/proxy.ts`, dynamic segment at `src/app/[locale]/`, 30 Vitest tests passed. Verified via report at `docs/reports/Phase 2 - Internationalization and Theme/phase2_completion_report.md`. |
+| **Phase 3** | Theme Provider (`next-themes`) | ✅ Completed | `next-themes` integrated with `attribute="class"`, default light theme enforced, dark mode persistence in `localStorage` verified, OKLCH high-contrast tokens, mobile `touch-manipulation`. Verified via report at `docs/reports/Phase 3 - Theme Provider and Dark Mode Polish/phase3_completion_report.md`. |
 | **Phase 4** | Supabase Clients, Schema, RLS | ⏳ Planned | Awaiting Phase 3 completion and user approval. |
 | **Phase 5** | Auth & Role-Based Route Protection | ⏳ Planned | Awaiting Phase 4 completion and user approval. |
 | **Phase 6** | Vitest & Core Unit Tests | ⏳ Planned | Awaiting Phase 5 completion and user approval. |
