@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import { AlertCircle, Check, Copy, Info, PlusCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 import { createProductAction } from '@/app/actions/product-actions'
 import { Badge } from '@/components/ui/badge'
@@ -67,10 +68,13 @@ export function ProductDraftReviewCard({ draft, locale, canSaveToCatalog, isAudi
 
     setIsSaving(false)
     if (!res.success) {
-      setSaveError(res.message || 'Gagal menyimpan produk.')
+      const err = res.message || 'Gagal menyimpan produk.'
+      setSaveError(err)
+      toast.error(err)
     } else {
       setSaveSuccess(true)
       setIsConfirmOpen(false)
+      toast.success(locale === 'en' ? `Product draft "${form.name}" saved to catalog.` : `Draf produk "${form.name}" berhasil disimpan ke katalog.`)
       if (onSavedSuccess) onSavedSuccess()
     }
   }

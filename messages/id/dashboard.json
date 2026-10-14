@@ -415,5 +415,12 @@
       "net": "Net Flow",
       "actions": "Aksi"
     }
+  },
+  "common": {
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "save": "Simpan",
+    "close": "Tutup",
+    "confirm": "Konfirmasi"
   }
 }

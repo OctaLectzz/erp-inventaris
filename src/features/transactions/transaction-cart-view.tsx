@@ -1,7 +1,5 @@
 'use client'
 
-import { useId, useMemo, useState, useTransition } from 'react'
-import Link from 'next/link'
 import {
   AlertCircle,
   AlertTriangle,
@@ -20,6 +18,9 @@ import {
   Trash2
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import Link from 'next/link'
+import { useId, useMemo, useState, useTransition } from 'react'
+import { toast } from 'sonner'
 
 import { recordBatchStockMovementAction } from '@/app/actions/stock-actions'
 import { Badge } from '@/components/ui/badge'
@@ -158,12 +159,17 @@ export function TransactionCartView({ products = [], profile, locale }: Transact
 
     setCartItems((prev) => [...prev, newItem])
     setItemQuantity(1)
+    toast.success(`${newItem.name} (${newItem.quantity} ${newItem.unit}) ditambahkan ke keranjang.`)
   }
 
   // Remove item from cart
   const handleRemoveItem = (productId: string) => {
-    setCartItems((prev) => prev.filter((item) => item.productId !== productId))
+    const item = cartItems.find((i) => i.productId === productId)
+    setCartItems((prev) => prev.filter((i) => i.productId !== productId))
     setFormError(null)
+    if (item) {
+      toast.info(`${item.name} dihapus dari keranjang.`)
+    }
   }
 
   // Clear entire cart
@@ -171,6 +177,7 @@ export function TransactionCartView({ products = [], profile, locale }: Transact
     setCartItems([])
     setFormError(null)
     setExecutionError(null)
+    toast.info('Keranjang transaksi dikosongkan.')
   }
 
   // Execute batch stock movement action
@@ -179,16 +186,19 @@ export function TransactionCartView({ products = [], profile, locale }: Transact
 
     if (!hasMutationAccess) {
       setExecutionError(t('readOnlyNotice'))
+      toast.error(t('readOnlyNotice'))
       return
     }
 
     if (cartItems.length === 0) {
       setExecutionError(t('validationAtLeastOne'))
+      toast.error(t('validationAtLeastOne'))
       return
     }
 
     if (note.trim().length < 3) {
       setExecutionError(t('validationNoteMin'))
+      toast.error(t('validationNoteMin'))
       return
     }
 
@@ -196,9 +206,9 @@ export function TransactionCartView({ products = [], profile, locale }: Transact
     if (movementType === 'OUT') {
       const overdraft = cartItems.find((item) => item.quantity > item.currentStock)
       if (overdraft) {
-        setExecutionError(
-          `Item ${overdraft.name} (SKU: ${overdraft.sku}) melebihi stok yang tersedia: diminta ${overdraft.quantity}, tersedia ${overdraft.currentStock}.`
-        )
+        const msg = `Item ${overdraft.name} (SKU: ${overdraft.sku}) melebihi stok yang tersedia: diminta ${overdraft.quantity}, tersedia ${overdraft.currentStock}.`
+        setExecutionError(msg)
+        toast.error(msg)
         return
       }
     }
@@ -220,8 +230,15 @@ export function TransactionCartView({ products = [], profile, locale }: Transact
         setExecutionResult(response.data)
         setCartItems([])
         setNote('')
+        toast.success(
+          locale === 'en'
+            ? `Batch transaction processed successfully (${response.data.items_count} items).`
+            : `Transaksi batch berhasil diproses (${response.data.items_count} item).`
+        )
       } else {
-        setExecutionError(response.message || t('errorTitle'))
+        const errorMsg = response.message || t('errorTitle')
+        setExecutionError(errorMsg)
+        toast.error(errorMsg)
       }
     })
   }

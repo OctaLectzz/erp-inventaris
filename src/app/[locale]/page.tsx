@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import {
   ArrowLeftRight,
   ArrowRight,
@@ -14,7 +15,6 @@ import {
   UserCheck
 } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import Link from 'next/link'
 
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
 import { ThemeToggle } from '@/components/shared/theme-toggle'

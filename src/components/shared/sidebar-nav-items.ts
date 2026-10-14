@@ -91,22 +91,17 @@ export function getSidebarMenuGroups({ locale, pathname, tSidebar, role }: GetMe
     })
   }
 
-  managementItems.push({
-    href: `/${locale}/movements`,
-    label: tSidebar('items.history'),
-    icon: ArrowLeftRight,
-    isActive: pathname.startsWith(`/${locale}/movements`) || pathname.startsWith('/movements')
-  })
-
   groups.push({
     id: 'management',
     label: tSidebar('groups.management'),
     items: managementItems
   })
 
-  // 3. REPORTS GROUP (Strictly hidden for warehouse staff / admin_gudang)
+  // 3. REPORTS GROUP (Includes analytics reports and movement audit ledger)
+  const reportItems: SidebarItem[] = []
+
   if (canViewReports(role)) {
-    const reportItems: SidebarItem[] = [
+    reportItems.push(
       {
         href: `/${locale}/reports`,
         label: tSidebar('items.reports'),
@@ -119,14 +114,22 @@ export function getSidebarMenuGroups({ locale, pathname, tSidebar, role }: GetMe
         icon: LineChart,
         isActive: pathname.includes('/reports/products')
       }
-    ]
-
-    groups.push({
-      id: 'reports',
-      label: tSidebar('groups.reports'),
-      items: reportItems
-    })
+    )
   }
+
+  // Riwayat Mutasi is now categorized under Reports
+  reportItems.push({
+    href: `/${locale}/movements`,
+    label: tSidebar('items.history'),
+    icon: ArrowLeftRight,
+    isActive: pathname.startsWith(`/${locale}/movements`) || pathname.startsWith('/movements')
+  })
+
+  groups.push({
+    id: 'reports',
+    label: tSidebar('groups.reports'),
+    items: reportItems
+  })
 
   // 4. AI COPILOT GROUP
   const aiItems: SidebarItem[] = []

@@ -1,9 +1,10 @@
-import { Geist_Mono, Inter } from 'next/font/google'
-import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale } from 'next-intl/server'
+import { Geist_Mono, Inter } from 'next/font/google'
+import { notFound } from 'next/navigation'
 
 import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { routing } from '@/i18n/routing'
 import { cn } from '@/lib/utils'
@@ -77,7 +78,10 @@ export default async function LocaleLayout({
       <body suppressHydrationWarning className="bg-background text-foreground flex min-h-full flex-col">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
           <NextIntlClientProvider locale={locale} messages={messages}>
-            <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
+            <TooltipProvider delayDuration={200}>
+              {children}
+              <Toaster richColors position="top-right" closeButton />
+            </TooltipProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

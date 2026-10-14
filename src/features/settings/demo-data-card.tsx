@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useTransition } from 'react'
 import { CheckCircle2, DownloadCloud, Loader2, RefreshCw } from 'lucide-react'
+import { useState, useTransition } from 'react'
+import { toast } from 'sonner'
 
 import { syncDummyJsonCatalogAction } from '@/app/actions/system-actions'
 import { Button } from '@/components/ui/button'
@@ -19,30 +20,34 @@ export function DemoDataCard({ locale }: DemoDataCardProps) {
     startTransition(async () => {
       const res = await syncDummyJsonCatalogAction(locale)
       if (res.success) {
+        const msg = res.message || 'Sinkronisasi 30 produk DummyJSON berhasil.'
         setFeedback({
           success: true,
-          message: res.message || 'Sinkronisasi 30 produk DummyJSON berhasil.'
+          message: msg
         })
+        toast.success(msg)
       } else {
+        const msg = res.message || 'Gagal menyinkronkan data dari DummyJSON.'
         setFeedback({
           success: false,
-          message: res.message || 'Gagal menyinkronkan data dari DummyJSON.'
+          message: msg
         })
+        toast.error(msg)
       }
     })
   }
 
   return (
-    <div className="border-border space-y-3 rounded-xl border p-4 text-xs">
+    <div className="space-y-3 rounded-xl border border-border p-4 text-xs">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <DownloadCloud className="text-primary h-4 w-4" aria-hidden="true" />
-          <span className="text-foreground font-bold">Sinkronisasi Katalog Demo (DummyJSON)</span>
+          <DownloadCloud className="h-4 w-4 text-primary" aria-hidden="true" />
+          <span className="font-bold text-foreground">Sinkronisasi Katalog Demo (DummyJSON)</span>
         </div>
-        <span className="text-muted-foreground font-mono text-[10px]">dummyjson.com/products</span>
+        <span className="font-mono text-[10px] text-muted-foreground">dummyjson.com/products</span>
       </div>
 
-      <p className="text-muted-foreground text-[11px] leading-relaxed">
+      <p className="text-[11px] leading-relaxed text-muted-foreground">
         Sesuai spesifikasi Modul B Take-Home Test: mengambil 30 data produk awal dari DummyJSON, menghasilkan SKU unik deterministik, dan mengonversi
         harga USD ke Rupiah (Rp 16.000). Stok operasional produk yang sudah ada tetap terjaga secara aman.
       </p>

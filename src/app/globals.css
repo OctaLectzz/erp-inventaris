@@ -201,6 +201,8 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(140, 150, 165, 0.25) transparent;
   }
   body {
     @apply bg-background text-foreground;
@@ -211,5 +213,38 @@
   }
   html {
     @apply font-sans;
+  }
+
+  /* Floating, transparent, and thin scrollbar across all containers */
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background: transparent;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: rgba(140, 150, 165, 0.25);
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+    transition: background-color 0.2s ease-in-out;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(140, 150, 165, 0.5);
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  .dark * {
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+  .dark *::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  .dark *::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.42);
   }
 }

@@ -415,5 +415,12 @@
       "net": "Net Flow",
       "actions": "Action"
     }
+  },
+  "common": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "close": "Close",
+    "confirm": "Confirm"
   }
 }

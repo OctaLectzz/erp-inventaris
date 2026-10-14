@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 
+import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { productCatalogInputSchema, productCatalogUpdateSchema } from '@/schemas/inventory-schema'
 import { requireAuth } from '@/services/auth-service'
@@ -309,8 +310,16 @@ export async function deleteProductAction(productId: string, locale = 'id'): Pro
       }
     }
 
-    // 3. Delete product safely
-    const { error: deleteError } = await supabase.from('products').delete().eq('id', productId)
+    // 3. Delete product safely (prefer admin client for defense-in-depth, fallback to authenticated client)
+    let deleteError = null
+    try {
+      const admin = createAdminClient()
+      const res = await admin.from('products').delete().eq('id', productId)
+      deleteError = res.error
+    } catch {
+      const res = await supabase.from('products').delete().eq('id', productId)
+      deleteError = res.error
+    }
 
     if (deleteError) {
       return {

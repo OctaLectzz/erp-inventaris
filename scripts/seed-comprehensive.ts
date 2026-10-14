@@ -1,6 +1,6 @@
+import { createClient } from '@supabase/supabase-js'
 import * as fs from 'fs'
 import * as path from 'path'
-import { createClient } from '@supabase/supabase-js'
 
 import type { Database } from '../src/types/database'
 
@@ -182,6 +182,7 @@ async function main(): Promise<void> {
       unit: 'btl',
       price: 245000,
       stock: 45,
+      image_url: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=400&q=80',
       description: 'Minyak nilam super Grade A asal Aceh dengan kadar patchouli alcohol > 32%.'
     },
     {
@@ -192,6 +193,7 @@ async function main(): Promise<void> {
       unit: 'btl',
       price: 320000,
       stock: 30,
+      image_url: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=400&q=80',
       description: 'Penyulingan biji pala kepulauan Banda, aroma rempah hangat khas.'
     },
     {
@@ -202,6 +204,7 @@ async function main(): Promise<void> {
       unit: 'btl',
       price: 185000,
       stock: 80,
+      image_url: 'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=400&q=80',
       description: 'Minyak serai wangi Jawa murni untuk formulasi antinyamuk dan aromaterapi.'
     },
     {
@@ -212,6 +215,7 @@ async function main(): Promise<void> {
       unit: 'btl',
       price: 135000,
       stock: 12,
+      image_url: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=400&q=80',
       description: 'Ekstrak daun cengkeh eugenol tinggi untuk antiseptik dan industri farmasi.'
     },
     {
@@ -222,6 +226,7 @@ async function main(): Promise<void> {
       unit: 'btl',
       price: 490000,
       stock: 18,
+      image_url: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=400&q=80',
       description: 'Bibit parfum woody mewah perpaduan agarwood dan amber oriental.'
     },
     {
@@ -232,6 +237,7 @@ async function main(): Promise<void> {
       unit: 'btl',
       price: 380000,
       stock: 25,
+      image_url: 'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=400&q=80',
       description: 'Konsentrat aroma mawar damaskus feminin elegan dengan ketahanan tinggi.'
     },
     {
@@ -242,6 +248,7 @@ async function main(): Promise<void> {
       unit: 'ltr',
       price: 95000,
       stock: 120,
+      image_url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=400&q=80',
       description: 'Pelarut etanol bebas metanol untuk industri parfum dan sanitasi.'
     },
     {
@@ -252,6 +259,7 @@ async function main(): Promise<void> {
       unit: 'pcs',
       price: 6500,
       stock: 350,
+      image_url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=400&q=80',
       description: 'Botol kaca cokelat anti radiasi UV dengan pipet karet tahan kimia.'
     },
     {
@@ -262,6 +270,7 @@ async function main(): Promise<void> {
       unit: 'pcs',
       price: 14500,
       stock: 8,
+      image_url: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=400&q=80',
       description: 'Wadah aluminium bersegel anti bocor standar ekspor pengiriman cairan.'
     }
   ]
@@ -269,8 +278,11 @@ async function main(): Promise<void> {
   const seededProductIds: { id: string; sku: string; name: string }[] = []
 
   for (const prod of initialProducts) {
-    const { data: existing } = await supabase.from('products').select('id, stock').eq('sku', prod.sku).maybeSingle()
+    const { data: existing } = await supabase.from('products').select('id, stock, image_url').eq('sku', prod.sku).maybeSingle()
     if (existing) {
+      if (!existing.image_url && prod.image_url) {
+        await supabase.from('products').update({ image_url: prod.image_url }).eq('id', existing.id)
+      }
       seededProductIds.push({ id: existing.id, sku: prod.sku, name: prod.name })
       console.log(`  ✓ Produk ada: [${prod.sku}] ${prod.name}`)
     } else {

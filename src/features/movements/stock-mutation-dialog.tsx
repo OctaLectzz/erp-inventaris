@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { AlertTriangle, ArrowDownRight, ArrowUpRight, CheckCircle2, Package } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
+import { toast } from 'sonner'
 
 import { recordStockMovementAction } from '@/app/actions/stock-actions'
 import { Badge } from '@/components/ui/badge'
@@ -108,10 +109,13 @@ export function StockMutationDialog({ open, onOpenChange, products = [], presele
 
     if (!result.success) {
       setServerError(result.message)
+      toast.error(result.message)
       return
     }
 
     setServerSuccess(t('mutationDialog.success'))
+    const typeLabel = values.type === 'IN' ? (locale === 'en' ? 'Stock IN' : 'Mutasi Masuk') : locale === 'en' ? 'Stock OUT' : 'Mutasi Keluar'
+    toast.success(`${typeLabel}: ${values.quantity} unit berhasil dicatat.`)
     if (onSuccess) {
       onSuccess(result.data)
     }

@@ -1,8 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { AlertCircle, Check, Copy, Loader2, Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
 
 import { refineProductDescriptionAction } from '@/app/actions/ai-actions'
 import { MarkdownRenderer } from '@/components/shared/markdown-renderer'

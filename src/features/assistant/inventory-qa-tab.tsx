@@ -1,8 +1,8 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Bot, Brain, CheckCircle2, ChevronDown, HelpCircle, Loader2, Send, Sparkles, Trash2, User } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
 
 import { askInventoryQuestionAction } from '@/app/actions/ai-actions'
 import { MarkdownRenderer } from '@/components/shared/markdown-renderer'

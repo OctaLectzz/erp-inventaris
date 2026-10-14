@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useTransition } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, Building2, CheckCircle2, Globe, Info, Loader2, Mail, MapPin, Phone, Save } from 'lucide-react'
+import { useState, useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
+import { toast } from 'sonner'
 
 import { updateWebsiteSettingsAction } from '@/app/actions/website-settings-actions'
 import { Button } from '@/components/ui/button'
@@ -57,10 +58,13 @@ export function WebsiteSettingsForm({ initialSettings, locale }: WebsiteSettings
       const res = await updateWebsiteSettingsAction(formData, locale)
       if (!res.success) {
         setErrorMessage(res.message)
+        toast.error(res.message)
         return
       }
 
-      setSuccessNotice('Pengaturan identitas website dan kontak perusahaan berhasil disimpan!')
+      const msg = locale === 'en' ? 'Website settings saved successfully!' : 'Pengaturan identitas website dan kontak perusahaan berhasil disimpan!'
+      setSuccessNotice(msg)
+      toast.success(msg)
     })
   }
 

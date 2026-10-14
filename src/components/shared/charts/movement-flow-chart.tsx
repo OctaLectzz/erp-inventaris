@@ -1,7 +1,7 @@
 'use client'
 
-import { BarChart3, TrendingDown, TrendingUp } from 'lucide-react'
 import * as React from 'react'
+import { BarChart3, TrendingDown, TrendingUp } from 'lucide-react'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'

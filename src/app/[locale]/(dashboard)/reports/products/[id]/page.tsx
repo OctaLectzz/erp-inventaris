@@ -1,7 +1,7 @@
-import { ArrowDownRight, ArrowUpRight, Boxes, RefreshCw } from 'lucide-react'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound, redirect } from 'next/navigation'
 import { connection } from 'next/server'
+import { ArrowDownRight, ArrowUpRight, Boxes, RefreshCw } from 'lucide-react'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { MovementFlowChart } from '@/components/shared/charts/movement-flow-chart'
 import { PeriodFilter } from '@/features/analytics/period-filter'

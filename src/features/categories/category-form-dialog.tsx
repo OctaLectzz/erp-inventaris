@@ -5,6 +5,7 @@ import { AlertCircle, CheckCircle2, Loader2, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 import { createCategoryAction, deleteCategoryAction, updateCategoryAction } from '@/app/actions/category-actions'
 import { Button } from '@/components/ui/button'
@@ -116,10 +117,12 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
             }
           }
           setServerError(res.message)
+          toast.error(res.message)
           return
         }
 
         setServerSuccess(t('categories.dialog.successUpdated'))
+        toast.success(t('categories.dialog.successUpdated'))
         setTimeout(() => {
           onOpenChange(false)
           onSuccess?.(res.data)
@@ -134,10 +137,12 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
             }
           }
           setServerError(res.message)
+          toast.error(res.message)
           return
         }
 
         setServerSuccess(t('categories.dialog.successCreated'))
+        toast.success(t('categories.dialog.successCreated'))
         setTimeout(() => {
           onOpenChange(false)
           onSuccess?.(res.data)
@@ -146,6 +151,7 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem'
       setServerError(msg)
+      toast.error(msg)
     }
   }
 
@@ -158,11 +164,13 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
       const res = await deleteCategoryAction(category.id, locale)
       if (!res.success) {
         setServerError(res.message)
+        toast.error(res.message)
         setIsDeleting(false)
         return
       }
 
       setServerSuccess(t('categories.dialog.successDeleted'))
+      toast.success(t('categories.dialog.successDeleted'))
       setTimeout(() => {
         setIsDeleting(false)
         onOpenChange(false)
@@ -171,6 +179,7 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Gagal menghapus kategori'
       setServerError(msg)
+      toast.error(msg)
       setIsDeleting(false)
     }
   }

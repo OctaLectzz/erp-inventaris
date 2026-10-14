@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, CheckCircle2, Info, Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 import { createProductAction, updateProductAction } from '@/app/actions/product-actions'
 import { ImageDropzone } from '@/components/shared/image-dropzone'
@@ -120,10 +121,12 @@ export function ProductFormDialog({ open, onOpenChange, product, categories = []
             }
           }
           setServerError(res.message)
+          toast.error(res.message)
           return
         }
 
         setServerSuccess(t('dialog.successUpdated'))
+        toast.success(t('dialog.successUpdated'))
         setTimeout(() => {
           onOpenChange(false)
           onSuccess?.(res.data)
@@ -139,10 +142,12 @@ export function ProductFormDialog({ open, onOpenChange, product, categories = []
             }
           }
           setServerError(res.message)
+          toast.error(res.message)
           return
         }
 
         setServerSuccess(t('dialog.successCreated'))
+        toast.success(t('dialog.successCreated'))
         setTimeout(() => {
           onOpenChange(false)
           onSuccess?.(res.data)
@@ -151,6 +156,7 @@ export function ProductFormDialog({ open, onOpenChange, product, categories = []
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Terjadi kesalahan'
       setServerError(msg)
+      toast.error(msg)
     }
   }
 
