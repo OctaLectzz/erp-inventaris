@@ -89,15 +89,15 @@ sequenceDiagram
 
 ### A. Role-Based Access Control (RBAC) Matrix
 
-| Feature / Action | Admin Gudang (`admin_gudang`) | Business Owner (`owner`) | Unauthenticated User |
-| :--- | :---: | :---: | :---: |
-| **View Movement History Page** | Allowed | Allowed (Read-only audit) | Redirected to `/login` |
-| **View "Catat Mutasi" Button** | Visible & Active | Hidden (Read-only badge shown) | Hidden |
-| **Open Stock Mutation Dialog** | Allowed | Denied (No dialog rendered) | Denied |
-| **Call `recordStockMovementAction`** | Allowed | Denied (`FORBIDDEN` returned) | Denied (`UNAUTHORIZED` returned) |
-| **Direct RPC Call Execution** | Allowed by Postgres RPC | Denied by Postgres RPC (`FORBIDDEN`) | Denied by Postgres RPC (`UNAUTHORIZED`) |
-| **Direct SQL Update to `products.stock`** | Denied (Column privilege + Trigger) | Denied (Column privilege + Trigger) | Denied |
-| **Direct SQL Insert to `stock_movements`** | Denied (Table privilege) | Denied (Table privilege) | Denied |
+| Feature / Action                           |    Admin Gudang (`admin_gudang`)    |       Business Owner (`owner`)       |          Unauthenticated User           |
+| :----------------------------------------- | :---------------------------------: | :----------------------------------: | :-------------------------------------: |
+| **View Movement History Page**             |               Allowed               |      Allowed (Read-only audit)       |         Redirected to `/login`          |
+| **View "Catat Mutasi" Button**             |          Visible & Active           |    Hidden (Read-only badge shown)    |                 Hidden                  |
+| **Open Stock Mutation Dialog**             |               Allowed               |     Denied (No dialog rendered)      |                 Denied                  |
+| **Call `recordStockMovementAction`**       |               Allowed               |    Denied (`FORBIDDEN` returned)     |    Denied (`UNAUTHORIZED` returned)     |
+| **Direct RPC Call Execution**              |       Allowed by Postgres RPC       | Denied by Postgres RPC (`FORBIDDEN`) | Denied by Postgres RPC (`UNAUTHORIZED`) |
+| **Direct SQL Update to `products.stock`**  | Denied (Column privilege + Trigger) | Denied (Column privilege + Trigger)  |                 Denied                  |
+| **Direct SQL Insert to `stock_movements`** |      Denied (Table privilege)       |       Denied (Table privilege)       |                 Denied                  |
 
 ### B. Out of Scope (Strictly Enforced)
 
@@ -113,16 +113,17 @@ sequenceDiagram
 ## 4. Implementation Steps & File Structure
 
 ### Step 1: Types & Service Layer
+
 - **`src/types/inventory.ts`**:
   - Add `StockMovementFilters` interface:
     ```typescript
     export interface StockMovementFilters {
-      search?: string       // SKU or Product Name
+      search?: string // SKU or Product Name
       type?: 'ALL' | 'IN' | 'OUT'
-      startDate?: string    // YYYY-MM-DD
-      endDate?: string      // YYYY-MM-DD
-      page?: number         // 1-indexed
-      pageSize?: number     // default 15
+      startDate?: string // YYYY-MM-DD
+      endDate?: string // YYYY-MM-DD
+      page?: number // 1-indexed
+      pageSize?: number // default 15
     }
     ```
   - Add `StockMovementWithDetails` interface matching `docs/API.md`.
@@ -135,6 +136,7 @@ sequenceDiagram
   - User name resolution helper.
 
 ### Step 2: Server Actions
+
 - **`src/app/actions/stock-actions.ts`**:
   - `recordStockMovementAction(input: StockMutationInput, locale = 'id')`:
     - Role check: authoritative `requireAuth(locale)`, role must be `admin_gudang`.
@@ -144,6 +146,7 @@ sequenceDiagram
     - Comprehensive error handling and `revalidatePath` on success.
 
 ### Step 3: Internationalization (i18n)
+
 - **`messages/id/dashboard.json` & `messages/en/dashboard.json`**:
   - Add `movements` section (title, subtitle, filters, table headers, empty states, pagination).
   - Add `mutationDialog` section (titles, type options, fields, labels, buttons, stock info, warnings, success messages).
@@ -151,6 +154,7 @@ sequenceDiagram
   - Ensure all error messages for stock mutation schema are translated: `invalidProductId`, `invalidMovementType`, `quantityMustBeInteger`, `quantityMustBePositive`, `noteMinLength`, `noteMaxLength`, `insufficientStock`.
 
 ### Step 4: UI Components
+
 - **`src/features/movements/stock-mutation-dialog.tsx`**:
   - Accessible dialog form with product selector, current stock display, IN/OUT toggle cards, quantity input, and note textarea.
   - Real-time client-side validation and overdraft feedback.
@@ -163,6 +167,7 @@ sequenceDiagram
   - Pagination controls.
 
 ### Step 5: Route Protection & Page Integration
+
 - **`src/proxy.ts`**:
   - Add `/movements` and `/(id|en)/movements` to `isProtectedAppRoute`.
 - **`src/features/dashboard/dashboard-nav.tsx`**:
@@ -173,6 +178,7 @@ sequenceDiagram
   - Skeletons and error boundary.
 
 ### Step 6: Testing & Quality Gates
+
 - **`tests/unit/stock-mutation-action.test.ts`**:
   - Unit tests for Server Action: auth verification, role rejection (`owner`), schema validation, RPC success/failure handling, path revalidation.
 - **`tests/unit/stock-movement-service.test.ts`**:

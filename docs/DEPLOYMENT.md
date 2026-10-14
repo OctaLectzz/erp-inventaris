@@ -9,10 +9,10 @@
 
 ## 1. Environments
 
-| Environment | Purpose | URL |
-| :--- | :--- | :--- |
+| Environment           | Purpose                 | URL                     |
+| :-------------------- | :---------------------- | :---------------------- |
 | **Local Development** | Development and testing | `http://localhost:3000` |
-| **Production** | Assessment demo ⚠️ | TBD (Vercel) |
+| **Production**        | Assessment demo ⚠️      | TBD (Vercel)            |
 
 ---
 
@@ -20,18 +20,18 @@
 
 ### 2.1 Local Development
 
-| Tool | Version | Purpose |
-| :--- | :--- | :--- |
-| **Node.js** | 18+ (LTS recommended) | Runtime |
-| **npm** | 9+ (bundled with Node.js) | Package manager |
-| **Git** | 2.30+ | Version control |
-| **Supabase CLI** | Latest | Local DB and migrations (optional) |
+| Tool             | Version                   | Purpose                            |
+| :--------------- | :------------------------ | :--------------------------------- |
+| **Node.js**      | 18+ (LTS recommended)     | Runtime                            |
+| **npm**          | 9+ (bundled with Node.js) | Package manager                    |
+| **Git**          | 2.30+                     | Version control                    |
+| **Supabase CLI** | Latest                    | Local DB and migrations (optional) |
 
 ### 2.2 Production ⚠️
 
-| Service | Purpose |
-| :--- | :--- |
-| **Vercel** | Application hosting |
+| Service      | Purpose                            |
+| :----------- | :--------------------------------- |
+| **Vercel**   | Application hosting                |
 | **Supabase** | PostgreSQL database, Auth, storage |
 
 ---
@@ -40,13 +40,13 @@
 
 ### 3.1 Variable Reference
 
-| Variable | Required | Client-Safe | Description |
-| :--- | :--- | :--- | :--- |
-| `NEXT_PUBLIC_APP_NAME` | Yes | Yes | Application display name |
-| `NEXT_PUBLIC_APP_URL` | Yes | Yes | Application base URL |
-| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Yes | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Yes | Supabase anonymous key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Yes | **No** | Supabase service role key (bypasses RLS) |
+| Variable                        | Required | Client-Safe | Description                              |
+| :------------------------------ | :------- | :---------- | :--------------------------------------- |
+| `NEXT_PUBLIC_APP_NAME`          | Yes      | Yes         | Application display name                 |
+| `NEXT_PUBLIC_APP_URL`           | Yes      | Yes         | Application base URL                     |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Yes      | Yes         | Supabase project URL                     |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes      | Yes         | Supabase anonymous key                   |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Yes      | **No**      | Supabase service role key (bypasses RLS) |
 
 ### 3.2 `.env.example`
 

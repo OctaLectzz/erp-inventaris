@@ -29,6 +29,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { LogoutButton } from '@/features/auth/logout-button'
+import { DemoDataCard } from '@/features/settings/demo-data-card'
 import { usePathname, useRouter } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 
@@ -543,6 +544,9 @@ export function SettingsView({ profile, locale }: SettingsViewProps) {
                   </div>
                   <p className="text-muted-foreground font-mono text-[10px]">{t('about.environment')}</p>
                 </div>
+
+                {/* Demo Data Management for Administrator (Take-Home Test Modul B Requirement) */}
+                {isAdministrator && <DemoDataCard locale={locale} />}
               </CardContent>
             </Card>
           )}

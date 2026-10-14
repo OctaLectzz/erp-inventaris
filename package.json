@@ -11,7 +11,9 @@
     "test:unit": "vitest run --exclude \"**/*live*\"",
     "test:live": "vitest run live",
     "test:watch": "vitest",
-    "seed:comprehensive": "npx tsx scripts/seed-comprehensive.ts"
+    "seed:comprehensive": "npx tsx scripts/seed-comprehensive.ts",
+    "db:reset": "npx tsx scripts/seed-comprehensive.ts",
+    "db:sync-dummyjson": "npx tsx scripts/sync-catalog.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

@@ -1,51 +1,119 @@
 {
-  "badge": "Mini Warehouse ERP Inventory",
-  "title": "Unified Inventory Management System",
-  "subtitle": "Real-time stock monitoring, inbound & outbound mutation logging, and transparent inventory movement audit trail for PT. Syailendra Bumi Investama (DDistillers).",
+  "badge": "Mini ERP Inventory • PT. Syailendra Bumi Investama (DDistillers)",
+  "title": "Real-Time Inventory Management & Stock Mutation System",
+  "subtitle": "ACID-guaranteed warehouse ERP simulation with standardized product catalog, atomic stock IN/OUT mutations, traceability audit ledger, interactive movement analytics, and 9Router AI Copilot.",
+  "statusActive": "Active Production System • Batch 5 Final",
   "actions": {
-    "primary": "Enter Dashboard (Coming Soon)",
-    "primaryTooltip": "User authentication and login features will be activated in Phase 5.",
-    "secondary": "View Foundation Preview"
+    "login": "Sign In to Inventory System",
+    "dashboard": "Open Dashboard",
+    "modules": "Explore System Modules",
+    "quickDemo": "Evaluator Quick-Access Accounts",
+    "viewDocs": "View Full Documentation"
   },
-  "card": {
-    "title": "System Foundation Status (Phase 2)",
-    "description": "Configured specifications for semantic color tokens, typography scale, bilingual support, and unified theming.",
-    "tokensSection": "Registered Color Token Palette",
-    "featuresSection": "Verified Technical Foundation",
-    "tokens": {
-      "navy": {
-        "name": "Primary Navy",
-        "desc": "Navigation, main headers, and primary actions"
+  "demoSection": {
+    "badge": "Evaluator Quick-Access",
+    "title": "Test 3 System Roles Directly",
+    "subtitle": "3 official demo accounts ready to use without sign-up. The login page provides 1-click chips for automated credential filling.",
+    "roles": {
+      "admin": {
+        "title": "Administrator",
+        "email": "admin@inventra.demo",
+        "desc": "Full access to catalog, stock mutations, AI product commits, user management, and system settings."
       },
-      "teal": {
-        "name": "Accent Teal",
-        "desc": "Active highlights, focus indicators, and CTAs"
+      "staff": {
+        "title": "Warehouse Staff",
+        "email": "staff@inventra.demo",
+        "desc": "Operational access to single & batch IN/OUT stock recording; restricted from master catalog & reports."
       },
-      "surface": {
-        "name": "Pale Surface",
-        "desc": "Soft contrast surface and neutral badges"
+      "auditor": {
+        "title": "Auditor (Owner)",
+        "email": "auditor@inventra.demo",
+        "desc": "Read-only inspection access for catalog, KPI dashboard, analytics reports, ledger, and AI Q&A."
       }
     },
-    "features": {
-      "typography": {
-        "title": "Inter & Geist Mono Typography",
-        "detail": "Data hierarchy for regular text and monospaced SKUs"
-      },
-      "styling": {
-        "title": "Tailwind CSS v4 + Radix",
-        "detail": "Modern CSS variables with dark mode support"
-      },
-      "typeSafety": {
-        "title": "Strict Type Safety",
-        "detail": "Uncompromising TypeScript strict mode"
-      },
-      "i18n": {
-        "title": "Bilingual Support (next-intl)",
-        "detail": "Default Indonesian and dedicated English route (/en)"
-      }
-    },
-    "footer": "Inventra v0.1.0-dev • Phase 2 Verified",
-    "techStack": "Next.js 16 • Tailwind v4 • next-intl"
+    "actionButton": "Sign In with this Role"
   },
-  "footerText": "© 2026 PT. Syailendra Bumi Investama (DDistillers). All rights reserved."
+  "modulesSection": {
+    "badge": "Take-Home Test Module Coverage",
+    "title": "6 Core Modules According to Technical Spec",
+    "subtitle": "All modules specified in the Take Home Test FSE document (Modules A through F) have been fully implemented and verified.",
+    "modules": {
+      "modulA": {
+        "tag": "Module A • Mandatory",
+        "title": "Simulated Login & Role-Based Access Control (RBAC)",
+        "desc": "Secure cookie session auth via @supabase/ssr, 3 consolidated user roles, direct URL protection in Edge Middleware & Layouts, and pre-seeded demo accounts."
+      },
+      "modulB": {
+        "tag": "Module B • Mandatory",
+        "title": "Product Catalog & Unique SKU Standardization",
+        "desc": "Synchronization of 30 initial products from dummyjson.com/products, deterministic unique SKUs, RESTRICT-linked categories, and catalog stock immutability."
+      },
+      "modulC": {
+        "tag": "Module C • Mandatory",
+        "title": "Physical Stock Mutation Logging & ACID Batch Transactions",
+        "desc": "Stock IN (add) and OUT (deduct) recording, strict positive integer validation, overdraft prevention, and all-or-nothing multi-item cart transactions."
+      },
+      "modulD": {
+        "tag": "Module D • Mandatory",
+        "title": "Historical Ledger & Stock Traceability",
+        "desc": "Comprehensive ledger tracking local timestamp, product SKU, mutation type, quantity, stock before → after transition, executor user, and reference notes."
+      },
+      "modulE": {
+        "tag": "Module E • Mandatory",
+        "title": "Executive Inventory Summary & Flow Analytics",
+        "desc": "Executive KPI dashboard showing total SKUs, physical units, precise IDR valuation, critical low stock watchlist (< 5 units), and interactive SVG flow chart."
+      },
+      "modulF": {
+        "tag": "Module F • Optional",
+        "title": "9Router AI Copilot Integration (Server-Only)",
+        "desc": "Intelligent assistant powered by private 9Router gateway (inventra model): draft product generator (stock locked to 0), spec refiner, and factual warehouse Q&A."
+      }
+    }
+  },
+  "rulesSection": {
+    "badge": "Business Logic Integrity",
+    "title": "Compliance with Key Assessment Rules",
+    "subtitle": "Every business rule is strictly enforced by Zod Schemas, PostgreSQL Database Constraints, and Vitest Unit Tests.",
+    "rules": [
+      {
+        "title": "Stock Overdraft Prevention",
+        "desc": "Outbound stock mutations (Stock OUT) must never exceed available inventory. Transactions are rejected and aborted (INSUFFICIENT_STOCK)."
+      },
+      {
+        "title": "Positive Integer Quantities Required",
+        "desc": "Inputs of 0, negative, decimal, or non-numeric values are rejected immediately without altering stock or movement history."
+      },
+      {
+        "title": "Stock Mathematical Consistency",
+        "desc": "Current stock is guaranteed consistent: Current Stock = Opening Stock + Total IN - Total OUT."
+      },
+      {
+        "title": "Critical Stock Flag (Low Stock Alert)",
+        "desc": "Items with fewer than 5 units in stock (< 5) automatically display a prominent visual alert badge across catalog and dashboard."
+      },
+      {
+        "title": "Currency Conversion to Rupiah",
+        "desc": "USD prices from DummyJSON are converted to Indonesian Rupiah (Rp 16,000 / USD) and formatted with proper thousand separators."
+      },
+      {
+        "title": "Traceability Movement Ledger",
+        "desc": "Every mutation permanently logs exact stock transitions (before → after), timestamps, and reference notes for audit tracing."
+      }
+    ]
+  },
+  "qualitySection": {
+    "badge": "Software Engineering & Quality Gates",
+    "title": "Production Architecture & Code Standards",
+    "stats": {
+      "tests": "355+",
+      "testsLabel": "Automated Tests (100% PASS)",
+      "files": "42",
+      "filesLabel": "Vitest Test Suites",
+      "lint": "0 Errors",
+      "lintLabel": "ESLint & Strict TypeScript",
+      "build": "54",
+      "buildLabel": "Clean Compiled Pages"
+    }
+  },
+  "footerText": "© 2026 PT. Syailendra Bumi Investama (DDistillers). Developed by Octaviano (OctaLectzz) for the Full Stack Engineer Take-Home Assessment."
 }

@@ -1,6 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
 import * as fs from 'fs'
 import * as path from 'path'
+import { createClient } from '@supabase/supabase-js'
 
 import type { UserRole } from '../src/types/auth'
 import type { Database } from '../src/types/database'

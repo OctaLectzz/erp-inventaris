@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Phase 9 — Final QA, Security Review & Assessment Submission (2026-10-14)
 
 #### Added
+
 - `docs/reports/Phase 9 - Final QA and Submission/requirements_traceability_matrix.md` — 100% PASS requirements traceability matrix across Modules A–E.
 - `docs/reports/Phase 9 - Final QA and Submission/security_review.md` — 10-point security audit report covering RLS, secret isolation, and npm audit analysis.
 - `docs/reports/Phase 9 - Final QA and Submission/submission_checklist.md` — Complete verification checklist for take-home assessment deliverables and 5 core scenarios.
@@ -19,43 +20,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Live PostgreSQL concurrency test `Scenario 10` in `tests/supabase/live-integration.test.ts` verifying pessimistic row lock (`FOR UPDATE`) serialization under parallel mutations.
 
 #### Fixed
+
 - Code style and Tailwind class sorting across 6 files in compliance with `.prettierrc`.
 - Cleaned up isolated browser test artifacts, returning live Supabase inventory to 30 products and 0 movements.
 
 ### Phase 8 — Stock IN/OUT Server Actions & Movement History (2026-10-14)
+
 - Implemented `recordStockMovementAction` Server Action calling atomic PostgreSQL RPC `record_stock_movement`.
 - Built interactive `StockMutationDialog` with live stock preview, positive integer validation, and overdraft prevention.
 - Built responsive `MovementTable` with SKU/Name search, type filter (IN/OUT/All), and ISO date range boundaries.
 - Protected movement routes at `/[locale]/movements` via edge proxy and Server Component guards.
 
 ### Phase 7 — Dashboard KPIs & Inventory Catalog (2026-10-13)
+
 - Real-time inventory KPIs via pure domain calculation `calculateInventorySummary` (SKU count, total units, low stock < 5, IDR valuation).
 - Low Stock Watchlist card highlighting items requiring restocking.
 - Responsive catalog data table with instant search, category filtering, and stock level filtering.
 - Modal add/edit product forms with strict stock immutability enforcement.
 
 ### Phase 6 — Vitest & Core Unit Tests (2026-10-13)
+
 - Comprehensive test suite covering SKU validation, stock boundaries, ledger domain, and inventory valuation.
 
 ### Phase 5 — Authentication & Role-Based Route Protection (2026-10-13)
+
 - Multi-role authentication with Supabase SSR cookies.
 - Server boundary authorization (`requireAuth`) and authoritative RBAC via `public.profiles`.
 - One-click demo evaluator chips on login form for `admin_gudang` and `owner`.
 
 ### Phase 4 — Supabase Integration & RLS (2026-10-13)
+
 - Applied migrations `001_initial_schema`, `002_rls_policies`, and `003_stock_mutation_rpc` to Supabase cloud.
 - Seeded 30 initial products from DummyJSON with USD to IDR conversion.
 - Created trigger `trg_protect_product_stock` preventing direct stock modification.
 
 ### Phase 3 — Theme Provider & Dark Mode (2026-10-13)
+
 - Integrated `next-themes` with light, dark, and system modes.
 - OKLCH high-contrast tokens in `globals.css`.
 
 ### Phase 2 — Internationalization (next-intl) (2026-10-13)
+
 - Bilingual dictionary architecture (ID/EN) across 7 namespaces.
 - Dynamic segment routing at `src/app/[locale]/` with canonical proxy middleware.
 
 ### Phase 1 — Foundation & Brand Tokens (2026-10-13)
+
 - Deep Navy, Electric Teal, Warm Surface brand tokens mapped to Tailwind v4.
 
 ### Phase 0 — Documentation and Engineering Standards (2026-10-13)

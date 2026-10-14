@@ -63,37 +63,37 @@ Enforced by Prettier with `@ianvs/prettier-plugin-sort-imports`:
 
 ## 3. Naming Conventions
 
-| Element | Convention | Example |
-| :--- | :--- | :--- |
-| Component files | kebab-case | `stock-movement-form.tsx` |
-| Non-component files | kebab-case | `use-inventory.ts` |
-| Folders | kebab-case | `stock-movements/` |
-| Pages | Next.js convention | `page.tsx`, `layout.tsx` |
-| Schema files | kebab-case | `product-schema.ts` |
-| Test files | co-located | `product-schema.test.ts` |
-| Variables | camelCase | `stockBefore`, `isLoading` |
-| Constants | UPPER_SNAKE | `LOW_STOCK_THRESHOLD` |
-| Functions | camelCase | `getProductBySku()` |
-| Types/Interfaces | PascalCase | `Product`, `StockMovement` |
-| Enums | PascalCase | `MovementType`, `UserRole` |
-| CSS Variables | kebab-case | `--color-navy` |
+| Element             | Convention         | Example                    |
+| :------------------ | :----------------- | :------------------------- |
+| Component files     | kebab-case         | `stock-movement-form.tsx`  |
+| Non-component files | kebab-case         | `use-inventory.ts`         |
+| Folders             | kebab-case         | `stock-movements/`         |
+| Pages               | Next.js convention | `page.tsx`, `layout.tsx`   |
+| Schema files        | kebab-case         | `product-schema.ts`        |
+| Test files          | co-located         | `product-schema.test.ts`   |
+| Variables           | camelCase          | `stockBefore`, `isLoading` |
+| Constants           | UPPER_SNAKE        | `LOW_STOCK_THRESHOLD`      |
+| Functions           | camelCase          | `getProductBySku()`        |
+| Types/Interfaces    | PascalCase         | `Product`, `StockMovement` |
+| Enums               | PascalCase         | `MovementType`, `UserRole` |
+| CSS Variables       | kebab-case         | `--color-navy`             |
 
 ---
 
 ## 4. File Placement Rules
 
-| File Type | Location |
-| :--- | :--- |
-| shadcn/ui components | `src/components/ui/` |
-| Shared components | `src/components/shared/` |
-| Feature components | `src/features/{feature}/` |
-| Zod schemas | `src/schemas/` |
-| Business logic | `src/services/` |
-| TypeScript types | `src/types/` |
-| Custom hooks | `src/hooks/` |
-| Zustand stores | `src/stores/` |
-| i18n messages | `src/messages/{locale}/` |
-| SQL migrations | `supabase/migrations/` |
+| File Type            | Location                  |
+| :------------------- | :------------------------ |
+| shadcn/ui components | `src/components/ui/`      |
+| Shared components    | `src/components/shared/`  |
+| Feature components   | `src/features/{feature}/` |
+| Zod schemas          | `src/schemas/`            |
+| Business logic       | `src/services/`           |
+| TypeScript types     | `src/types/`              |
+| Custom hooks         | `src/hooks/`              |
+| Zustand stores       | `src/stores/`             |
+| i18n messages        | `src/messages/{locale}/`  |
+| SQL migrations       | `supabase/migrations/`    |
 
 **Never** create a new root folder without prior discussion.
 

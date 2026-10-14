@@ -219,22 +219,22 @@ pm2 startup  # Enable auto-start on reboot
 module.exports = {
   apps: [
     {
-      name: "nexpos-wa",
-      script: "dist/index.js",
+      name: 'nexpos-wa',
+      script: 'dist/index.js',
       instances: 1, // Single instance (one WA session)
       autorestart: true,
       watch: false,
-      max_memory_restart: "500M",
+      max_memory_restart: '500M',
       env: {
-        NODE_ENV: "production",
+        NODE_ENV: 'production'
       },
-      log_file: "/var/log/nexpos-wa/combined.log",
-      error_file: "/var/log/nexpos-wa/error.log",
-      out_file: "/var/log/nexpos-wa/output.log",
-      time: true,
-    },
-  ],
-};
+      log_file: '/var/log/nexpos-wa/combined.log',
+      error_file: '/var/log/nexpos-wa/error.log',
+      out_file: '/var/log/nexpos-wa/output.log',
+      time: true
+    }
+  ]
+}
 ```
 
 ### 4.4 Nginx Reverse Proxy (Optional)
@@ -284,32 +284,32 @@ npx prisma db seed
 
 ```typescript
 // prisma/seed.ts
-import { PrismaClient, UserRole } from "@prisma/client";
+import { PrismaClient, UserRole } from '@prisma/client'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 async function main(): Promise<void> {
   // Create default superadmin profile
   // (The actual Supabase Auth user must be created first via Supabase dashboard)
   await prisma.profile.upsert({
-    where: { email: "superadmin@nexpos.com" },
+    where: { email: 'superadmin@nexpos.com' },
     update: {},
     create: {
-      userId: "supabase-auth-user-id-here", // Must match auth.users.id
-      email: "superadmin@nexpos.com",
-      fullName: "Super Admin",
-      role: UserRole.SUPERADMIN,
-    },
-  });
+      userId: 'supabase-auth-user-id-here', // Must match auth.users.id
+      email: 'superadmin@nexpos.com',
+      fullName: 'Super Admin',
+      role: UserRole.SUPERADMIN
+    }
+  })
 
-  console.log("Seed completed successfully");
+  console.log('Seed completed successfully')
 }
 
 main()
   .catch(console.error)
   .finally(async () => {
-    await prisma.$disconnect();
-  });
+    await prisma.$disconnect()
+  })
 ```
 
 ### 5.3 Migration Workflow
@@ -358,8 +358,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: '20'
+          cache: 'npm'
       - run: npm ci
       - run: npm run lint
 
@@ -370,8 +370,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: '20'
+          cache: 'npm'
       - run: npm ci
       - run: npx prisma generate
       - run: npm run test:run
@@ -383,8 +383,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: '20'
+          cache: 'npm'
       - run: npm ci
       - run: npx prisma generate
       - run: npm run build
@@ -400,7 +400,7 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: "--prod"
+          vercel-args: '--prod'
 ```
 
 ---
@@ -424,18 +424,15 @@ jobs:
 export async function GET(): Promise<Response> {
   try {
     // Check database connection
-    await prisma.$queryRaw`SELECT 1`;
+    await prisma.$queryRaw`SELECT 1`
 
     return Response.json({
-      status: "healthy",
+      status: 'healthy',
       timestamp: new Date().toISOString(),
-      version: process.env.npm_package_version,
-    });
+      version: process.env.npm_package_version
+    })
   } catch {
-    return Response.json(
-      { status: "unhealthy", timestamp: new Date().toISOString() },
-      { status: 503 },
-    );
+    return Response.json({ status: 'unhealthy', timestamp: new Date().toISOString() }, { status: 503 })
   }
 }
 ```

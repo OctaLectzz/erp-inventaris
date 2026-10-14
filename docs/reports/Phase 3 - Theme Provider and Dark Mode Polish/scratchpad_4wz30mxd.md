@@ -9,4 +9,3 @@
 - [x] 7. Click ThemeToggle button (Sun icon) to switch back to Light mode
 - [x] 8. Confirm 'dark' class is removed from html tag
 - [x] 9. Final verification report
-

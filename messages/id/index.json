@@ -1,51 +1,119 @@
 {
-  "badge": "Mini ERP Inventaris Gudang",
-  "title": "Sistem Manajemen Inventaris Terpadu",
-  "subtitle": "Solusi pemantauan stok real-time, pencatatan mutasi barang masuk & keluar, serta audit trail pergerakan inventaris yang transparan untuk PT. Syailendra Bumi Investama (DDistillers).",
+  "badge": "Mini ERP Inventaris • PT. Syailendra Bumi Investama (DDistillers)",
+  "title": "Sistem Manajemen Inventaris & Mutasi Stok Real-Time",
+  "subtitle": "Simulasi ERP pergudangan modern bergaransi ACID dengan katalog produk terstandarisasi, mutasi fisik masuk/keluar atomik, buku besar audit traceability, analitik arus pergerakan barang, dan AI Copilot 9Router.",
+  "statusActive": "Sistem Operasional Aktif • Batch 5 Final",
   "actions": {
-    "primary": "Masuk ke Dashboard (Segera Hadir)",
-    "primaryTooltip": "Fitur autentikasi dan login pengguna akan aktif pada Fase 5.",
-    "secondary": "Lihat Pratinjau Fondasi"
+    "login": "Masuk ke Sistem Inventaris",
+    "dashboard": "Buka Dashboard",
+    "modules": "Pelajari Modul Sistem",
+    "quickDemo": "Akses Cepat Akun Demo",
+    "viewDocs": "Dokumentasi Lengkap"
   },
-  "card": {
-    "title": "Status Fondasi Sistem (Fase 2)",
-    "description": "Spesifikasi token warna semantik, skala tipografi, dukungan dwibahasa, dan tema terpadu yang telah terkonfigurasi.",
-    "tokensSection": "Palet Token Warna Terdaftar",
-    "featuresSection": "Fondasi Teknis Terverifikasi",
-    "tokens": {
-      "navy": {
-        "name": "Primary Navy",
-        "desc": "Navigasi, tajuk utama, dan aksi primer"
+  "demoSection": {
+    "badge": "Akses Cepat Penguji (Evaluator Quick-Access)",
+    "title": "Uji Langsung 3 Peran Sistem",
+    "subtitle": "Tersedia 3 akun demo resmi siap pakai tanpa perlu registrasi. Formulir login menyediakan tombol chip 1-klik untuk pengisian otomatis.",
+    "roles": {
+      "admin": {
+        "title": "Administrator",
+        "email": "admin@inventra.demo",
+        "desc": "Akses penuh mencakup katalog, mutasi stok, draf AI ke katalog, manajemen user, dan pengaturan sistem."
       },
-      "teal": {
-        "name": "Accent Teal",
-        "desc": "Sorotan aktif, indikator fokus, dan CTA"
+      "staff": {
+        "title": "Staf Gudang",
+        "email": "staff@inventra.demo",
+        "desc": "Akses operasional pencatatan mutasi tunggal & batch IN/OUT; dibatasi dari perubahan master katalog dan laporan."
       },
-      "surface": {
-        "name": "Pale Surface",
-        "desc": "Permukaan kontras lembut dan badge netral"
+      "auditor": {
+        "title": "Auditor (Owner)",
+        "email": "auditor@inventra.demo",
+        "desc": "Akses pemantauan hanya-baca (read-only) untuk katalog, dashboard KPI, laporan analitik, ledger, dan AI Q&A."
       }
     },
-    "features": {
-      "typography": {
-        "title": "Tipografi Inter & Geist Mono",
-        "detail": "Hierarki tipe data reguler dan monospaced SKU"
-      },
-      "styling": {
-        "title": "Tailwind CSS v4 + Radix",
-        "detail": "Variabel CSS modern dengan dukungan mode gelap"
-      },
-      "typeSafety": {
-        "title": "Strict Type Safety",
-        "detail": "TypeScript strict mode tanpa kompromi"
-      },
-      "i18n": {
-        "title": "Dukungan Dwibahasa (next-intl)",
-        "detail": "Bahasa Indonesia bawaan dan rute bahasa Inggris (/en)"
-      }
-    },
-    "footer": "Inventra v0.1.0-dev • Fase 2 Terverifikasi",
-    "techStack": "Next.js 16 • Tailwind v4 • next-intl"
+    "actionButton": "Masuk dengan Peran Ini"
   },
-  "footerText": "© 2026 PT. Syailendra Bumi Investama (DDistillers). Seluruh hak cipta dilindungi."
+  "modulesSection": {
+    "badge": "Cakupan Modul Penilaian Take-Home Test",
+    "title": "6 Modul Inti Sesuai Spesifikasi Teknis",
+    "subtitle": "Seluruh modul yang disyaratkan dalam dokumen Take Home Test FSE (Modul A sampai F) telah diimplementasikan dan terverifikasi penuh.",
+    "modules": {
+      "modulA": {
+        "tag": "Modul A • Wajib",
+        "title": "Login Simulasi & Otorisasi Berbasis Peran (RBAC)",
+        "desc": "Autentikasi sesi cookie aman via @supabase/ssr, 3 peran pengguna konsolidasi, proteksi URL langsung di Edge Middleware & Layout, dan akun demo siap pakai."
+      },
+      "modulB": {
+        "tag": "Modul B • Wajib",
+        "title": "Katalog Produk & Standardisasi SKU Unik",
+        "desc": "Sinkronisasi 30 produk awal dari dummyjson.com/products, SKU unik deterministik, master kategori berelasi RESTRICT, dan imutabilitas stok katalog."
+      },
+      "modulC": {
+        "tag": "Modul C • Wajib",
+        "title": "Pencatatan Mutasi Stok Fisik & Transaksi Batch ACID",
+        "desc": "Pencatatan mutasi IN (tambah) dan OUT (kurang), validasi kuantitas bulat positif, pencegahan overdraft stok, dan transaksi keranjang multi-item bergaransi all-or-nothing."
+      },
+      "modulD": {
+        "tag": "Modul D • Wajib",
+        "title": "Buku Besar Riwayat & Traceability Perubahan Stok",
+        "desc": "Buku besar mutasi lengkap mencatat waktu lokal, SKU barang, jenis mutasi, kuantitas, transisi stok sebelum → sesudah, aktor pengguna, dan catatan referensi dengan filter fleksibel."
+      },
+      "modulE": {
+        "tag": "Modul E • Wajib",
+        "title": "Ringkasan Inventaris Eksekutif & Analitik Arus",
+        "desc": "Dashboard KPI menampilkan total SKU, total unit fisik, estimasi valuasi Rupiah presisi, daftar pantau stok kritis (< 5 unit), dan grafik arus pergerakan mutasi SVG interaktif."
+      },
+      "modulF": {
+        "tag": "Modul F • Opsional",
+        "title": "Integrasi AI Copilot 9Router (Server-Only)",
+        "desc": "Asisten cerdas berbasis 9Router gateway privat (model inventra): generator draf produk (stok terkunci 0), refiner spesifikasi teknis, dan tanya-jawab stok gudang faktual."
+      }
+    }
+  },
+  "rulesSection": {
+    "badge": "Integritas Logika Bisnis",
+    "title": "Kepatuhan Terhadap Aturan Kunci",
+    "subtitle": "Setiap aturan bisnis diverifikasi secara ketat melalui Zod Schema, PostgreSQL Database Constraints, dan Vitest Unit Tests.",
+    "rules": [
+      {
+        "title": "Pencegahan Overdraft Stok",
+        "desc": "Mutasi keluar (Stock OUT) tidak boleh melebihi stok yang tersedia. Transaksi otomatis ditolak dan dibatalkan (INSUFFICIENT_STOCK)."
+      },
+      {
+        "title": "Kuantitas Wajib Bilangan Bulat Positif",
+        "desc": "Input bernilai 0, negatif, desimal, atau teks non-numerik langsung ditolak seketika tanpa mengubah stok maupun riwayat."
+      },
+      {
+        "title": "Konsistensi Matematis Stok",
+        "desc": "Stok saat ini dijamin selalu konsisten: Stok Saat Ini = Stok Pembuka + Total Masuk - Total Keluar."
+      },
+      {
+        "title": "Penanda Stok Kritis (Low Stock Alert)",
+        "desc": "Barang dengan stok kurang dari 5 unit (< 5) secara otomatis diberi tanda peringatan visual pada katalog dan dashboard."
+      },
+      {
+        "title": "Konversi Mata Uang ke Rupiah",
+        "desc": "Harga USD dari DummyJSON dikonversi ke Rupiah (Rp 16.000 / USD) dan diformat standar IDR dengan pemisah ribuan."
+      },
+      {
+        "title": "Traceability Riwayat Penelusuran",
+        "desc": "Tiap mutasi mencatat transisi stok persis (sebelum → sesudah), waktu pembuatan, dan catatan referensi untuk penelusuran audit."
+      }
+    ]
+  },
+  "qualitySection": {
+    "badge": "Rekayasa Perangkat Lunak & Quality Gates",
+    "title": "Standar Arsitektur Produksi & Kualitas Kode",
+    "stats": {
+      "tests": "355+",
+      "testsLabel": "Tes Otomatis (100% PASS)",
+      "files": "42",
+      "filesLabel": "File Pengujian Vitest",
+      "lint": "0 Error",
+      "lintLabel": "ESLint & Strict TypeScript",
+      "build": "54",
+      "buildLabel": "Halaman Terkompilasi Bersih"
+    }
+  },
+  "footerText": "© 2026 PT. Syailendra Bumi Investama (DDistillers). Dikembangkan oleh Octaviano (OctaLectzz) untuk Take-Home Assessment Full Stack Engineer."
 }

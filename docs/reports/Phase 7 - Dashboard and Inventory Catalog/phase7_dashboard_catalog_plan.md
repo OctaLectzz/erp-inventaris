@@ -5,6 +5,7 @@
 Implement Phase 7 of the **Inventra Mini ERP Inventory Management** system in accordance with `docs/TASK_INSTRUCTION.md`, `docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/DESIGN.md`, and `docs/SECURITY.md`.
 
 This phase establishes the operational core of the application:
+
 1. **Live Warehouse Dashboard**: Real-time KPI summary (Unique SKUs, Total Units, Low Stock Alert items $< 5$, Total Valuation in IDR) derived from Supabase using pure domain calculations (`src/services/inventory-domain.ts`), along with an actionable Low Stock Watchlist table.
 2. **Interactive Product Catalog**: Responsive catalog view with multi-faceted search (SKU and product name), category filtering, stock health filter (All, Low Stock, Normal), pagination, empty states, and visual status badges.
 3. **Product Catalog Add & Edit Management**: Accessible dialog forms for `admin_gudang` with Zod + React Hook Form validation, and **strict stock immutability** (stock field completely omitted from catalog operations; new items start at 0 and adjustments are reserved for authorized stock movement RPCs).
@@ -17,6 +18,7 @@ This phase establishes the operational core of the application:
 
 > [!IMPORTANT]
 > **Valuation Reconciliation Finding:**
+>
 > - **Actual Live Supabase Database Metrics:**
 >   - Total Catalog Products: **30 unique SKUs**
 >   - Total Units (Stok): **1,648 units**
@@ -31,6 +33,7 @@ This phase establishes the operational core of the application:
 > [!WARNING]
 > **Stock Immutability Guardrail:**
 > In accordance with Section 6 of the prompt:
+>
 > - The new `productCatalogInputSchema` and `productCatalogUpdateSchema` in `src/schemas/inventory-schema.ts` **strictly omit** the `stock` field.
 > - The existing `productInputSchema` (used in Phase 6 unit tests) is preserved intact for backwards compatibility.
 > - Insert operations default to `stock = 0`, satisfying PostgreSQL column grants and the `prevent_direct_stock_modification` trigger.
@@ -90,6 +93,7 @@ graph TD
 ### Layer 1: Validation Schemas & Types
 
 #### [MODIFY] `src/schemas/inventory-schema.ts`
+
 - Retain existing `stockMutationInputSchema` and `productInputSchema` (to protect all Phase 6 tests).
 - Add `productCatalogInputSchema`:
   - `sku`: uppercase, trimmed, 3–50 chars, regex `/^[A-Z0-9-]+$/`.
@@ -104,6 +108,7 @@ graph TD
   - Extends `productCatalogInputSchema` with `id: z.string().uuid()`.
 
 #### [MODIFY] `src/types/inventory.ts`
+
 - Export `ProductCatalogFilter`:
   ```typescript
   export interface ProductCatalogFilter {
@@ -118,6 +123,7 @@ graph TD
 ### Layer 2: Service & Server Actions Layer
 
 #### [NEW] `src/services/product-service.ts`
+
 - `getInventoryDashboardData(supabase: SupabaseClient<Database>)`:
   - Fetches products from `public.products` (`id, sku, name, category, unit, price, stock`).
   - Passes items to pure domain `calculateInventorySummary(products)`.
@@ -129,6 +135,7 @@ graph TD
   - Returns distinct sorted category list for filter dropdown.
 
 #### [NEW] `src/app/actions/product-actions.ts`
+
 - `createProductAction(input: unknown)`:
   1. Authorize: calls `requireAuth(locale)`. Ensures `profile.role === 'admin_gudang'`; if not, returns `{ success: false, error: 'FORBIDDEN', message: '...' }`.
   2. Validate: validates payload using `productCatalogInputSchema`.
@@ -148,23 +155,28 @@ graph TD
 ### Layer 3: Presentation & UI Components
 
 #### [NEW] `src/components/ui/badge.tsx`
+
 - Standard shadcn badge with variants: `default`, `secondary`, `destructive`, `outline`, `success`, `warning`.
 
 #### [NEW] `src/components/ui/dialog.tsx`
+
 - Accessible modal dialog component utilizing `@radix-ui/react-dialog` primitives (already present in project dependencies via `radix-ui`).
 
 #### [NEW] `src/components/ui/textarea.tsx`
+
 - Standard styled textarea component matching Inventra input design tokens.
 
 #### [NEW] `src/features/catalog/product-form-dialog.tsx`
+
 - Client modal component handling both **Add Product** and **Edit Product**.
 - Uses `react-hook-form` with `@hookform/resolvers/zod` and `productCatalogInputSchema`.
 - Displays clear explanatory notice:
-  - *New product*: "Stok awal adalah 0 unit. Tambahkan stok melalui mutasi stok masuk."
-  - *Edit*: "Informasi katalog produk. Kuantitas stok hanya dapat disesuaikan melalui mutasi stok."
+  - _New product_: "Stok awal adalah 0 unit. Tambahkan stok melalui mutasi stok masuk."
+  - _Edit_: "Informasi katalog produk. Kuantitas stok hanya dapat disesuaikan melalui mutasi stok."
 - Accessible dialog title, description, form validation error hints, loading spinner on submit button.
 
 #### [NEW] `src/features/catalog/catalog-table.tsx`
+
 - Client component with:
   - Live search input (filters SKU and product name).
   - Category dropdown filter.
@@ -179,6 +191,7 @@ graph TD
   - Polished empty state with search reset button.
 
 #### [NEW] `src/app/[locale]/(dashboard)/inventory/page.tsx`
+
 - Server Component:
   - Enforces `requireAuth(locale)` to retrieve authoritative profile.
   - Fetches catalog products and categories via `getInventoryCatalogData` and `getCatalogCategories`.
@@ -186,12 +199,15 @@ graph TD
   - Embeds `CatalogTable`.
 
 #### [NEW] `src/app/[locale]/(dashboard)/inventory/loading.tsx`
+
 - Skeleton loading state for table and metric headers.
 
 #### [NEW] `src/app/[locale]/(dashboard)/inventory/error.tsx`
+
 - User-friendly error boundary with retry action.
 
 #### [MODIFY] `src/app/[locale]/(dashboard)/dashboard/page.tsx`
+
 - Upgraded to call `getInventoryDashboardData`.
 - Computes KPIs using pure domain logic (`calculateInventorySummary`).
 - Replaces static descriptions with live Supabase metrics.
@@ -199,6 +215,7 @@ graph TD
 - Provides loading, empty state, and failure fallback.
 
 #### [MODIFY] `src/app/[locale]/(dashboard)/layout.tsx`
+
 - Adds top-level responsive navigation bar with links:
   - **Dashboard** (`/[locale]/dashboard`)
   - **Katalog Produk** (`/[locale]/inventory`)
@@ -206,6 +223,7 @@ graph TD
 - Role-aware badge and mobile dropdown.
 
 #### [MODIFY] `src/proxy.ts`
+
 - Updates `isDashboardRoute` regex/logic to protect `/(id|en)/inventory` as well, ensuring multi-layer redirect to `login` for any unauthenticated visitors.
 
 ---
@@ -213,6 +231,7 @@ graph TD
 ### Layer 4: Internationalization (i18n)
 
 #### [MODIFY] `messages/id/dashboard.json` & `messages/en/dashboard.json`
+
 - Add keys for catalog, filters, table headers, status badges, and product dialog:
   - `catalog.title`, `catalog.subtitle`, `catalog.addProduct`, `catalog.editProduct`
   - `catalog.searchPlaceholder`, `catalog.filterCategory`, `catalog.filterStatus`
@@ -223,6 +242,7 @@ graph TD
   - `watchlist.title`, `watchlist.subtitle`, `watchlist.viewAll`
 
 #### [MODIFY] `messages/id/validation.json` & `messages/en/validation.json`
+
 - Ensure all schema error codes (`skuTooShort`, `skuTooLong`, `skuInvalidFormat`, `nameRequired`, `categoryRequired`, `unitRequired`, `priceMustBeInteger`, `priceMustBeNonNegative`, `imageUrlInvalid`) are defined in both dictionaries.
 
 ---
@@ -230,6 +250,7 @@ graph TD
 ### Layer 5: Testing Suite
 
 #### [NEW] `tests/unit/product-catalog-schema.test.ts`
+
 - Tests `productCatalogInputSchema`:
   - Accepts valid product inputs.
   - Rejects invalid SKU formats (lowercase, spaces, special chars).
@@ -239,6 +260,7 @@ graph TD
   - Requires valid UUID `id`.
 
 #### [NEW] `tests/unit/product-service.test.ts`
+
 - Mocks Supabase client using existing `tests/mocks/supabase-mock.ts`.
 - Verifies `getInventoryDashboardData` calculates correct KPIs using `calculateInventorySummary`.
 - Verifies `createProductAction` rejects unauthenticated users and `owner` role.
@@ -250,6 +272,7 @@ graph TD
 ## 5. Verification Plan
 
 ### Automated Quality Gates
+
 1. Unit test suite:
    ```bash
    npm run test:unit
@@ -280,6 +303,7 @@ graph TD
    ```
 
 ### Manual Verification Scenarios
+
 1. **Dashboard Metrics**:
    - Log in as `admin@inventra.demo` -> open `http://localhost:3000/id/dashboard`.
    - Verify Total Products = 30, Total Stock = 1,648, Low Stock Alerts = 2, Total Valuation = Rp 6.251.910.720.

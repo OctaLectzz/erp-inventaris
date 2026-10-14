@@ -20,6 +20,7 @@ Semua pengujian unit, mock server action, verifikasi paritas bilingual (ID/EN), 
 ## 2. File yang Dibuat dan Diubah
 
 ### A. File Baru (Untracked)
+
 1. **`src/schemas/auth-schema.ts`**: Skema Zod untuk validasi login (`email`, `password`, `redirectTo`) dan tipe `AuthActionResult`.
 2. **`src/services/auth-service.ts`**: Layanan autentikasi server terpusat: `getCurrentUser()`, `getCurrentUserProfile()`, `requireAuth()`, `requireRole()`, dan pertahanan sanitasi `getSafeRedirectUrl()`.
 3. **`src/app/actions/auth-actions.ts`**: Server Actions untuk autentikasi aman (`signInAction`, `signInDemoAction`, `signOutAction`) dengan amplop error generik untuk mencegah enumerasi akun.
@@ -36,6 +37,7 @@ Semua pengujian unit, mock server action, verifikasi paritas bilingual (ID/EN), 
 14. **`tests/auth/live-auth.test.ts`**: Integration test langsung ke Supabase instance nyata dengan kredensial akun demo admin gudang dan owner.
 
 ### B. File yang Diperbarui (Modified)
+
 1. **`src/proxy.ts`**: Penambahan logika pengecekan rute terproteksi (`/dashboard`) dan rute autentikasi (`/login`), pemeliharaan cookie sesi Supabase SSR, pencegahan redirect loop, dan perlindungan open-redirect.
 2. **`src/app/[locale]/page.tsx`**: Pengaktifan tombol aksi utama (CTA) untuk langsung mengarahkan ke halaman login (`/${locale}/login`).
 3. **`messages/id/auth.json` & `messages/en/auth.json`**: Penambahan kamus terjemahan bilingual simetris untuk label form, pesan kesalahan generik, informasi peran RBAC, dan evaluasi demo.
@@ -48,6 +50,7 @@ Semua pengujian unit, mock server action, verifikasi paritas bilingual (ID/EN), 
 ## 3. Alur Autentikasi dan Logout
 
 ### A. Alur Masuk (Sign In)
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -83,6 +86,7 @@ sequenceDiagram
 ```
 
 ### B. Alur Keluar (Sign Out)
+
 1. Pengguna menekan tombol "Keluar" (`LogoutButton`).
 2. Server Action `signOutAction()` memanggil `supabase.auth.signOut()`, mencabut token sesi pada Supabase Auth dan menghapus cookie autentikasi SSR.
 3. Next.js melakukan pengalihan bersih ke rute login yang sesuai dengan locale aktif (`/${locale}/login`).
@@ -91,12 +95,12 @@ sequenceDiagram
 
 ## 4. Matriks Akses dan Kontrol Berbasis Peran (RBAC)
 
-| Peran | Hak Akses Dashboard | Akses Katalog Produk | Akses Mutasi Stok (IN/OUT) | Hak Penyesuaian Inventaris | Audit & Valuasi Aset | Penegakan Keamanan |
-| :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| **`admin_gudang`** | ✅ Ya | ✅ Baca | ✅ Penuh (via RPC `record_stock_movement`) | ✅ Penuh | ✅ Ya | RLS + Database Column Grants + RPC Authorization |
-| **`owner`** | ✅ Ya | ✅ Baca | ❌ Ditolak (Hanya-Baca) | ❌ Ditolak | ✅ Ya (Monitoring Eksekutif) | RLS + Database RPC Function Exception |
-| **Pengguna Tanpa Profil** | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak | Server boundary `requireAuth` & trigger pembatalan sesi |
-| **Pengguna Anonim** | ❌ Ditolak (Redirect ke Login) | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak | ❌ Ditolak | Canonical Proxy + Layout Guard |
+| Peran                     |      Hak Akses Dashboard       | Akses Katalog Produk |         Akses Mutasi Stok (IN/OUT)         | Hak Penyesuaian Inventaris |     Audit & Valuasi Aset     | Penegakan Keamanan                                      |
+| :------------------------ | :----------------------------: | :------------------: | :----------------------------------------: | :------------------------: | :--------------------------: | :------------------------------------------------------ |
+| **`admin_gudang`**        |             ✅ Ya              |       ✅ Baca        | ✅ Penuh (via RPC `record_stock_movement`) |          ✅ Penuh          |            ✅ Ya             | RLS + Database Column Grants + RPC Authorization        |
+| **`owner`**               |             ✅ Ya              |       ✅ Baca        |          ❌ Ditolak (Hanya-Baca)           |         ❌ Ditolak         | ✅ Ya (Monitoring Eksekutif) | RLS + Database RPC Function Exception                   |
+| **Pengguna Tanpa Profil** |           ❌ Ditolak           |      ❌ Ditolak      |                 ❌ Ditolak                 |         ❌ Ditolak         |          ❌ Ditolak          | Server boundary `requireAuth` & trigger pembatalan sesi |
+| **Pengguna Anonim**       | ❌ Ditolak (Redirect ke Login) |      ❌ Ditolak      |                 ❌ Ditolak                 |         ❌ Ditolak         |          ❌ Ditolak          | Canonical Proxy + Layout Guard                          |
 
 > **Catatan Sumber Otoritas**: Peran pengguna TIDAK PERNAH dibaca dari `user_metadata` client. Peran diperoleh secara ketat melalui relasi `auth.users.id -> public.profiles.id` pada tingkat database PostgreSQL.
 
@@ -120,6 +124,7 @@ sequenceDiagram
 ## 6. Verifikasi Kualitas dan Hasil Pengujian
 
 ### A. Pengujian Otomatis (Vitest)
+
 Perintah yang dijalankan: `npx vitest run`
 
 ```
@@ -130,6 +135,7 @@ Test Files  8 passed (8)
 ```
 
 Daftar test suite yang lulus:
+
 1. `tests/auth/auth-schema.test.ts` (9 pengujian Zod) — **Lulus**
 2. `tests/auth/auth-service.test.ts` (11 pengujian keamanan & utilitas) — **Lulus**
 3. `tests/auth/auth-actions.test.ts` (5 pengujian alur server action) — **Lulus**
@@ -140,19 +146,27 @@ Daftar test suite yang lulus:
 8. `tests/i18n/translations.test.ts` (30 pengujian paritas terjemahan ID/EN) — **Lulus**
 
 ### B. Pemeriksaan Tipe TypeScript
+
 Perintah: `npx tsc --noEmit`
+
 - Hasil: **0 errors** (Lulus sempurna pada strict mode).
 
 ### C. ESLint Linter
+
 Perintah: `npm run lint`
+
 - Hasil: **0 errors, 0 warnings** (Lulus bersih, kepatuhan zero-any terbukti).
 
 ### D. Formatting Prettier
+
 Perintah: `npx prettier --write ...`
+
 - Hasil: **Semua file terformat rapi sesuai `.prettierrc`**.
 
 ### E. Next.js Production Build
+
 Perintah: `npm run build`
+
 - Turbopack compilation: **Selesai dalam 6.5s**
 - TypeScript type checking: **Selesai dalam 10.8s**
 - Static page generation: **12/12 halaman berhasil dihasilkan**

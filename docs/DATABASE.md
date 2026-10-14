@@ -65,20 +65,22 @@ Inventra uses **Supabase PostgreSQL** as its primary database. The schema is des
 
 Linked 1:1 with `auth.users`. Created automatically when a new user is provisioned.
 
-| Column | Type | Constraints | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | `uuid` | PK, FK → `auth.users(id)` ON DELETE CASCADE | User ID from Supabase Auth |
-| `email` | `text` | NOT NULL | User email (denormalized for convenience) |
-| `full_name` | `text` | NOT NULL | Display name |
-| `role` | `text` | NOT NULL, CHECK (role IN ('admin_gudang', 'owner')) | User role for RBAC |
-| `created_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | Profile creation timestamp |
-| `updated_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | Last profile update timestamp |
+| Column       | Type          | Constraints                                         | Description                               |
+| :----------- | :------------ | :-------------------------------------------------- | :---------------------------------------- |
+| `id`         | `uuid`        | PK, FK → `auth.users(id)` ON DELETE CASCADE         | User ID from Supabase Auth                |
+| `email`      | `text`        | NOT NULL                                            | User email (denormalized for convenience) |
+| `full_name`  | `text`        | NOT NULL                                            | Display name                              |
+| `role`       | `text`        | NOT NULL, CHECK (role IN ('admin_gudang', 'owner')) | User role for RBAC                        |
+| `created_at` | `timestamptz` | NOT NULL, DEFAULT `now()`                           | Profile creation timestamp                |
+| `updated_at` | `timestamptz` | NOT NULL, DEFAULT `now()`                           | Last profile update timestamp             |
 
 **Indexes:**
+
 - PK on `id`
 - Unique on `email`
 
 **Notes:**
+
 - The `role` column uses a CHECK constraint instead of an enum for simpler migrations.
 - `updated_at` should be maintained via a trigger or application logic.
 
@@ -86,27 +88,29 @@ Linked 1:1 with `auth.users`. Created automatically when a new user is provision
 
 Inventory catalog. Each product has a unique SKU and a stock quantity.
 
-| Column | Type | Constraints | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | `uuid` | PK, DEFAULT `gen_random_uuid()` | Product UUID |
-| `sku` | `text` | NOT NULL, UNIQUE | Stock Keeping Unit — unique product identifier |
-| `name` | `text` | NOT NULL | Product name |
-| `category` | `text` | NOT NULL | Product category (from DummyJSON) |
-| `unit` | `text` | NOT NULL, DEFAULT `'pcs'` | Unit of measure (pcs, kg, liter, etc.) |
-| `price` | `bigint` | NOT NULL, CHECK (price >= 0) | Reference price in IDR (Indonesian Rupiah) |
-| `stock` | `integer` | NOT NULL, DEFAULT 0, CHECK (stock >= 0) | Current stock quantity |
-| `description` | `text` | | Optional product description |
-| `image_url` | `text` | | Product image URL (from DummyJSON) |
-| `created_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | Product creation timestamp |
-| `updated_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | Last product update timestamp |
+| Column        | Type          | Constraints                             | Description                                    |
+| :------------ | :------------ | :-------------------------------------- | :--------------------------------------------- |
+| `id`          | `uuid`        | PK, DEFAULT `gen_random_uuid()`         | Product UUID                                   |
+| `sku`         | `text`        | NOT NULL, UNIQUE                        | Stock Keeping Unit — unique product identifier |
+| `name`        | `text`        | NOT NULL                                | Product name                                   |
+| `category`    | `text`        | NOT NULL                                | Product category (from DummyJSON)              |
+| `unit`        | `text`        | NOT NULL, DEFAULT `'pcs'`               | Unit of measure (pcs, kg, liter, etc.)         |
+| `price`       | `bigint`      | NOT NULL, CHECK (price >= 0)            | Reference price in IDR (Indonesian Rupiah)     |
+| `stock`       | `integer`     | NOT NULL, DEFAULT 0, CHECK (stock >= 0) | Current stock quantity                         |
+| `description` | `text`        |                                         | Optional product description                   |
+| `image_url`   | `text`        |                                         | Product image URL (from DummyJSON)             |
+| `created_at`  | `timestamptz` | NOT NULL, DEFAULT `now()`               | Product creation timestamp                     |
+| `updated_at`  | `timestamptz` | NOT NULL, DEFAULT `now()`               | Last product update timestamp                  |
 
 **Indexes:**
+
 - PK on `id`
 - UNIQUE on `sku`
 - Index on `category` (for filtering)
 - Index on `stock` (for low-stock queries)
 
 **Constraints:**
+
 - `CHECK (stock >= 0)` — stock can never go negative. This is the database-level safety net for the stock OUT validation.
 - `CHECK (price >= 0)` — prices are non-negative.
 
@@ -114,19 +118,20 @@ Inventory catalog. Each product has a unique SKU and a stock quantity.
 
 Immutable log of every stock change. Created atomically alongside stock updates.
 
-| Column | Type | Constraints | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | `uuid` | PK, DEFAULT `gen_random_uuid()` | Movement UUID |
-| `product_id` | `uuid` | NOT NULL, FK → `products(id)` ON DELETE RESTRICT | Associated product |
-| `user_id` | `uuid` | NOT NULL, FK → `auth.users(id)` ON DELETE RESTRICT | User who performed the action |
-| `type` | `text` | NOT NULL, CHECK (type IN ('IN', 'OUT')) | Movement type |
-| `quantity` | `integer` | NOT NULL, CHECK (quantity > 0) | Quantity moved (always positive) |
-| `stock_before` | `integer` | NOT NULL, CHECK (stock_before >= 0) | Stock before the movement |
-| `stock_after` | `integer` | NOT NULL, CHECK (stock_after >= 0) | Stock after the movement |
-| `note` | `text` | NOT NULL | Reason or reference for the movement |
-| `created_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | Movement timestamp |
+| Column         | Type          | Constraints                                        | Description                          |
+| :------------- | :------------ | :------------------------------------------------- | :----------------------------------- |
+| `id`           | `uuid`        | PK, DEFAULT `gen_random_uuid()`                    | Movement UUID                        |
+| `product_id`   | `uuid`        | NOT NULL, FK → `products(id)` ON DELETE RESTRICT   | Associated product                   |
+| `user_id`      | `uuid`        | NOT NULL, FK → `auth.users(id)` ON DELETE RESTRICT | User who performed the action        |
+| `type`         | `text`        | NOT NULL, CHECK (type IN ('IN', 'OUT'))            | Movement type                        |
+| `quantity`     | `integer`     | NOT NULL, CHECK (quantity > 0)                     | Quantity moved (always positive)     |
+| `stock_before` | `integer`     | NOT NULL, CHECK (stock_before >= 0)                | Stock before the movement            |
+| `stock_after`  | `integer`     | NOT NULL, CHECK (stock_after >= 0)                 | Stock after the movement             |
+| `note`         | `text`        | NOT NULL                                           | Reason or reference for the movement |
+| `created_at`   | `timestamptz` | NOT NULL, DEFAULT `now()`                          | Movement timestamp                   |
 
 **Indexes:**
+
 - PK on `id`
 - Index on `product_id` (for product-specific history)
 - Index on `user_id` (for user-specific history)
@@ -135,6 +140,7 @@ Immutable log of every stock change. Created atomically alongside stock updates.
 - Composite index on `(product_id, created_at DESC)` (for product movement history)
 
 **Constraints:**
+
 - `CHECK (quantity > 0)` — quantities are always positive integers.
 - `CHECK (stock_before >= 0)` and `CHECK (stock_after >= 0)` — stock values are never negative.
 - `ON DELETE RESTRICT` on both FKs — cannot delete a product or user that has movement history.
@@ -144,11 +150,11 @@ Immutable log of every stock change. Created atomically alongside stock updates.
 
 ## 4. Relationships
 
-| From | To | Type | FK Column | On Delete |
-| :--- | :--- | :--- | :--- | :--- |
-| `profiles.id` | `auth.users.id` | 1:1 | `profiles.id` | CASCADE |
-| `stock_movements.product_id` | `products.id` | Many:1 | `stock_movements.product_id` | RESTRICT |
-| `stock_movements.user_id` | `auth.users.id` | Many:1 | `stock_movements.user_id` | RESTRICT |
+| From                         | To              | Type   | FK Column                    | On Delete |
+| :--------------------------- | :-------------- | :----- | :--------------------------- | :-------- |
+| `profiles.id`                | `auth.users.id` | 1:1    | `profiles.id`                | CASCADE   |
+| `stock_movements.product_id` | `products.id`   | Many:1 | `stock_movements.product_id` | RESTRICT  |
+| `stock_movements.user_id`    | `auth.users.id` | Many:1 | `stock_movements.user_id`    | RESTRICT  |
 
 ---
 
@@ -325,10 +331,10 @@ supabase/migrations/
 
 Two demo accounts are provisioned:
 
-| Role | Email | Purpose |
-| :--- | :--- | :--- |
+| Role           | Email                 | Purpose              |
+| :------------- | :-------------------- | :------------------- |
 | `admin_gudang` | `admin@inventra.demo` | Warehouse admin demo |
-| `owner` | `owner@inventra.demo` | Business owner demo |
+| `owner`        | `owner@inventra.demo` | Business owner demo  |
 
 Passwords are documented in the README.
 

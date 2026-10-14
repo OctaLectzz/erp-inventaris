@@ -10,23 +10,25 @@
 
 ## 1. Hasil Audit Kontrak RPC & Skema Database
 
-Sebelum memulai implementasi, telah dilakukan pemeriksaan *read-only* mendalam terhadap basis data aktif PostgreSQL via Supabase MCP:
+Sebelum memulai implementasi, telah dilakukan pemeriksaan _read-only_ mendalam terhadap basis data aktif PostgreSQL via Supabase MCP:
 
 ### A. Kontrak RPC `public.record_stock_movement`
+
 - **Tanda Tangan Argumen**: `(p_product_id uuid, p_type text, p_quantity integer, p_note text) RETURNS json`
 - **Karakteristik Keamanan**:
   - `SECURITY DEFINER` dengan `SET search_path = ''` untuk mitigasi pembajakan skema.
   - Hak eksekusi diberikan secara eksklusif kepada `authenticated`. Akses `anon` dan `PUBLIC` dicabut (`REVOKE`).
   - **Zero-Trust Actor Resolution**: Aktor pemanggil ditentukan secara otoritatif di dalam mesin database melalui `v_user_id := (SELECT auth.uid())`. Database tidak pernah mempercayai ID pengguna yang dipasok dari sisi client.
   - **Authoritative Role Enforcement**: Memeriksa fungsi pembantu `public.get_user_role(v_user_id) = 'admin_gudang'`. Upaya pemanggilan oleh pengguna dengan role `owner` menghasilkan `{ success: false, error: 'FORBIDDEN', message: 'Only warehouse administrators (admin_gudang) can mutate inventory' }`.
-  - **Pessimistic Concurrency Lock**: Menjalankan `SELECT stock FROM public.products WHERE id = p_product_id FOR UPDATE` untuk mencegah *race condition* dan pembacaan *phantom* pada mutasi konkuren.
+  - **Pessimistic Concurrency Lock**: Menjalankan `SELECT stock FROM public.products WHERE id = p_product_id FOR UPDATE` untuk mencegah _race condition_ dan pembacaan _phantom_ pada mutasi konkuren.
   - **Atomisitas Ganda**: Pembaruan stok produk (`UPDATE public.products SET stock = ...`) dan pencatatan buku besar riwayat (`INSERT INTO public.stock_movements (...)`) dibungkus dalam satu transaksi ACID tak terpisahkan.
   - **Envelope Respons**:
     - Berhasil: `{ success: true, data: { movement_id, product_id, type, quantity, stock_before, stock_after, note } }`
     - Gagal: `{ success: false, error: string, message: string }` (e.g. `'INSUFFICIENT_STOCK'`, `'INVALID_QUANTITY'`, `'EMPTY_NOTE'`).
-    - *Aturan Krusial*: Supabase JS tidak melempar eksepsi ketika RPC mengembalikan status kegagalan terstruktur. Server Action wajib memvalidasi `!error && data?.success === true`.
+    - _Aturan Krusial_: Supabase JS tidak melempar eksepsi ketika RPC mengembalikan status kegagalan terstruktur. Server Action wajib memvalidasi `!error && data?.success === true`.
 
 ### B. Skema & Relasi `public.stock_movements`
+
 - **Kolom Tabel**:
   - `id`: `uuid PRIMARY KEY DEFAULT gen_random_uuid()`
   - `product_id`: `uuid NOT NULL REFERENCES public.products(id) ON DELETE RESTRICT`
@@ -40,7 +42,7 @@ Sebelum memulai implementasi, telah dilakukan pemeriksaan *read-only* mendalam t
 - **Constraint Integritas Delta**: `movements_delta_integrity` menjamin bahwa untuk tipe `IN`, `stock_after = stock_before + quantity`; dan untuk tipe `OUT`, `stock_after = stock_before - quantity`.
 - **Temuan Kunci PostgREST Relationship Cache**:
   - PostgREST mengenali relasi langsung `stock_movements.product_id` ke `products(id)`, sehingga kueri `.select('*, products(...)')` berjalan mulus.
-  - Namun relasi `user_id` mengarah ke `auth.users(id)` (bukan langsung `public.profiles(id)`). Upaya *embed* langsung `.select('*, profiles(*)')` ditolak oleh PostgREST schema cache.
+  - Namun relasi `user_id` mengarah ke `auth.users(id)` (bukan langsung `public.profiles(id)`). Upaya _embed_ langsung `.select('*, profiles(*)')` ditolak oleh PostgREST schema cache.
   - Diselesaikan secara arsitektural pada lapisan service (`stock-movement-service.ts`) dengan memetakan profil pemanggil dan fallback atribut peran tanpa memodifikasi skema SQL basis data.
 
 ---
@@ -48,26 +50,28 @@ Sebelum memulai implementasi, telah dilakukan pemeriksaan *read-only* mendalam t
 ## 2. Berkas yang Dibuat dan Diubah
 
 ### A. Berkas Baru (Created)
-| Berkas | Lapisan Arsitektur | Tanggung Jawab |
-| :--- | :--- | :--- |
-| `src/services/stock-movement-service.ts` | Service Layer | Kueri data riwayat mutasi terpaginasi, validasi rentang tanggal ISO (`parseDateRangeBoundaries`), filter tipe mutasi, filter pencarian multi-atribut produk (SKU/Nama), dan atribusi pengguna. |
-| `src/app/actions/stock-actions.ts` | Server Actions | Server Action `recordStockMovementAction` dengan validasi otorisasi server-boundary, skema Zod `stockMutationInputSchema`, pre-flight availability check, pemanggilan RPC `record_stock_movement`, dan `revalidatePath`. |
-| `src/features/movements/stock-mutation-dialog.tsx` | Presentation (Feature) | Form modal interaktif untuk Admin Gudang dengan selektor produk, kartu pemilihan tipe IN/OUT, input kuantitas bilangan bulat positif, live feedback estimasi stok akhir, peringatan overdraft, dan textarea catatan. |
-| `src/features/movements/movement-table.tsx` | Presentation (Feature) | Komponen tabel riwayat responsif untuk desktop dan tampilan card mobile, dilengkapi bilah filter (SKU/nama, tipe mutasi, tanggal mulai, tanggal akhir), tombol reset filter, pagination, dan trigger mutasi stok. |
-| `src/app/[locale]/(dashboard)/movements/page.tsx` | App Router (RSC) | Server Component halaman riwayat pergerakan stok dengan guard `requireAuth`, pengambilan data terurut dari Supabase, dan header informatif. |
-| `src/app/[locale]/(dashboard)/movements/loading.tsx` | App Router | Loading skeleton UI teranimasi saat halaman riwayat mutasi dimuat. |
-| `src/app/[locale]/(dashboard)/movements/error.tsx` | App Router | Error boundary dengan tombol coba lagi saat terjadi kegagalan pengambilan data pergerakan stok. |
-| `tests/unit/stock-mutation-action.test.ts` | Testing Layer | Pengujian unit Server Action `recordStockMovementAction` (7 pengujian): penolakan anonim, penolakan peran `owner`, validasi Zod, penolakan produk hilang, penolakan overdraft, eksekusi RPC, dan penanganan kegagalan terstruktur. |
-| `tests/unit/stock-movement-service.test.ts` | Testing Layer | Pengujian unit service riwayat stok (7 pengujian): batas tanggal ISO, validasi tanggal tidak logis, pemfilteran tipe mutasi, pemfilteran SKU/nama, dan paginasi. |
+
+| Berkas                                               | Lapisan Arsitektur     | Tanggung Jawab                                                                                                                                                                                                                     |
+| :--------------------------------------------------- | :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/services/stock-movement-service.ts`             | Service Layer          | Kueri data riwayat mutasi terpaginasi, validasi rentang tanggal ISO (`parseDateRangeBoundaries`), filter tipe mutasi, filter pencarian multi-atribut produk (SKU/Nama), dan atribusi pengguna.                                     |
+| `src/app/actions/stock-actions.ts`                   | Server Actions         | Server Action `recordStockMovementAction` dengan validasi otorisasi server-boundary, skema Zod `stockMutationInputSchema`, pre-flight availability check, pemanggilan RPC `record_stock_movement`, dan `revalidatePath`.           |
+| `src/features/movements/stock-mutation-dialog.tsx`   | Presentation (Feature) | Form modal interaktif untuk Admin Gudang dengan selektor produk, kartu pemilihan tipe IN/OUT, input kuantitas bilangan bulat positif, live feedback estimasi stok akhir, peringatan overdraft, dan textarea catatan.               |
+| `src/features/movements/movement-table.tsx`          | Presentation (Feature) | Komponen tabel riwayat responsif untuk desktop dan tampilan card mobile, dilengkapi bilah filter (SKU/nama, tipe mutasi, tanggal mulai, tanggal akhir), tombol reset filter, pagination, dan trigger mutasi stok.                  |
+| `src/app/[locale]/(dashboard)/movements/page.tsx`    | App Router (RSC)       | Server Component halaman riwayat pergerakan stok dengan guard `requireAuth`, pengambilan data terurut dari Supabase, dan header informatif.                                                                                        |
+| `src/app/[locale]/(dashboard)/movements/loading.tsx` | App Router             | Loading skeleton UI teranimasi saat halaman riwayat mutasi dimuat.                                                                                                                                                                 |
+| `src/app/[locale]/(dashboard)/movements/error.tsx`   | App Router             | Error boundary dengan tombol coba lagi saat terjadi kegagalan pengambilan data pergerakan stok.                                                                                                                                    |
+| `tests/unit/stock-mutation-action.test.ts`           | Testing Layer          | Pengujian unit Server Action `recordStockMovementAction` (7 pengujian): penolakan anonim, penolakan peran `owner`, validasi Zod, penolakan produk hilang, penolakan overdraft, eksekusi RPC, dan penanganan kegagalan terstruktur. |
+| `tests/unit/stock-movement-service.test.ts`          | Testing Layer          | Pengujian unit service riwayat stok (7 pengujian): batas tanggal ISO, validasi tanggal tidak logis, pemfilteran tipe mutasi, pemfilteran SKU/nama, dan paginasi.                                                                   |
 
 ### B. Berkas yang Diubah (Modified)
-| Berkas | Lapisan | Deskripsi Perubahan |
-| :--- | :--- | :--- |
-| `src/types/inventory.ts` | Domain Types | Menambahkan antarmuka `StockMovementWithDetails`, `StockMovementFilters`, dan `StockMovementListResult`. |
-| `src/proxy.ts` | Edge Middleware | Memperluas deteksi rute terproteksi (`isProtectedAppRoute`) mencakup `/movements` dan `/(id\|en)/movements`. |
-| `src/features/dashboard/dashboard-nav.tsx` | Presentation (Feature) | Menambahkan tab navigasi "Mutasi Stok" (`links.movements`) dengan ikon `ArrowLeftRight` dan deteksi status aktif. |
-| `messages/id/dashboard.json` & `messages/en/dashboard.json` | Internationalization | Menambahkan namespace `movements` dan `mutationDialog` secara simetris dalam bahasa Indonesia dan Inggris. |
-| `messages/id/validation.json` & `messages/en/validation.json` | Internationalization | Menambahkan kunci terjemahan validasi error mutasi (`invalidMovementType`, `quantityMustBeInteger`, `quantityMustBePositive`, `noteMinLength`, `noteMaxLength`). |
+
+| Berkas                                                        | Lapisan                | Deskripsi Perubahan                                                                                                                                              |
+| :------------------------------------------------------------ | :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/types/inventory.ts`                                      | Domain Types           | Menambahkan antarmuka `StockMovementWithDetails`, `StockMovementFilters`, dan `StockMovementListResult`.                                                         |
+| `src/proxy.ts`                                                | Edge Middleware        | Memperluas deteksi rute terproteksi (`isProtectedAppRoute`) mencakup `/movements` dan `/(id\|en)/movements`.                                                     |
+| `src/features/dashboard/dashboard-nav.tsx`                    | Presentation (Feature) | Menambahkan tab navigasi "Mutasi Stok" (`links.movements`) dengan ikon `ArrowLeftRight` dan deteksi status aktif.                                                |
+| `messages/id/dashboard.json` & `messages/en/dashboard.json`   | Internationalization   | Menambahkan namespace `movements` dan `mutationDialog` secara simetris dalam bahasa Indonesia dan Inggris.                                                       |
+| `messages/id/validation.json` & `messages/en/validation.json` | Internationalization   | Menambahkan kunci terjemahan validasi error mutasi (`invalidMovementType`, `quantityMustBeInteger`, `quantityMustBePositive`, `noteMinLength`, `noteMaxLength`). |
 
 ---
 
@@ -119,17 +123,17 @@ Sebelum memulai implementasi, telah dilakukan pemeriksaan *read-only* mendalam t
 
 ## 4. Validasi Input & Pemeriksaan Hak Akses (RBAC)
 
-| Skenario Pengujian / Kondisi | Lapisan Pemeriksaan | Hasil & Perilaku Sistem |
-| :--- | :--- | :--- |
-| **Pengguna Tanpa Sesi (Anonim)** | Server Boundary (`requireAuth`) & Middleware | Akses ditolak (`UNAUTHORIZED`), dialihkan ke `/login`. |
-| **Pengguna dengan Role `owner`** | Server Action (`stock-actions.ts`) | Aksi ditolak dengan error `FORBIDDEN`. Tombol form disembunyikan di UI dengan label Mode Audit. |
-| **Kuantitas = 0** | Zod Schema (`.positive()`) | Ditolak dengan pesan `quantityMustBePositive`. |
-| **Kuantitas Negatif (-5)** | Zod Schema (`.positive()`) | Ditolak dengan pesan `quantityMustBePositive`. |
-| **Kuantitas Desimal (2.5)** | Zod Schema (`.int()`) | Ditolak dengan pesan `quantityMustBeInteger`. |
-| **Tipe Mutasi Tidak Dikenal ('TRANSFER')** | Zod Schema (`.enum(['IN', 'OUT'])`) | Ditolak dengan pesan `invalidMovementType`. |
-| **Catatan Kurang dari 3 Karakter** | Zod Schema (`.min(3)`) | Ditolak dengan pesan `noteMinLength`. |
-| **Stok OUT Melebihi Kuantitas Tersedia** | Pre-flight Guard & Database RPC Lock | Ditolak seketika dengan kode `INSUFFICIENT_STOCK`. Nilai stok di database sama sekali tidak berubah. |
-| **Pemanggilan Langsung RPC oleh Pemilik Usaha** | Internal PostgreSQL RPC Guard | Mengembalikan status `FORBIDDEN` dari dalam fungsi SQL tanpa mengubah data. |
+| Skenario Pengujian / Kondisi                    | Lapisan Pemeriksaan                          | Hasil & Perilaku Sistem                                                                              |
+| :---------------------------------------------- | :------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
+| **Pengguna Tanpa Sesi (Anonim)**                | Server Boundary (`requireAuth`) & Middleware | Akses ditolak (`UNAUTHORIZED`), dialihkan ke `/login`.                                               |
+| **Pengguna dengan Role `owner`**                | Server Action (`stock-actions.ts`)           | Aksi ditolak dengan error `FORBIDDEN`. Tombol form disembunyikan di UI dengan label Mode Audit.      |
+| **Kuantitas = 0**                               | Zod Schema (`.positive()`)                   | Ditolak dengan pesan `quantityMustBePositive`.                                                       |
+| **Kuantitas Negatif (-5)**                      | Zod Schema (`.positive()`)                   | Ditolak dengan pesan `quantityMustBePositive`.                                                       |
+| **Kuantitas Desimal (2.5)**                     | Zod Schema (`.int()`)                        | Ditolak dengan pesan `quantityMustBeInteger`.                                                        |
+| **Tipe Mutasi Tidak Dikenal ('TRANSFER')**      | Zod Schema (`.enum(['IN', 'OUT'])`)          | Ditolak dengan pesan `invalidMovementType`.                                                          |
+| **Catatan Kurang dari 3 Karakter**              | Zod Schema (`.min(3)`)                       | Ditolak dengan pesan `noteMinLength`.                                                                |
+| **Stok OUT Melebihi Kuantitas Tersedia**        | Pre-flight Guard & Database RPC Lock         | Ditolak seketika dengan kode `INSUFFICIENT_STOCK`. Nilai stok di database sama sekali tidak berubah. |
+| **Pemanggilan Langsung RPC oleh Pemilik Usaha** | Internal PostgreSQL RPC Guard                | Mengembalikan status `FORBIDDEN` dari dalam fungsi SQL tanpa mengubah data.                          |
 
 ---
 
@@ -138,7 +142,7 @@ Sebelum memulai implementasi, telah dilakukan pemeriksaan *read-only* mendalam t
 1. **Rute Terproteksi**: Tersedia secara dwibahasa di `/[locale]/movements` (misal `/id/movements` dan `/en/movements`), dilindungi oleh edge proxy middleware `src/proxy.ts`.
 2. **Kolom Data Ditampilkan**:
    - **Waktu Transaksi**: Diformat terlokalisasi sesuai bahasa aktif (contoh: `14 Okt 2026, 02:15`).
-   - **SKU Produk**: Kode SKU monospace dengan sorotan warna *brand primary*.
+   - **SKU Produk**: Kode SKU monospace dengan sorotan warna _brand primary_.
    - **Nama Produk**: Nama lengkap produk beserta badge kategori.
    - **Tipe Mutasi**: Badge semantik hijau (`IN`) atau merah/rose (`OUT`) dengan ikon arah panah.
    - **Kuantitas**: Nilai mutasi bertanda (`+10` atau `-3` unit).
@@ -157,7 +161,8 @@ Sebelum memulai implementasi, telah dilakukan pemeriksaan *read-only* mendalam t
 
 ## 6. Bukti Tidak Ada Mutasi Stok Langsung Melalui Aplikasi
 
-Sistem menerapkan prinsip *defense in depth* berlapis untuk menjamin imutabilitas mutasi langsung:
+Sistem menerapkan prinsip _defense in depth_ berlapis untuk menjamin imutabilitas mutasi langsung:
+
 1. **Tidak Ada Kolom `stock` di Form Master Produk**:
    - `productCatalogInputSchema` dan `productCatalogUpdateSchema` sama sekali tidak memuat properti `stock`.
 2. **Tidak Ada `UPDATE products SET stock` dari Lapisan Aplikasi**:
@@ -175,26 +180,26 @@ Sistem menerapkan prinsip *defense in depth* berlapis untuk menjamin imutabilita
 
 Semua perintah pemeriksaan otomatis telah dijalankan dan lulus 100%:
 
-| Kategori Pengujian | Perintah Eksekusi | Target / Cakupan | Hasil & Status |
-| :--- | :--- | :--- | :---: |
-| **Unit Testing** | `npm run test:unit` | 14 berkas uji unit (171 tes) | ✅ **171 / 171 Lulus (100%)** |
-| **Live Integration Tests** | `npm run test:live` | 2 berkas uji live Supabase (25 tes) | ✅ **25 / 25 Lulus (100%)** |
-| **TypeScript Strictness** | `npx tsc --noEmit` | Seluruh codebase TypeScript (Strict Mode) | ✅ **0 Error** |
-| **ESLint Standards** | `npm run lint` | Aturan Next.js 16 & React Hooks | ✅ **0 Error, 0 Warning** |
-| **Prettier Formatting** | `npx prettier --check` | Seluruh berkas `src/`, `tests/`, `messages/` | ✅ **Format Bersih & Rapi** |
-| **Production Build** | `npm run build` | Turbopack Production Build (App Router) | ✅ **Compiled Cleanly (18 Routes)** |
+| Kategori Pengujian         | Perintah Eksekusi      | Target / Cakupan                             |           Hasil & Status            |
+| :------------------------- | :--------------------- | :------------------------------------------- | :---------------------------------: |
+| **Unit Testing**           | `npm run test:unit`    | 14 berkas uji unit (171 tes)                 |    ✅ **171 / 171 Lulus (100%)**    |
+| **Live Integration Tests** | `npm run test:live`    | 2 berkas uji live Supabase (25 tes)          |     ✅ **25 / 25 Lulus (100%)**     |
+| **TypeScript Strictness**  | `npx tsc --noEmit`     | Seluruh codebase TypeScript (Strict Mode)    |           ✅ **0 Error**            |
+| **ESLint Standards**       | `npm run lint`         | Aturan Next.js 16 & React Hooks              |      ✅ **0 Error, 0 Warning**      |
+| **Prettier Formatting**    | `npx prettier --check` | Seluruh berkas `src/`, `tests/`, `messages/` |     ✅ **Format Bersih & Rapi**     |
+| **Production Build**       | `npm run build`        | Turbopack Production Build (App Router)      | ✅ **Compiled Cleanly (18 Routes)** |
 
 ---
 
-## 8. Catatan Pengujian Konkurensi (*Concurrency*)
+## 8. Catatan Pengujian Konkurensi (_Concurrency_)
 
 - Desain RPC `public.record_stock_movement` menggunakan klausa `SELECT stock FROM public.products WHERE id = p_product_id FOR UPDATE`.
-- Mekanisme ini menempatkan kunci baris eksklusif (*row-level pessimistic write lock*) di PostgreSQL untuk mencegah *lost updates* dan *race condition* pada saat beberapa operator gudang memasukkan transaksi untuk produk yang sama secara simultan.
+- Mekanisme ini menempatkan kunci baris eksklusif (_row-level pessimistic write lock_) di PostgreSQL untuk mencegah _lost updates_ dan _race condition_ pada saat beberapa operator gudang memasukkan transaksi untuk produk yang sama secara simultan.
 - Pengujian simulasi konkurensi di `tests/supabase/rpc-logic-simulation.test.ts` telah memverifikasi bahwa skenario mutasi simultan memproses antrean secara sekuensial dan menolak permintaan jika stok tersisa tidak lagi mencukupi.
 
 ---
 
-## 9. Masalah yang Belum Selesai (*Open Issues*)
+## 9. Masalah yang Belum Selesai (_Open Issues_)
 
 - **Tidak Ada Masalah Terbuka**: Seluruh fungsionalitas yang ditargetkan pada Phase 8 telah selesai, terintegrasi, dan teruji tanpa regresi pada fungsionalitas fase-fase sebelumnya.
 
@@ -211,4 +216,4 @@ Semua perintah pemeriksaan otomatis telah dijalankan dan lulus 100%:
 
 ---
 
-*Laporan ini menandai penyelesaian resmi Phase 8. Sistem berada dalam kondisi stabil dan siap untuk peninjauan pengguna.*
+_Laporan ini menandai penyelesaian resmi Phase 8. Sistem berada dalam kondisi stabil dan siap untuk peninjauan pengguna._

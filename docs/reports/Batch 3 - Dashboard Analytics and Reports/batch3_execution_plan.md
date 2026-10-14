@@ -1,13 +1,15 @@
 # INVENTRA — BATCH 3: IMPLEMENTATION & MODULARIZATION PLAN
+
 **Dashboard Analytics, Advanced Reports & Code Modularization Standards**
 
 ---
 
 ## 1. Executive Summary & Objectives
 
-Batch 3 elevates Inventra from an inventory transaction recorder into an analytical management system for warehouse operations (`administrator`, `staff_gudang`, `auditor`). 
+Batch 3 elevates Inventra from an inventory transaction recorder into an analytical management system for warehouse operations (`administrator`, `staff_gudang`, `auditor`).
 
 ### Core Objectives
+
 1. **Analytics Dashboard (`/dashboard`)**: Left accent-border summary cards, authentic movement volume mini-charts, period-filtered IN/OUT flow charts, and clear date/timezone boundaries without fictitious metrics.
 2. **Advanced Reports (`/reports` & `/reports/products`)**: High-level warehouse movement summary and interactive Product Movement Directory with TanStack Table.
 3. **Product Detail Traceability (`/reports/products/[id]`)**: Deep-dive audit page showing product identity, stock health, period mutation summary, velocity, and full movement ledger.
@@ -19,6 +21,7 @@ Batch 3 elevates Inventra from an inventory transaction recorder into an analyti
 ## 2. Pre-Implementation Audit Findings
 
 ### 2.1 Database Contracts & Ledger Limitations
+
 - **`public.stock_movements`**: Contains `(id, product_id, user_id, type, quantity, stock_before, stock_after, note, created_at)`.
   - `product_id` references `public.products(id)`.
   - `user_id` references `auth.users(id)`. There is **NO direct foreign key** to `public.profiles`.
@@ -31,9 +34,10 @@ Batch 3 elevates Inventra from an inventory transaction recorder into an analyti
 - **Ledger Volume**: Currently contains 1 authentic production row. Charting and analytics must handle sparse data, zero-state periods, and single-data-point timelines with absolute visual honesty (no fake interpolation or mock sparklines).
 
 ### 2.2 Dependencies & Charting Strategy
+
 - **Installed**: `@tanstack/react-table` (v8.21.2), `lucide-react`, `next-intl` (v4.14.9), `next-themes` (v0.4.6), `radix-ui`, `zustand`, `tailwindcss` (v4).
 - **Charting Library**: No external charting library (Recharts, Chart.js) is installed.
-- **Audit Ruling & Decision**: Adhering strictly to *"Jangan memasang dependensi tanpa persetujuan"*, we will build a **lightweight, pure SVG + Tailwind responsive charting component**:
+- **Audit Ruling & Decision**: Adhering strictly to _"Jangan memasang dependensi tanpa persetujuan"_, we will build a **lightweight, pure SVG + Tailwind responsive charting component**:
   - Zero bundle weight increase.
   - Native dark/light mode responsiveness using `--chart-1` through `--chart-5` OKLCH tokens already in `globals.css`.
   - Accessible SVG markup (`role="img"`, `aria-label`, `<title>`, and focusable interactive data points).
@@ -41,26 +45,27 @@ Batch 3 elevates Inventra from an inventory transaction recorder into an analyti
   - 100% responsive (`viewBox` auto-scaling, fluid layout).
 
 ### 2.3 File Length Audit (> 250 Lines in `src/`)
+
 Audit revealed 16 files currently exceeding 250 lines:
 
-| File | Lines | Scope in Batch 3 | Action / Exemption Rationale |
-| :--- | :---: | :---: | :--- |
-| `src/features/transactions/transaction-cart-view.tsx` | 655 | Batch 2 Trans | Exempted in Batch 3 (stable, tested in Batch 2). Refactoring scheduled for later batch to prevent regressions. |
-| `src/features/settings/settings-view.tsx` | 547 | Settings | Exempted in Batch 3 (separate feature domain). |
-| `src/features/movements/movement-table.tsx` | 423 | **Reports / Ledger** | **Refactor in Batch 3**: Split into `movement-filters.tsx`, `movement-columns.tsx`, and `movement-pagination.tsx`. |
-| `src/features/catalog/catalog-table.tsx` | 379 | Catalog | Exempted in Batch 3 (core catalog module). |
-| `src/features/categories/category-form-dialog.tsx` | 352 | Categories | Exempted in Batch 3. |
-| `src/features/catalog/product-form-dialog.tsx` | 338 | Catalog | Exempted in Batch 3. |
-| `src/features/movements/stock-mutation-dialog.tsx` | 316 | Movements | Retain as modal dialog; extracted pure helpers. |
-| `src/app/actions/category-actions.ts` | 310 | Server Actions | Server boundary file containing multi-step validations. |
-| `src/features/categories/category-table.tsx` | 304 | Categories | Exempted in Batch 3. |
-| `src/components/shared/app-sidebar.tsx` | 299 | **Shared Nav** | **Refactor in Batch 3**: Extract `sidebar-nav-items.ts` to reduce line count under 200 lines. |
-| `src/app/actions/stock-actions.ts` | 298 | Server Actions | Server mutation actions with pre-flight checks and audit logging. |
-| `src/features/auth/login-form.tsx` | 294 | Auth | Stable auth form with demo user credentials. |
-| `src/types/inventory.ts` | 284 | Types | Centralized domain type definitions (declarative). |
-| `src/components/shared/app-header.tsx` | 281 | Shared Header | Responsive header with role badges and profile menu. |
-| `src/components/shared/image-dropzone.tsx` | 281 | Upload | Cloudinary / local image uploader with canvas resize. |
-| `src/app/actions/product-actions.ts` | 252 | Server Actions | Product CRUD server actions. |
+| File                                                  | Lines |   Scope in Batch 3   | Action / Exemption Rationale                                                                                       |
+| :---------------------------------------------------- | :---: | :------------------: | :----------------------------------------------------------------------------------------------------------------- |
+| `src/features/transactions/transaction-cart-view.tsx` |  655  |    Batch 2 Trans     | Exempted in Batch 3 (stable, tested in Batch 2). Refactoring scheduled for later batch to prevent regressions.     |
+| `src/features/settings/settings-view.tsx`             |  547  |       Settings       | Exempted in Batch 3 (separate feature domain).                                                                     |
+| `src/features/movements/movement-table.tsx`           |  423  | **Reports / Ledger** | **Refactor in Batch 3**: Split into `movement-filters.tsx`, `movement-columns.tsx`, and `movement-pagination.tsx`. |
+| `src/features/catalog/catalog-table.tsx`              |  379  |       Catalog        | Exempted in Batch 3 (core catalog module).                                                                         |
+| `src/features/categories/category-form-dialog.tsx`    |  352  |      Categories      | Exempted in Batch 3.                                                                                               |
+| `src/features/catalog/product-form-dialog.tsx`        |  338  |       Catalog        | Exempted in Batch 3.                                                                                               |
+| `src/features/movements/stock-mutation-dialog.tsx`    |  316  |      Movements       | Retain as modal dialog; extracted pure helpers.                                                                    |
+| `src/app/actions/category-actions.ts`                 |  310  |    Server Actions    | Server boundary file containing multi-step validations.                                                            |
+| `src/features/categories/category-table.tsx`          |  304  |      Categories      | Exempted in Batch 3.                                                                                               |
+| `src/components/shared/app-sidebar.tsx`               |  299  |    **Shared Nav**    | **Refactor in Batch 3**: Extract `sidebar-nav-items.ts` to reduce line count under 200 lines.                      |
+| `src/app/actions/stock-actions.ts`                    |  298  |    Server Actions    | Server mutation actions with pre-flight checks and audit logging.                                                  |
+| `src/features/auth/login-form.tsx`                    |  294  |         Auth         | Stable auth form with demo user credentials.                                                                       |
+| `src/types/inventory.ts`                              |  284  |        Types         | Centralized domain type definitions (declarative).                                                                 |
+| `src/components/shared/app-header.tsx`                |  281  |    Shared Header     | Responsive header with role badges and profile menu.                                                               |
+| `src/components/shared/image-dropzone.tsx`            |  281  |        Upload        | Cloudinary / local image uploader with canvas resize.                                                              |
+| `src/app/actions/product-actions.ts`                  |  252  |    Server Actions    | Product CRUD server actions.                                                                                       |
 
 ---
 
@@ -89,6 +94,7 @@ Audit revealed 16 files currently exceeding 250 lines:
 ```
 
 ### 3.1 Date Boundaries & Timezone Policy
+
 - **Target Timezone**: `Asia/Jakarta` (WIB, UTC+7).
 - **Date Boundary Calculation**:
   - `today`: `startOfDay` to `endOfDay` of current local date.
@@ -100,6 +106,7 @@ Audit revealed 16 files currently exceeding 250 lines:
 - **Pure Utility**: `src/lib/date-boundaries.ts` with comprehensive unit tests for leap years, month boundaries, and UTC conversion.
 
 ### 3.2 Metric Semantics
+
 - **Catalog Snapshot (Current)**:
   - `Total SKUs`: Distinct active products in catalog.
   - `Total Physical Stock`: Sum of current stock quantities.
@@ -117,7 +124,9 @@ Audit revealed 16 files currently exceeding 250 lines:
   - Low Stock: Destructive (Amber/Red) `border-l-4 border-l-destructive`
 
 ### 3.3 Zero-Dependency SVG Charting Engine
+
 Located in `src/components/shared/charts/`:
+
 1. **`movement-bar-chart.tsx`**: Grouped bar visualization showing IN (Teal) vs OUT (Coral/Amber) per time bucket (daily for week/month, monthly for year/all).
 2. **`mini-sparkline.tsx`**: Compact inline SVG trendline using authentic ledger points only (hidden or showing clean flatline if 0 data).
 3. **Features**:
@@ -131,18 +140,21 @@ Located in `src/components/shared/charts/`:
 ## 4. Route & Component Architecture
 
 ### Route 1: `/dashboard` (Analytics Enhanced)
+
 - Add period selector filter bar: `[Hari Ini | 7 Hari | 30 Hari | Tahun Ini | Khusus | Semua]`.
 - Update KPI Stat Cards with left accent borders and authentic mini-charts.
 - Add Stock Movement Flow Chart (IN vs OUT) for the selected period.
 - Maintain existing Low Stock Watchlist and Recent Activity feed.
 
 ### Route 2: `/reports` (Warehouse Overview & Analytics Hub)
+
 - Remove `Batch 3 Feature Roadmap` placeholder.
 - KPI Overview: Period IN/OUT flow, total transactions, high-turnover categories.
 - Movement Flow Chart with period filtering.
 - Quick links to Product Movement Analysis (`/reports/products`) and Full Ledger History (`/movements`).
 
 ### Route 3: `/reports/products` (Product Movement Directory)
+
 - Remove placeholder card.
 - Search and filter bar (SKU/name, category, stock health: Normal vs Low Stock).
 - TanStack Table (`ProductReportTable`):
@@ -154,6 +166,7 @@ Located in `src/components/shared/charts/`:
 - Full pagination and column sorting.
 
 ### Route 4: `/reports/products/[id]` (Product Detail Movement Traceability)
+
 - Server Component with dynamic route validation:
   - Product not found -> 404 / friendly error page.
 - Header: Product identity, image thumbnail, category, SKU, unit price, current stock badge.
@@ -173,6 +186,7 @@ Located in `src/components/shared/charts/`:
 ## 5. Code Modularization Standards
 
 ### Permanent Rules to be written into `AGENTS.md` and `docs/ARCHITECTURE.md`:
+
 1. **Target File Length**: Keep files under 250 lines.
 2. **Review Threshold**: Any file reaching 250 lines must be reviewed for separation of concerns.
 3. **Hard Ceiling**: Avoid files exceeding 300 lines unless a formal architectural exemption applies.
@@ -203,17 +217,20 @@ graph TD
 ```
 
 ### Phase 3.1: Pure Domain & Analytics Utilities
+
 - Create `src/lib/date-boundaries.ts` (timezone-aware boundary calculation).
 - Create `src/services/analytics-domain.ts` (pure aggregation, bucket sorting, zero-fill).
 - Add unit tests: `tests/unit/date-boundaries.test.ts`, `tests/unit/analytics-domain.test.ts`.
 
 ### Phase 3.2: Zero-Dependency SVG Chart Engine
+
 - Create `src/components/shared/charts/chart-types.ts`.
 - Create `src/components/shared/charts/movement-flow-chart.tsx` (< 220 lines).
 - Create `src/components/shared/charts/mini-sparkline.tsx` (< 120 lines).
 - Create `src/components/shared/charts/chart-tooltip.tsx` (< 90 lines).
 
 ### Phase 3.3: Modularization of Existing Files
+
 - Refactor `src/features/movements/movement-table.tsx`:
   - Extract `src/features/movements/movement-filters.tsx`.
   - Extract `src/features/movements/movement-columns.tsx`.
@@ -224,11 +241,13 @@ graph TD
   - Reduce `app-sidebar.tsx` to < 200 lines.
 
 ### Phase 3.4: Enhanced Dashboard Analytics
+
 - Update `src/features/dashboard/kpi-stat-card.tsx` to support left accent borders (`border-l-4`).
 - Add period selector and movement flow chart to `/dashboard`.
 - Ensure authoritative current valuation is separate from period movement metrics.
 
 ### Phase 3.5: Reports Hub & Product Reports Page
+
 - Implement `/reports/page.tsx` with full metrics, period filters, and navigation links.
 - Implement `/reports/products/page.tsx` with TanStack Table, search, categories, and stock status.
 - Create modular components:
@@ -236,6 +255,7 @@ graph TD
   - `src/features/reports/product-report-columns.tsx` (< 150 lines)
 
 ### Phase 3.6: Product Detail Movement Traceability
+
 - Implement `/reports/products/[id]/page.tsx` dynamic route.
 - Create modular detail components:
   - `src/features/reports/product-detail-header.tsx` (< 150 lines)
@@ -243,10 +263,12 @@ graph TD
   - `src/features/reports/product-detail-history.tsx` (< 200 lines)
 
 ### Phase 3.7: Internationalization Parity
+
 - Add comprehensive translation keys in `messages/id/dashboard.json` and `messages/en/dashboard.json` under `analytics` and `reports`.
 - Verify 1:1 key parity using `tests/i18n/translations.test.ts`.
 
 ### Phase 3.8: Verification, Quality Gates & Completion Report
+
 - Run `npm test` (all 266+ tests passing).
 - Run `npm run lint` (0 errors).
 - Run `npx tsc --noEmit` (strict TypeScript check).

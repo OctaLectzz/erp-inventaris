@@ -19,13 +19,13 @@ Inventra follows a **Professional Minimal** design philosophy appropriate for a 
 
 ## 2. Brand Identity
 
-| Token | Value | Usage |
-| :--- | :--- | :--- |
-| **Primary Navy** | `#0F2D4A` | Navigation, headings, primary actions, brand identity |
-| **Accent Teal** | `#14B8A6` | Call-to-action buttons, links, active states, success indicators |
-| **Pale Surface** | `#E6F4F2` | Subtle background tints, card highlights, hover states |
-| **Main Text** | `#1F2937` | Body text, labels, descriptions |
-| **Font** | Inter | All UI text (headings, body, labels, data) |
+| Token            | Value     | Usage                                                            |
+| :--------------- | :-------- | :--------------------------------------------------------------- |
+| **Primary Navy** | `#0F2D4A` | Navigation, headings, primary actions, brand identity            |
+| **Accent Teal**  | `#14B8A6` | Call-to-action buttons, links, active states, success indicators |
+| **Pale Surface** | `#E6F4F2` | Subtle background tints, card highlights, hover states           |
+| **Main Text**    | `#1F2937` | Body text, labels, descriptions                                  |
+| **Font**         | Inter     | All UI text (headings, body, labels, data)                       |
 
 ---
 
@@ -62,27 +62,27 @@ The current `globals.css` uses shadcn's `mist` base color with oklch values. Dur
 
 ### 3.2 Semantic Color Usage
 
-| Semantic Role | Light Mode | Dark Mode | Usage |
-| :--- | :--- | :--- | :--- |
-| `--primary` | Navy `#0F2D4A` | Lightened navy | Primary buttons, navigation, headings |
-| `--primary-foreground` | White | Dark text | Text on primary backgrounds |
-| `--accent` | Teal `#14B8A6` | Teal (adjusted) | CTAs, links, active indicators |
-| `--background` | White | Dark navy | Page background |
-| `--foreground` | `#1F2937` | Light gray | Body text |
-| `--muted` | `#E6F4F2` | Dark surface | Subtle backgrounds, card tints |
-| `--destructive` | Red | Light red | Error states, delete actions |
-| `--border` | Light gray | Dark border | Borders, dividers |
-| `--card` | White | Dark card | Card backgrounds |
+| Semantic Role          | Light Mode     | Dark Mode       | Usage                                 |
+| :--------------------- | :------------- | :-------------- | :------------------------------------ |
+| `--primary`            | Navy `#0F2D4A` | Lightened navy  | Primary buttons, navigation, headings |
+| `--primary-foreground` | White          | Dark text       | Text on primary backgrounds           |
+| `--accent`             | Teal `#14B8A6` | Teal (adjusted) | CTAs, links, active indicators        |
+| `--background`         | White          | Dark navy       | Page background                       |
+| `--foreground`         | `#1F2937`      | Light gray      | Body text                             |
+| `--muted`              | `#E6F4F2`      | Dark surface    | Subtle backgrounds, card tints        |
+| `--destructive`        | Red            | Light red       | Error states, delete actions          |
+| `--border`             | Light gray     | Dark border     | Borders, dividers                     |
+| `--card`               | White          | Dark card       | Card backgrounds                      |
 
 ### 3.3 Stock Status Colors
 
-| Status | Color | Usage |
-| :--- | :--- | :--- |
-| **Low Stock** (< 5) | `--destructive` (red) | Badge, row highlight, alert |
-| **Normal Stock** (5–49) | `--foreground` (default) | Standard display |
-| **High Stock** (50+) | `--accent` (teal) | Optional positive indicator |
-| **Stock IN** | Teal/green | Movement type badge |
-| **Stock OUT** | Amber/orange | Movement type badge |
+| Status                  | Color                    | Usage                       |
+| :---------------------- | :----------------------- | :-------------------------- |
+| **Low Stock** (< 5)     | `--destructive` (red)    | Badge, row highlight, alert |
+| **Normal Stock** (5–49) | `--foreground` (default) | Standard display            |
+| **High Stock** (50+)    | `--accent` (teal)        | Optional positive indicator |
+| **Stock IN**            | Teal/green               | Movement type badge         |
+| **Stock OUT**           | Amber/orange             | Movement type badge         |
 
 ### 3.4 Color Rules
 
@@ -97,25 +97,25 @@ The current `globals.css` uses shadcn's `mist` base color with oklch values. Dur
 
 ### 4.1 Font Stack
 
-| Font | Variable | Usage |
-| :--- | :--- | :--- |
-| **Inter** | `--font-sans` | All UI text (primary font) |
+| Font           | Variable            | Usage                                       |
+| :------------- | :------------------ | :------------------------------------------ |
+| **Inter**      | `--font-sans`       | All UI text (primary font)                  |
 | **Geist Mono** | `--font-geist-mono` | Code snippets, SKU display, monospaced data |
 
 Inter is already configured in `src/app/layout.tsx` via `next/font/google`.
 
 ### 4.2 Type Scale
 
-| Element | Tailwind Class | Weight | Usage |
-| :--- | :--- | :--- | :--- |
-| Page Title | `text-2xl` / `text-3xl` | `font-bold` | Page headings (h1) |
-| Section Title | `text-xl` | `font-semibold` | Section headings (h2) |
-| Card Title | `text-lg` | `font-semibold` | Card/dialog headings (h3) |
-| Body | `text-sm` / `text-base` | `font-normal` | Paragraphs, descriptions |
-| Label | `text-sm` | `font-medium` | Form labels, table headers |
-| Caption | `text-xs` | `font-normal` | Timestamps, secondary info |
-| SKU / Code | `text-sm font-mono` | `font-medium` | SKU values, product codes |
-| Metric Value | `text-3xl` / `text-4xl` | `font-bold` | Dashboard summary numbers |
+| Element       | Tailwind Class          | Weight          | Usage                      |
+| :------------ | :---------------------- | :-------------- | :------------------------- |
+| Page Title    | `text-2xl` / `text-3xl` | `font-bold`     | Page headings (h1)         |
+| Section Title | `text-xl`               | `font-semibold` | Section headings (h2)      |
+| Card Title    | `text-lg`               | `font-semibold` | Card/dialog headings (h3)  |
+| Body          | `text-sm` / `text-base` | `font-normal`   | Paragraphs, descriptions   |
+| Label         | `text-sm`               | `font-medium`   | Form labels, table headers |
+| Caption       | `text-xs`               | `font-normal`   | Timestamps, secondary info |
+| SKU / Code    | `text-sm font-mono`     | `font-medium`   | SKU values, product codes  |
+| Metric Value  | `text-3xl` / `text-4xl` | `font-bold`     | Dashboard summary numbers  |
 
 ### 4.3 Typography Rules
 
@@ -132,34 +132,34 @@ Inter is already configured in `src/app/layout.tsx` via `next/font/google`.
 
 Use Tailwind's default spacing scale. Preferred spacers:
 
-| Token | Value | Usage |
-| :--- | :--- | :--- |
-| `gap-1` / `p-1` | 4px | Tight internal spacing |
-| `gap-2` / `p-2` | 8px | Compact element spacing |
-| `gap-3` / `p-3` | 12px | Standard form field gaps |
-| `gap-4` / `p-4` | 16px | Card padding, section gaps |
-| `gap-6` / `p-6` | 24px | Page section spacing |
-| `gap-8` / `p-8` | 32px | Major section separation |
+| Token           | Value | Usage                      |
+| :-------------- | :---- | :------------------------- |
+| `gap-1` / `p-1` | 4px   | Tight internal spacing     |
+| `gap-2` / `p-2` | 8px   | Compact element spacing    |
+| `gap-3` / `p-3` | 12px  | Standard form field gaps   |
+| `gap-4` / `p-4` | 16px  | Card padding, section gaps |
+| `gap-6` / `p-6` | 24px  | Page section spacing       |
+| `gap-8` / `p-8` | 32px  | Major section separation   |
 
 ### 5.2 Layout Patterns
 
-| Pattern | Implementation |
-| :--- | :--- |
-| **Dashboard Layout** | Sidebar (collapsible) + main content area |
-| **Content Area** | Max-width container with horizontal padding |
-| **Card Grid** | CSS Grid with responsive columns (`grid-cols-1 md:grid-cols-2 lg:grid-cols-4`) |
-| **Data Table** | Full-width with horizontal scroll on mobile |
-| **Form Layout** | Single-column stack with consistent label/input spacing |
+| Pattern              | Implementation                                                                 |
+| :------------------- | :----------------------------------------------------------------------------- |
+| **Dashboard Layout** | Sidebar (collapsible) + main content area                                      |
+| **Content Area**     | Max-width container with horizontal padding                                    |
+| **Card Grid**        | CSS Grid with responsive columns (`grid-cols-1 md:grid-cols-2 lg:grid-cols-4`) |
+| **Data Table**       | Full-width with horizontal scroll on mobile                                    |
+| **Form Layout**      | Single-column stack with consistent label/input spacing                        |
 
 ### 5.3 Responsive Breakpoints
 
-| Breakpoint | Tailwind | Usage |
-| :--- | :--- | :--- |
-| Mobile | Default (< 640px) | Single column, collapsed sidebar |
-| Tablet | `sm:` (640px) | Two-column grids |
-| Desktop | `md:` (768px) | Sidebar visible, multi-column layouts |
-| Wide | `lg:` (1024px) | Full dashboard layout |
-| Ultra-wide | `xl:` (1280px) | Wider content area |
+| Breakpoint | Tailwind          | Usage                                 |
+| :--------- | :---------------- | :------------------------------------ |
+| Mobile     | Default (< 640px) | Single column, collapsed sidebar      |
+| Tablet     | `sm:` (640px)     | Two-column grids                      |
+| Desktop    | `md:` (768px)     | Sidebar visible, multi-column layouts |
+| Wide       | `lg:` (1024px)    | Full dashboard layout                 |
+| Ultra-wide | `xl:` (1280px)    | Wider content area                    |
 
 ---
 
@@ -167,13 +167,13 @@ Use Tailwind's default spacing scale. Preferred spacers:
 
 ### 6.1 Buttons
 
-| Variant | Usage | Example |
-| :--- | :--- | :--- |
-| `default` (primary) | Primary actions | "Record Stock IN", "Save" |
-| `secondary` | Secondary actions | "Cancel", "Reset Filters" |
-| `destructive` | Dangerous actions | "Delete", "Reset Demo Data" |
-| `outline` | Tertiary actions | "Export", "View Details" |
-| `ghost` | Inline actions | Icon buttons, table row actions |
+| Variant             | Usage             | Example                         |
+| :------------------ | :---------------- | :------------------------------ |
+| `default` (primary) | Primary actions   | "Record Stock IN", "Save"       |
+| `secondary`         | Secondary actions | "Cancel", "Reset Filters"       |
+| `destructive`       | Dangerous actions | "Delete", "Reset Demo Data"     |
+| `outline`           | Tertiary actions  | "Export", "View Details"        |
+| `ghost`             | Inline actions    | Icon buttons, table row actions |
 
 ### 6.2 Forms
 
@@ -200,12 +200,12 @@ Use Tailwind's default spacing scale. Preferred spacers:
 
 ### 6.5 Badges
 
-| Badge | Color | Usage |
-| :--- | :--- | :--- |
-| Stock IN | Teal/green variant | Movement type indicator |
-| Stock OUT | Orange/amber variant | Movement type indicator |
-| Low Stock | Red/destructive variant | Stock status warning |
-| Role badge | Muted variant | User role display |
+| Badge      | Color                   | Usage                   |
+| :--------- | :---------------------- | :---------------------- |
+| Stock IN   | Teal/green variant      | Movement type indicator |
+| Stock OUT  | Orange/amber variant    | Movement type indicator |
+| Low Stock  | Red/destructive variant | Stock status warning    |
+| Role badge | Muted variant           | User role display       |
 
 ### 6.6 Toast Notifications
 

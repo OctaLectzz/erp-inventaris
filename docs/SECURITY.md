@@ -62,10 +62,10 @@ Inventra handles inventory data for a simulated business environment. While this
 
 ### 3.1 Role-Based Access Control (RBAC)
 
-| Role | Code | Capabilities |
-| :--- | :--- | :--- |
-| Warehouse Admin | `admin_gudang` | Full CRUD on products, stock mutations, movement history view |
-| Business Owner | `owner` | Full read access, stock mutations, summary metrics, movement history |
+| Role            | Code           | Capabilities                                                         |
+| :-------------- | :------------- | :------------------------------------------------------------------- |
+| Warehouse Admin | `admin_gudang` | Full CRUD on products, stock mutations, movement history view        |
+| Business Owner  | `owner`        | Full read access, stock mutations, summary metrics, movement history |
 
 ### 3.2 Role Storage
 
@@ -97,13 +97,13 @@ Inventra handles inventory data for a simulated business environment. While this
 
 ### 4.1 RLS Policies (Planned)
 
-| Table | Policy | Description |
-| :--- | :--- | :--- |
-| `profiles` | SELECT own profile | Users can only read their own profile. |
-| `products` | SELECT for authenticated | All authenticated users can read products. |
-| `products` | INSERT/UPDATE for authenticated | Authenticated users can create/update products. |
-| `stock_movements` | SELECT for authenticated | All authenticated users can read movements. |
-| `stock_movements` | INSERT for authenticated | Authenticated users can create movements. |
+| Table             | Policy                          | Description                                     |
+| :---------------- | :------------------------------ | :---------------------------------------------- |
+| `profiles`        | SELECT own profile              | Users can only read their own profile.          |
+| `products`        | SELECT for authenticated        | All authenticated users can read products.      |
+| `products`        | INSERT/UPDATE for authenticated | Authenticated users can create/update products. |
+| `stock_movements` | SELECT for authenticated        | All authenticated users can read movements.     |
+| `stock_movements` | INSERT for authenticated        | Authenticated users can create movements.       |
 
 ### 4.2 RLS Rules
 
@@ -149,11 +149,11 @@ Database (constraints, checks)  →  Last line of defense
 
 ### 6.1 Secret Management
 
-| Variable | Visibility | Purpose |
-| :--- | :--- | :--- |
-| `NEXT_PUBLIC_SUPABASE_URL` | Client-safe | Supabase project URL |
+| Variable                        | Visibility  | Purpose                               |
+| :------------------------------ | :---------- | :------------------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Client-safe | Supabase project URL                  |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Client-safe | Supabase anonymous key (RLS enforced) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server-only | Bypasses RLS — admin operations only |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Server-only | Bypasses RLS — admin operations only  |
 
 ### 6.2 Secret Rules
 
@@ -221,20 +221,20 @@ As specified in the assessment brief:
 
 ## 11. Security Checklist
 
-| Check | Status |
-| :--- | :--- |
-| Supabase Auth for session management | Planned |
-| HTTP-only session cookies via `@supabase/ssr` | Planned |
-| Public registration disabled | Planned |
-| Demo accounts provisioned via seed script | Planned |
-| RLS enabled on all tables | Planned |
-| Server-side input validation (Zod) | Planned |
-| Server-side role checks | Planned |
-| Middleware-based route protection | Planned |
-| Direct URL access protection | Planned |
-| Environment secrets not in Git | Configured (`.gitignore`) |
-| `SUPABASE_SERVICE_ROLE_KEY` server-only | Planned |
-| Atomic stock mutations | Planned |
-| No client-trusted stock values | Planned |
-| Error details not exposed to clients | Planned |
-| HTTPS transport | Planned (Vercel + Supabase) |
+| Check                                         | Status                      |
+| :-------------------------------------------- | :-------------------------- |
+| Supabase Auth for session management          | Planned                     |
+| HTTP-only session cookies via `@supabase/ssr` | Planned                     |
+| Public registration disabled                  | Planned                     |
+| Demo accounts provisioned via seed script     | Planned                     |
+| RLS enabled on all tables                     | Planned                     |
+| Server-side input validation (Zod)            | Planned                     |
+| Server-side role checks                       | Planned                     |
+| Middleware-based route protection             | Planned                     |
+| Direct URL access protection                  | Planned                     |
+| Environment secrets not in Git                | Configured (`.gitignore`)   |
+| `SUPABASE_SERVICE_ROLE_KEY` server-only       | Planned                     |
+| Atomic stock mutations                        | Planned                     |
+| No client-trusted stock values                | Planned                     |
+| Error details not exposed to clients          | Planned                     |
+| HTTPS transport                               | Planned (Vercel + Supabase) |

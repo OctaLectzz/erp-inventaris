@@ -13,7 +13,7 @@
 Audit komprehensif ini dilakukan untuk mengevaluasi kesiapan arsitektur sistem Inventra sebelum melanjutkan ke **Batch 2 (Transaksi Multi-Item & Riwayat Stok)**. Fokus audit mencakup:
 
 1. **Konsolidasi Role-Based Access Control (RBAC):** Menganalisis mengapa sistem masih beroperasi dengan 2 role warisan (`admin_gudang` dan `owner`), mengidentifikasi seluruh titik keterikatan hardcoded pada 10 lapisan arsitektur, dan menyusun peta jalan migrasi non-destruktif menuju 3 role final (`administrator`, `staff_gudang`, `auditor`).
-2. **Penyempurnaan KPI Dashboard:** Mengaudit kartu metrik (khususnya *Total Valuasi Stok* dan *Peringatan Stok Menipis*) secara visual pada 4 viewport standar (360px, 768px, 1024px, 1440px) menggunakan pengujian browser nyata, mengidentifikasi pemotongan label (*clipping/truncation*), serta merancang formatter IDR yang konsisten dan responsif.
+2. **Penyempurnaan KPI Dashboard:** Mengaudit kartu metrik (khususnya _Total Valuasi Stok_ dan _Peringatan Stok Menipis_) secara visual pada 4 viewport standar (360px, 768px, 1024px, 1440px) menggunakan pengujian browser nyata, mengidentifikasi pemotongan label (_clipping/truncation_), serta merancang formatter IDR yang konsisten dan responsif.
 3. **Transparansi Status Navigasi & Fitur:** Mengaudit menu rute yang masih berstatus roadmap (`/transactions`, `/reports`, `/reports/products`, `/assistant`) agar tidak membingungkan evaluator sebagai fitur aktif yang rusak.
 
 ---
@@ -24,18 +24,18 @@ Audit komprehensif ini dilakukan untuk mengevaluasi kesiapan arsitektur sistem I
 
 Pemeriksaan mendalam terhadap basis kode dan database Supabase aktif (`vwzlvsggpuvmkubkzfzp`) menghasilkan temuan pada 10 lapisan berikut:
 
-| No | Komponen / Layer | File / Lokasi Aktual | Kondisi Aktual di Lapisan |
-| :--- | :--- | :--- | :--- |
-| 1 | **Tipe TypeScript** | `src/types/auth.ts` | Tipe union `UserRole` telah memuat 5 nilai: `'admin_gudang' \| 'owner' \| 'administrator' \| 'staff_gudang' \| 'auditor'`. Objek `USER_ROLES` dan `VALID_ROLES` juga telah mencatat kelimanya. |
-| 2 | **Database Constraint** | `supabase/migrations/20261013000001_initial_schema.sql` (Line 27) | `public.profiles` memiliki check constraint ketat: `CONSTRAINT profiles_role_check CHECK (role IN ('admin_gudang', 'owner'))`. Database **menolak keras** jika ada nilai `administrator`, `staff_gudang`, atau `auditor` di-insert/update. |
-| 3 | **Provisioning Trigger** | `supabase/migrations/20261013000002_rls_policies.sql` (Line 137) | Fungsi trigger `handle_new_user()` mengecek `v_role := coalesce(NEW.raw_app_meta_data->>'role', 'owner')`. Jika bukan `admin_gudang` atau `owner`, fungsi **memaksa role kembali ke `'owner'`**. |
-| 4 | **Role Protection Trigger** | `supabase/migrations/20261013000002_rls_policies.sql` (Line 66) | Fungsi trigger `prevent_profile_role_change()` melarang modifikasi kolom `role` kecuali dipanggil oleh `service_role` atau superuser `postgres`/`supabase_admin`. |
-| 5 | **RLS Policies** | `supabase/migrations/20261013000002_rls_policies.sql` | Kebijakan `products_insert_admin` dan `products_update_admin` mengecek `public.get_user_role(...) = 'admin_gudang'`. Kebijakan pada `public.categories` di migrasi 4 telah menambahkan `administrator`, namun `products` masih terkunci ke `admin_gudang`. |
-| 6 | **RPC Mutasi Stok** | `supabase/migrations/20261013000003_stock_mutation_rpc.sql` (Line 44) | Fungsi PostgreSQL `public.record_stock_movement` mengecek: `IF v_user_role IS DISTINCT FROM 'admin_gudang' THEN RETURN FORBIDDEN; END IF;`. Panggilan oleh `owner`, `staff_gudang`, atau `auditor` ditolak seketika. |
-| 7 | **Middleware & Guards** | `src/proxy.ts` & `src/services/auth-service.ts` | `proxy.ts` mengecek sesi autentikasi. `requireRole(allowedRoles)` tersedia di `auth-service.ts`, namun **belum pernah dipanggil** di halaman mana pun. Semua rute `(dashboard)` hanya memakai `requireAuth(locale)`. |
-| 8 | **Server Actions** | `src/app/actions/{product,stock,category}-actions.ts` | `createProductAction`, `updateProductAction`, dan `recordStockMovementAction` memiliki guard eksplisit: `if (profile.role !== 'admin_gudang') return { success: false, error: 'FORBIDDEN' }`. |
-| 9 | **UI & Sidebar Display** | `app-sidebar.tsx`, `app-header.tsx`, `settings-view.tsx`, `dashboard/page.tsx` | Seluruh komponen menggunakan logika biner: `const isAdmin = profile.role === 'admin_gudang' \|\| profile.role === 'administrator'`. Tampilan label menggunakan ternary hardcoded: `{isAdmin ? tAuth('roles.admin_gudang') : tAuth('roles.owner')}`. Akun selain admin gudang/administrator otomatis berlabel "Pemilik Usaha". |
-| 10 | **Test Suite** | `tests/auth/*`, `tests/supabase/*`, `tests/unit/*` | 12+ file tes (termasuk 22 live database assertions) menguji secara ketat penolakan dan perizinan berbasis role `admin_gudang` dan `owner`. |
+| No  | Komponen / Layer            | File / Lokasi Aktual                                                           | Kondisi Aktual di Lapisan                                                                                                                                                                                                                                                                                                     |
+| :-- | :-------------------------- | :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Tipe TypeScript**         | `src/types/auth.ts`                                                            | Tipe union `UserRole` telah memuat 5 nilai: `'admin_gudang' \| 'owner' \| 'administrator' \| 'staff_gudang' \| 'auditor'`. Objek `USER_ROLES` dan `VALID_ROLES` juga telah mencatat kelimanya.                                                                                                                                |
+| 2   | **Database Constraint**     | `supabase/migrations/20261013000001_initial_schema.sql` (Line 27)              | `public.profiles` memiliki check constraint ketat: `CONSTRAINT profiles_role_check CHECK (role IN ('admin_gudang', 'owner'))`. Database **menolak keras** jika ada nilai `administrator`, `staff_gudang`, atau `auditor` di-insert/update.                                                                                    |
+| 3   | **Provisioning Trigger**    | `supabase/migrations/20261013000002_rls_policies.sql` (Line 137)               | Fungsi trigger `handle_new_user()` mengecek `v_role := coalesce(NEW.raw_app_meta_data->>'role', 'owner')`. Jika bukan `admin_gudang` atau `owner`, fungsi **memaksa role kembali ke `'owner'`**.                                                                                                                              |
+| 4   | **Role Protection Trigger** | `supabase/migrations/20261013000002_rls_policies.sql` (Line 66)                | Fungsi trigger `prevent_profile_role_change()` melarang modifikasi kolom `role` kecuali dipanggil oleh `service_role` atau superuser `postgres`/`supabase_admin`.                                                                                                                                                             |
+| 5   | **RLS Policies**            | `supabase/migrations/20261013000002_rls_policies.sql`                          | Kebijakan `products_insert_admin` dan `products_update_admin` mengecek `public.get_user_role(...) = 'admin_gudang'`. Kebijakan pada `public.categories` di migrasi 4 telah menambahkan `administrator`, namun `products` masih terkunci ke `admin_gudang`.                                                                    |
+| 6   | **RPC Mutasi Stok**         | `supabase/migrations/20261013000003_stock_mutation_rpc.sql` (Line 44)          | Fungsi PostgreSQL `public.record_stock_movement` mengecek: `IF v_user_role IS DISTINCT FROM 'admin_gudang' THEN RETURN FORBIDDEN; END IF;`. Panggilan oleh `owner`, `staff_gudang`, atau `auditor` ditolak seketika.                                                                                                          |
+| 7   | **Middleware & Guards**     | `src/proxy.ts` & `src/services/auth-service.ts`                                | `proxy.ts` mengecek sesi autentikasi. `requireRole(allowedRoles)` tersedia di `auth-service.ts`, namun **belum pernah dipanggil** di halaman mana pun. Semua rute `(dashboard)` hanya memakai `requireAuth(locale)`.                                                                                                          |
+| 8   | **Server Actions**          | `src/app/actions/{product,stock,category}-actions.ts`                          | `createProductAction`, `updateProductAction`, dan `recordStockMovementAction` memiliki guard eksplisit: `if (profile.role !== 'admin_gudang') return { success: false, error: 'FORBIDDEN' }`.                                                                                                                                 |
+| 9   | **UI & Sidebar Display**    | `app-sidebar.tsx`, `app-header.tsx`, `settings-view.tsx`, `dashboard/page.tsx` | Seluruh komponen menggunakan logika biner: `const isAdmin = profile.role === 'admin_gudang' \|\| profile.role === 'administrator'`. Tampilan label menggunakan ternary hardcoded: `{isAdmin ? tAuth('roles.admin_gudang') : tAuth('roles.owner')}`. Akun selain admin gudang/administrator otomatis berlabel "Pemilik Usaha". |
+| 10  | **Test Suite**              | `tests/auth/*`, `tests/supabase/*`, `tests/unit/*`                             | 12+ file tes (termasuk 22 live database assertions) menguji secara ketat penolakan dan perizinan berbasis role `admin_gudang` dan `owner`.                                                                                                                                                                                    |
 
 ### 2.2 Akar Masalah: Mengapa Sistem Masih Menampilkan `admin_gudang` & `owner`?
 
@@ -52,32 +52,32 @@ Meskipun berkas TypeScript `src/types/auth.ts` telah memuat deklarasi role baru,
 
 ### 3.1 Matriks Akses Otoritas Final (Agreed RBAC Matrix)
 
-Matriks hak akses berikut disusun berdasarkan prinsip hak akses terendah (*Principle of Least Privilege*) dan pemisahan tugas (*Separation of Concerns*):
+Matriks hak akses berikut disusun berdasarkan prinsip hak akses terendah (_Principle of Least Privilege_) dan pemisahan tugas (_Separation of Concerns_):
 
-| Modul / Domain Aksi | Administrator (`administrator`) | Staf Gudang (`staff_gudang`) | Auditor (`auditor`) | Lapisan Enforce Otoritas |
-| :--- | :---: | :---: | :---: | :--- |
-| **Katalog Produk — Lihat Data** | ✅ Ya | ✅ Ya | ✅ Ya (Read-Only) | RLS `products_select_authenticated` |
-| **Katalog Produk — Tambah & Edit Item** | ✅ Ya | ❌ Tidak (atau Draf) | ❌ Ditolak | RLS `products_insert_admin` + Server Action |
-| **Master Kategori — Kelola (CRUD)** | ✅ Ya (Penuh) | ❌ Tidak | ❌ Ditolak | RLS `categories_*_admin` + Server Action |
-| **Mutasi Stok Tunggal (IN / OUT)** | ✅ Ya | ✅ Ya (Operasional) | ❌ Ditolak | Database RPC `record_stock_movement` |
-| **Mutasi Stok Multi-Item (Batch 2)** | ✅ Ya | ✅ Ya (Operasional) | ❌ Ditolak | Database RPC `record_batch_stock_movements` |
-| **Riwayat Mutasi & Audit Ledger** | ✅ Ya (Semua) | ✅ Ya (Semua) | ✅ Ya (Semua) | RLS `movements_select_authenticated` |
-| **Ekspor Data Ledger (CSV/Excel)** | ✅ Ya | ✅ Ya | ✅ Ya | Server Action / Client Stream |
-| **Dashboard — Metrik Operasional & Alert** | ✅ Ya | ✅ Ya | ✅ Ya | Server Component Data Fetcher |
-| **Dashboard — Valuasi Stok Total (Rp)** | ✅ Ya | ⚠️ Ringkasan Terbatas | ✅ Ya (Penuh/Audit) | UI Level / Field Level Masking |
-| **Pengaturan Profil Sendiri (Nama)** | ✅ Ya | ✅ Ya | ✅ Ya | Server Action `updateProfileNameAction` |
-| **Pengubahan Role Pengguna** | ❌ Ditolak (DB Only) | ❌ Ditolak | ❌ Ditolak | Trigger `prevent_profile_role_change` |
+| Modul / Domain Aksi                        | Administrator (`administrator`) | Staf Gudang (`staff_gudang`) | Auditor (`auditor`) | Lapisan Enforce Otoritas                    |
+| :----------------------------------------- | :-----------------------------: | :--------------------------: | :-----------------: | :------------------------------------------ |
+| **Katalog Produk — Lihat Data**            |              ✅ Ya              |            ✅ Ya             |  ✅ Ya (Read-Only)  | RLS `products_select_authenticated`         |
+| **Katalog Produk — Tambah & Edit Item**    |              ✅ Ya              |     ❌ Tidak (atau Draf)     |     ❌ Ditolak      | RLS `products_insert_admin` + Server Action |
+| **Master Kategori — Kelola (CRUD)**        |          ✅ Ya (Penuh)          |           ❌ Tidak           |     ❌ Ditolak      | RLS `categories_*_admin` + Server Action    |
+| **Mutasi Stok Tunggal (IN / OUT)**         |              ✅ Ya              |     ✅ Ya (Operasional)      |     ❌ Ditolak      | Database RPC `record_stock_movement`        |
+| **Mutasi Stok Multi-Item (Batch 2)**       |              ✅ Ya              |     ✅ Ya (Operasional)      |     ❌ Ditolak      | Database RPC `record_batch_stock_movements` |
+| **Riwayat Mutasi & Audit Ledger**          |          ✅ Ya (Semua)          |        ✅ Ya (Semua)         |    ✅ Ya (Semua)    | RLS `movements_select_authenticated`        |
+| **Ekspor Data Ledger (CSV/Excel)**         |              ✅ Ya              |            ✅ Ya             |        ✅ Ya        | Server Action / Client Stream               |
+| **Dashboard — Metrik Operasional & Alert** |              ✅ Ya              |            ✅ Ya             |        ✅ Ya        | Server Component Data Fetcher               |
+| **Dashboard — Valuasi Stok Total (Rp)**    |              ✅ Ya              |    ⚠️ Ringkasan Terbatas     | ✅ Ya (Penuh/Audit) | UI Level / Field Level Masking              |
+| **Pengaturan Profil Sendiri (Nama)**       |              ✅ Ya              |            ✅ Ya             |        ✅ Ya        | Server Action `updateProfileNameAction`     |
+| **Pengubahan Role Pengguna**               |      ❌ Ditolak (DB Only)       |          ❌ Ditolak          |     ❌ Ditolak      | Trigger `prevent_profile_role_change`       |
 
 > **Prinsip Kunci Keamanan:**
 > Role **tidak pernah** dapat diubah oleh pengguna sendiri dari antarmuka web. Semua mutasi diverifikasi pada Server Action dan database RPC (`SECURITY DEFINER` dengan verifikasi `public.get_user_role(auth.uid())`), bukan sekadar menyembunyikan elemen UI atau tombol menu.
 
 ### 3.2 Pemetaan Akun Lama ke Role Baru
 
-| Akun Eksisting | Role Lama | Role Baru Final | Kredensial Demo & Peran Operasional Baru |
-| :--- | :--- | :--- | :--- |
-| `admin@inventra.demo` | `admin_gudang` | `administrator` | Mempertahankan akses manajemen sistem, katalog, kategori, dan pengawasan stok menyeluruh. |
-| `staff@inventra.demo` *(Baru)* | *(N/A)* | `staff_gudang` | Akun demo operasional baru untuk pencatatan mutasi stok fisik harian masuk/keluar tanpa hak mengedit master harga/kategori. |
-| `owner@inventra.demo` | `owner` | `auditor` | Mempertahankan akses audit eksekutif hanya-baca, monitoring valuasi total aset, dan riwayat ledger tanpa hak mutasi fisik. |
+| Akun Eksisting                 | Role Lama      | Role Baru Final | Kredensial Demo & Peran Operasional Baru                                                                                    |
+| :----------------------------- | :------------- | :-------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| `admin@inventra.demo`          | `admin_gudang` | `administrator` | Mempertahankan akses manajemen sistem, katalog, kategori, dan pengawasan stok menyeluruh.                                   |
+| `staff@inventra.demo` _(Baru)_ | _(N/A)_        | `staff_gudang`  | Akun demo operasional baru untuk pencatatan mutasi stok fisik harian masuk/keluar tanpa hak mengedit master harga/kategori. |
+| `owner@inventra.demo`          | `owner`        | `auditor`       | Mempertahankan akses audit eksekutif hanya-baca, monitoring valuasi total aset, dan riwayat ledger tanpa hak mutasi fisik.  |
 
 ### 3.3 Tahapan Rencana Migrasi Bertahap (Non-Destruktif)
 
@@ -141,27 +141,25 @@ graph TD
 
 Pengujian visual langsung menggunakan browser subagent terhadap sesi login aktual di `http://localhost:3000/id/dashboard` menghasilkan temuan empiris berikut:
 
-| Viewport (Resolusi) | Layout KPI Grid | Temuan Visual & Truncation | Status Rendering |
-| :--- | :--- | :--- | :---: |
-| **1440 × 900 px (Desktop Luas)** | 4 Kolom (`xl:grid-cols-4`) | **Defek Truncation Terkonfirmasi:** Header kartu keempat terpotong menjadi **`PERINGATAN STOK ME...`** akibat class `truncate pr-2 text-xs uppercase tracking-wider` yang terhimpit ikon badge di kanan. Angka valuasi `Rp 6.434.309.760` muat namun mepet tepi kartu. | ⚠️ Perlu Perbaikan |
-| **1024 × 768 px (Tablet Landscape / Laptop)** | 2 Kolom (`sm:grid-cols-2`) | Ruang kartu lebih lebar (~340px). Judul `PERINGATAN STOK MENIPIS` tidak terpotong. Angka valuasi terbaca jelas. | ✅ Lulus |
-| **768 × 1024 px (Tablet Portrait)** | 2 Kolom (`sm:grid-cols-2`) | Sidebar otomatis beralih ke mobile sheet. Ruang kartu cukup lebar. Tidak ada label terpotong. | ✅ Lulus |
-| **360 × 800 px (Mobile Layar Kecil)** | 1 Kolom (`grid-cols-1`) | Kartu menumpuk vertikal dengan lebar penuh (~328px). Nominal `Rp 6.434.309.760` terbaca utuh. Catatan: Dev overlay Next.js (badge "N") sedikit menutupi pojok kiri bawah saat di-scroll. | ✅ Lulus |
+| Viewport (Resolusi)                           | Layout KPI Grid            | Temuan Visual & Truncation                                                                                                                                                                                                                                             |  Status Rendering  |
+| :-------------------------------------------- | :------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------: |
+| **1440 × 900 px (Desktop Luas)**              | 4 Kolom (`xl:grid-cols-4`) | **Defek Truncation Terkonfirmasi:** Header kartu keempat terpotong menjadi **`PERINGATAN STOK ME...`** akibat class `truncate pr-2 text-xs uppercase tracking-wider` yang terhimpit ikon badge di kanan. Angka valuasi `Rp 6.434.309.760` muat namun mepet tepi kartu. | ⚠️ Perlu Perbaikan |
+| **1024 × 768 px (Tablet Landscape / Laptop)** | 2 Kolom (`sm:grid-cols-2`) | Ruang kartu lebih lebar (~340px). Judul `PERINGATAN STOK MENIPIS` tidak terpotong. Angka valuasi terbaca jelas.                                                                                                                                                        |      ✅ Lulus      |
+| **768 × 1024 px (Tablet Portrait)**           | 2 Kolom (`sm:grid-cols-2`) | Sidebar otomatis beralih ke mobile sheet. Ruang kartu cukup lebar. Tidak ada label terpotong.                                                                                                                                                                          |      ✅ Lulus      |
+| **360 × 800 px (Mobile Layar Kecil)**         | 1 Kolom (`grid-cols-1`)    | Kartu menumpuk vertikal dengan lebar penuh (~328px). Nominal `Rp 6.434.309.760` terbaca utuh. Catatan: Dev overlay Next.js (badge "N") sedikit menutupi pojok kiri bawah saat di-scroll.                                                                               |      ✅ Lulus      |
 
 ### 4.2 Analisis Masalah Tipografi & Format Mata Uang IDR
 
-1. **Pemotongan Label (*Header Clipping*):**
+1. **Pemotongan Label (_Header Clipping_):**
    - Kode aktual `KpiStatCard` (`src/features/dashboard/kpi-stat-card.tsx` Line 33):
      ```tsx
-     <CardTitle className="text-muted-foreground truncate pr-2 text-xs font-semibold tracking-wider uppercase">
-       {title}
-     </CardTitle>
+     <CardTitle className="text-muted-foreground truncate pr-2 text-xs font-semibold tracking-wider uppercase">{title}</CardTitle>
      ```
    - Penerapan `truncate` dengan `uppercase` dan `tracking-wider` pada judul bahasa Indonesia (`Peringatan Stok Menipis`) maupun bahasa Inggris (`Total Inventory Valuation` = 25 karakter) memicu ellipsis yang tidak estetis dan menghilangkan makna kata.
 2. **Skalabilitas Nominal Valuasi Besar:**
    - Valuasi saat ini: `Rp 6.434.309.760` (17 karakter).
    - Tipografi aktual: `text-xl font-bold tracking-tight break-words tabular-nums sm:text-2xl sm:break-normal xl:text-3xl`.
-   - Pada resolusi 1280px–1366px (laptop standar) dengan sidebar terbuka (`w-64`), lebar kolom kartu KPI hanya ~210px. Jika valuasi inventaris mencapai puluhan atau ratusan miliar (misal `Rp 48.920.500.000` / 18 karakter), angka berisiko patah baris atau terpotong (*overflow*).
+   - Pada resolusi 1280px–1366px (laptop standar) dengan sidebar terbuka (`w-64`), lebar kolom kartu KPI hanya ~210px. Jika valuasi inventaris mencapai puluhan atau ratusan miliar (misal `Rp 48.920.500.000` / 18 karakter), angka berisiko patah baris atau terpotong (_overflow_).
 3. **Desentralisasi Formatter:**
    - `formatCurrency` saat ini didefinisikan secara lokal di dalam fungsi komponen `DashboardPage` (`dashboard/page.tsx` Line 48), bukan utilitas bersama yang teruji di `src/lib/formatters.ts`.
 4. **Integritas Data (Anti-Halusinasi & Truthfulness):**
@@ -172,7 +170,7 @@ Pengujian visual langsung menggunakan browser subagent terhadap sesi login aktua
 
 1. **Utilitas Formatter Mandiri (`src/lib/formatters.ts`):**
    - Membuat fungsi terstandarisasi `formatCurrencyIDR(amount: number, locale = 'id')`.
-   - Mendukung format ringkas cerdas (*Compact Currency Notation*):
+   - Mendukung format ringkas cerdas (_Compact Currency Notation_):
      - $\ge \text{Rp } 1.000.000.000$: `Rp 6,43 M` (atau `Rp 6,43 Miliar` / `$6.43 B` untuk EN).
      - $\ge \text{Rp } 1.000.000$: `Rp 250,5 Jt` (atau `Rp 250,5 Juta` / `$250.5 M` untuk EN).
      - $< \text{Rp } 1.000.000$: Format nominal standar lengkap.
@@ -187,17 +185,17 @@ Pengujian visual langsung menggunakan browser subagent terhadap sesi login aktua
 
 Hasil pemeriksaan terhadap menu navigasi sidebar dan rute terkait:
 
-| Rute URL | Label Menu | Status Implementasi Aktual | Tampilan di Sidebar Saat Ini | Rekomendasi Perbaikan Status |
-| :--- | :--- | :--- | :--- | :--- |
-| `/[locale]/dashboard` | Dashboard | ✅ Aktif (Live Metrics) | Normal Link | Pertahankan |
-| `/[locale]/inventory` | Katalog Produk | ✅ Aktif (Catalog & Filters) | Normal Link | Pertahankan |
-| `/[locale]/categories` | Kategori Produk | ✅ Aktif (CRUD Categories) | Normal Link | Pertahankan |
-| `/[locale]/transactions` | Transaksi Stok | ⏳ **Roadmap Batch 2** | Terlihat seperti menu aktif normal tanpa pembeda | Tambahkan badge halus `[Batch 2]` atau status `Direncanakan` agar pengguna mengetahui fitur keranjang mutasi multi-item sedang disiapkan. |
-| `/[locale]/movements` | Riwayat Mutasi | ✅ Aktif (Ledger & Single Mutation) | Normal Link | Pertahankan |
-| `/[locale]/reports` | Analitik & Laporan | ⏳ **Roadmap Batch 3** | Terlihat seperti menu aktif normal tanpa pembeda | Beri penanda badge roadmap `[Batch 3]` untuk menghindari impresi fitur grafik belum berfungsi. |
-| `/[locale]/reports/products` | Analisis Produk | ⏳ **Roadmap Batch 3** | Terlihat seperti menu aktif normal tanpa pembeda | Beri penanda badge roadmap `[Batch 3]`. |
-| `/[locale]/assistant` | AI Assistant | ⏳ **Roadmap Batch 4** | Terlihat seperti menu aktif normal tanpa pembeda | Beri penanda badge roadmap `[Batch 4]`. Jangan tampilkan sebagai AI aktif sampai Batch 4 dieksekusi. |
-| `/[locale]/settings` | Pengaturan | ✅ Aktif (5 Submenu & Profile) | Normal Link | Pertahankan |
+| Rute URL                     | Label Menu         | Status Implementasi Aktual          | Tampilan di Sidebar Saat Ini                     | Rekomendasi Perbaikan Status                                                                                                              |
+| :--------------------------- | :----------------- | :---------------------------------- | :----------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| `/[locale]/dashboard`        | Dashboard          | ✅ Aktif (Live Metrics)             | Normal Link                                      | Pertahankan                                                                                                                               |
+| `/[locale]/inventory`        | Katalog Produk     | ✅ Aktif (Catalog & Filters)        | Normal Link                                      | Pertahankan                                                                                                                               |
+| `/[locale]/categories`       | Kategori Produk    | ✅ Aktif (CRUD Categories)          | Normal Link                                      | Pertahankan                                                                                                                               |
+| `/[locale]/transactions`     | Transaksi Stok     | ⏳ **Roadmap Batch 2**              | Terlihat seperti menu aktif normal tanpa pembeda | Tambahkan badge halus `[Batch 2]` atau status `Direncanakan` agar pengguna mengetahui fitur keranjang mutasi multi-item sedang disiapkan. |
+| `/[locale]/movements`        | Riwayat Mutasi     | ✅ Aktif (Ledger & Single Mutation) | Normal Link                                      | Pertahankan                                                                                                                               |
+| `/[locale]/reports`          | Analitik & Laporan | ⏳ **Roadmap Batch 3**              | Terlihat seperti menu aktif normal tanpa pembeda | Beri penanda badge roadmap `[Batch 3]` untuk menghindari impresi fitur grafik belum berfungsi.                                            |
+| `/[locale]/reports/products` | Analisis Produk    | ⏳ **Roadmap Batch 3**              | Terlihat seperti menu aktif normal tanpa pembeda | Beri penanda badge roadmap `[Batch 3]`.                                                                                                   |
+| `/[locale]/assistant`        | AI Assistant       | ⏳ **Roadmap Batch 4**              | Terlihat seperti menu aktif normal tanpa pembeda | Beri penanda badge roadmap `[Batch 4]`. Jangan tampilkan sebagai AI aktif sampai Batch 4 dieksekusi.                                      |
+| `/[locale]/settings`         | Pengaturan         | ✅ Aktif (5 Submenu & Profile)      | Normal Link                                      | Pertahankan                                                                                                                               |
 
 ---
 
@@ -206,7 +204,8 @@ Hasil pemeriksaan terhadap menu navigasi sidebar dan rute terkait:
 Setelah rencana ini disetujui, berkas-berkas berikut akan dimodifikasi pada tahap eksekusi:
 
 ### 6.1 Database & Migrasi SQL
-- `supabase/migrations/20261014000002_rbac_consolidation.sql` *(Baru)*:
+
+- `supabase/migrations/20261014000002_rbac_consolidation.sql` _(Baru)_:
   - Perluas constraint `profiles_role_check` menjadi 5 role.
   - Perbarui fungsi trigger `handle_new_user()` untuk mendukung role baru dengan default `auditor`.
   - Perbarui RLS policies pada `public.products` untuk role `administrator`.
@@ -214,13 +213,16 @@ Setelah rencana ini disetujui, berkas-berkas berikut akan dimodifikasi pada taha
   - Migrasi data akun profil lama ke role baru (`admin_gudang` $\to$ `administrator`, `owner` $\to$ `auditor`).
 
 ### 6.2 Konfigurasi & Tipe Data
+
 - `src/types/auth.ts`: Tambahkan helper fungsi otorisasi (`hasMutationPermission`, `hasCatalogManagePermission`, `isAuditorRole`).
 - `.env.local` & `.env.example`: Tambahkan akun demo `DEMO_STAFF_EMAIL` dan `DEMO_STAFF_PASSWORD`.
 
 ### 6.3 Utilitas & Formatter
-- `src/lib/formatters.ts` *(Baru)*: Utilitas format mata uang IDR lengkap dan ringkas (*compact notation*).
+
+- `src/lib/formatters.ts` _(Baru)_: Utilitas format mata uang IDR lengkap dan ringkas (_compact notation_).
 
 ### 6.4 Komponen Antarmuka (UI Components)
+
 - `src/features/dashboard/kpi-stat-card.tsx`: Dukungan tooltip nominal penuh, eliminasi clipping teks header, dan tipografi adaptif.
 - `src/app/[locale]/(dashboard)/dashboard/page.tsx`: Integrasi formatter baru, penyesuaian label role 3-level.
 - `src/components/shared/app-sidebar.tsx`: Penyesuaian visual badge role dan badge indikator roadmap pada menu rute masa depan.
@@ -230,12 +232,14 @@ Setelah rencana ini disetujui, berkas-berkas berikut akan dimodifikasi pada taha
 - `src/features/catalog/catalog-table.tsx` & `src/features/movements/movement-table.tsx`: Penggunaan helper otorisasi baru.
 
 ### 6.5 Server Actions & Services
+
 - `src/app/actions/auth-actions.ts`: Penambahan handler demo untuk role `staff_gudang`.
 - `src/app/actions/product-actions.ts`: Pengecekan role `administrator`.
 - `src/app/actions/stock-actions.ts`: Pengecekan role `administrator` dan `staff_gudang`.
 - `src/proxy.ts`: Konsolidasi route matcher agar melindungi seluruh sub-rute dashboard.
 
 ### 6.6 Kamus Bahasa (i18n)
+
 - `messages/id/auth.json` & `messages/en/auth.json`: Entri `roles.administrator`, `roles.staff_gudang`, `roles.auditor`.
 - `messages/id/sidebar.json` & `messages/en/sidebar.json`: Entri status roadmap `sidebar.status.planned` dan `sidebar.status.roadmap`.
 - `messages/id/dashboard.json` & `messages/en/dashboard.json`: Copy penjelas izin akses masing-masing dari 3 peran.
@@ -263,22 +267,23 @@ Pengujian akan dijalankan secara berlapis untuk memastikan nol regresi terhadap 
 
 ## 8. Analisis Risiko & Mitigasi
 
-| No | Risiko Potensial | Dampak | Probabilitas | Strategi Mitigasi Terencana |
-| :--- | :--- | :---: | :---: | :--- |
-| 1 | **Database Constraint Violation** | Tinggi | Rendah | Menggunakan pendekatan migrasi bertahap non-destruktif (Fase A) yang memperluas check constraint sebelum memperbarui baris data atau kode aplikasi. |
-| 2 | **Regresi pada Test Suite Eksisting (225 Tests)** | Sedang | Sedang | Menjalankan seluruh test suite Vitest di setiap fase perubahan dan memastikan pemetaan backward compatibility terjaga hingga rilis stabil. |
-| 3 | **Kegagalan Sesi Pengguna Demo Lama** | Sedang | Rendah | Melakukan backfill transparan pada `public.profiles` dan memastikan handler `signInAction` mengenali pemetaan akun lama. |
-| 4 | **Perbedaan Persepsi Angka Singkat Valuasi** | Rendah | Sedang | Selalu menyertakan tooltip interaktif dan detail nominal Rupiah penuh di samping angka ringkas. |
+| No  | Risiko Potensial                                  | Dampak | Probabilitas | Strategi Mitigasi Terencana                                                                                                                         |
+| :-- | :------------------------------------------------ | :----: | :----------: | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Database Constraint Violation**                 | Tinggi |    Rendah    | Menggunakan pendekatan migrasi bertahap non-destruktif (Fase A) yang memperluas check constraint sebelum memperbarui baris data atau kode aplikasi. |
+| 2   | **Regresi pada Test Suite Eksisting (225 Tests)** | Sedang |    Sedang    | Menjalankan seluruh test suite Vitest di setiap fase perubahan dan memastikan pemetaan backward compatibility terjaga hingga rilis stabil.          |
+| 3   | **Kegagalan Sesi Pengguna Demo Lama**             | Sedang |    Rendah    | Melakukan backfill transparan pada `public.profiles` dan memastikan handler `signInAction` mengenali pemetaan akun lama.                            |
+| 4   | **Perbedaan Persepsi Angka Singkat Valuasi**      | Rendah |    Sedang    | Selalu menyertakan tooltip interaktif dan detail nominal Rupiah penuh di samping angka ringkas.                                                     |
 
 ---
 
 ## 9. Kesimpulan & Rekomendasi Langkah Selanjutnya
 
 Audit telah selesai dilaksanakan dengan hasil yang jelas:
+
 - Akar masalah keterikatan sistem pada 2 role lama telah teridentifikasi secara presisi di level skema PostgreSQL, RPC, Server Action, UI, dan kamus bahasa.
 - Rancangan migrasi non-destruktif ke 3 role final (`administrator`, `staff_gudang`, `auditor`) telah siap dieksekusi secara aman.
-- Cacat visual pemotongan teks pada kartu KPI dashboard (*clipping*) pada viewport 1440px telah dibuktikan secara empiris dan solusi formatter IDR terpadu telah dirancang.
+- Cacat visual pemotongan teks pada kartu KPI dashboard (_clipping_) pada viewport 1440px telah dibuktikan secara empiris dan solusi formatter IDR terpadu telah dirancang.
 
 > [!IMPORTANT]
 > **Pemberhentian Sesuai Arahan Pengguna:**
-> Sesuai instruksi pada prompt ("*Berhenti setelah laporan tersedia. Jangan mulai Batch 2 atau melakukan migrasi sampai pengguna meninjau dan menyetujui rencana tersebut.*"), seluruh pekerjaan coding dan perubahan database dihentikan sampai laporan ini ditinjau dan disetujui oleh pengguna.
+> Sesuai instruksi pada prompt ("_Berhenti setelah laporan tersedia. Jangan mulai Batch 2 atau melakukan migrasi sampai pengguna meninjau dan menyetujui rencana tersebut._"), seluruh pekerjaan coding dan perubahan database dihentikan sampai laporan ini ditinjau dan disetujui oleh pengguna.

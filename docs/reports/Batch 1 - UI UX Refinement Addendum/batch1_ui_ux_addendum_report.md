@@ -19,46 +19,47 @@ All changes were implemented with zero database schema/RLS modifications, zero e
 
 ### A. Login and Demo Accounts
 
-| Requirement | Implementation Detail | Status |
-| :--- | :--- | :--- |
-| **Demo Auto-Fill Only** | The demo chips on `/login` now invoke `getDemoCredentialsAction` to fetch credentials without signing in. Form fields are populated using React Hook Form `setValue`. | ✅ Verified |
-| **No Auto-Submit** | Clicking a demo account does **not** call `signInAction` automatically; the user must explicitly click the "Masuk" button. | ✅ Verified |
-| **Accessible Feedback** | An accessible live feedback banner (`role="status"`, `aria-live="polite"`) appears upon chip click informing the evaluator that credentials have been filled and to click "Masuk" manually. | ✅ Verified |
+| Requirement                    | Implementation Detail                                                                                                                                                                                              | Status      |
+| :----------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------- |
+| **Demo Auto-Fill Only**        | The demo chips on `/login` now invoke `getDemoCredentialsAction` to fetch credentials without signing in. Form fields are populated using React Hook Form `setValue`.                                              | ✅ Verified |
+| **No Auto-Submit**             | Clicking a demo account does **not** call `signInAction` automatically; the user must explicitly click the "Masuk" button.                                                                                         | ✅ Verified |
+| **Accessible Feedback**        | An accessible live feedback banner (`role="status"`, `aria-live="polite"`) appears upon chip click informing the evaluator that credentials have been filled and to click "Masuk" manually.                        | ✅ Verified |
 | **Logout Confirmation Dialog** | Integrated Radix UI `Dialog` modal (`LogoutConfirmationDialog`) with title, description, "Batal" (dismiss/retain session), and "Keluar" (execute sign-out). Supports keyboard focus trap and Escape key dismissal. | ✅ Verified |
 
 ### B. Navbar and Sidebar Architecture
 
-| Requirement | Implementation Detail | Status |
-| :--- | :--- | :--- |
-| **Navbar Hamburger Toggle** | Added desktop hamburger toggle button (`hidden lg:flex`) to the top navbar next to breadcrumbs. Toggles collapsed state (`w-64` vs `w-18`) with cookie synchronization (`sidebar_collapsed`). | ✅ Verified |
-| **Mobile Drawer (Sheet)** | Added mobile hamburger button (`lg:hidden`) triggering a slide-over `Sheet` with backdrop for responsive mobile navigation. | ✅ Verified |
-| **Icon-Only Sidebar Footer** | Replaced text buttons in sidebar footer with compact, accessible icon-only controls for `ThemeToggle`, `LocaleSwitcher`, and `LogoutButton`, each wrapped with Radix UI `Tooltip`. | ✅ Verified |
-| **Eliminate Navbar Redundancy** | Removed duplicate theme toggle, locale switcher, and logout buttons from the top navbar, reserving navbar space exclusively for navigation, breadcrumbs, role badges, and user chips. | ✅ Verified |
-| **Bounded Sidebar Height** | Bound sidebar height to `h-screen max-h-screen flex flex-col`, keeping the header and footer `shrink-0` with scrollable navigation (`flex-1 min-h-0 overflow-y-auto`). | ✅ Verified |
+| Requirement                     | Implementation Detail                                                                                                                                                                         | Status      |
+| :------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------- |
+| **Navbar Hamburger Toggle**     | Added desktop hamburger toggle button (`hidden lg:flex`) to the top navbar next to breadcrumbs. Toggles collapsed state (`w-64` vs `w-18`) with cookie synchronization (`sidebar_collapsed`). | ✅ Verified |
+| **Mobile Drawer (Sheet)**       | Added mobile hamburger button (`lg:hidden`) triggering a slide-over `Sheet` with backdrop for responsive mobile navigation.                                                                   | ✅ Verified |
+| **Icon-Only Sidebar Footer**    | Replaced text buttons in sidebar footer with compact, accessible icon-only controls for `ThemeToggle`, `LocaleSwitcher`, and `LogoutButton`, each wrapped with Radix UI `Tooltip`.            | ✅ Verified |
+| **Eliminate Navbar Redundancy** | Removed duplicate theme toggle, locale switcher, and logout buttons from the top navbar, reserving navbar space exclusively for navigation, breadcrumbs, role badges, and user chips.         | ✅ Verified |
+| **Bounded Sidebar Height**      | Bound sidebar height to `h-screen max-h-screen flex flex-col`, keeping the header and footer `shrink-0` with scrollable navigation (`flex-1 min-h-0 overflow-y-auto`).                        | ✅ Verified |
 
 ### C. Responsive Dashboard & Overflow Prevention
 
-| Requirement | Implementation Detail | Status |
-| :--- | :--- | :--- |
-| **Adaptive KPI Grid** | Updated dashboard KPI stat card grid from rigid 4-column layout to adaptive `grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4`. | ✅ Verified |
-| **IDR Valuation Typography** | Applied responsive, tabular typography (`text-xl sm:text-2xl xl:text-3xl font-bold tracking-tight text-foreground tabular-nums break-words sm:break-normal`) to KPI cards, completely preventing clipping on large IDR valuations. | ✅ Verified |
-| **Horizontal Scroll Confinement** | Wrapped `RecentMovementsCard` and `LowStockWatchlist` tables in `<div className="w-full overflow-x-auto">`. Page document width strictly matches viewport width (`scrollWidth <= innerWidth`). | ✅ Verified |
-| **i18n Table Headers** | Localized all remaining hardcoded table headers and status tags in recent movements and watchlist cards via `dashboard.recentMovements` and `dashboard.watchlist` namespaces. | ✅ Verified |
+| Requirement                       | Implementation Detail                                                                                                                                                                                                              | Status      |
+| :-------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------- |
+| **Adaptive KPI Grid**             | Updated dashboard KPI stat card grid from rigid 4-column layout to adaptive `grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4`.                                                                                                | ✅ Verified |
+| **IDR Valuation Typography**      | Applied responsive, tabular typography (`text-xl sm:text-2xl xl:text-3xl font-bold tracking-tight text-foreground tabular-nums break-words sm:break-normal`) to KPI cards, completely preventing clipping on large IDR valuations. | ✅ Verified |
+| **Horizontal Scroll Confinement** | Wrapped `RecentMovementsCard` and `LowStockWatchlist` tables in `<div className="w-full overflow-x-auto">`. Page document width strictly matches viewport width (`scrollWidth <= innerWidth`).                                     | ✅ Verified |
+| **i18n Table Headers**            | Localized all remaining hardcoded table headers and status tags in recent movements and watchlist cards via `dashboard.recentMovements` and `dashboard.watchlist` namespaces.                                                      | ✅ Verified |
 
 ### D. Semantic Sidebar Menu Groups & Roadmap Routes
 
-| Group | Localized Header (ID / EN) | Included Navigation Items |
-| :--- | :--- | :--- |
-| **MAIN** | UTAMA / MAIN | Dashboard (`/dashboard`) |
-| **MANAGEMENT** | MANAJEMEN / MANAGEMENT | Master Katalog (`/inventory`), Manajemen Kategori (`/categories`), Transaksi Stok (`/transactions`) |
-| **REPORTS** | LAPORAN / REPORTS | Riwayat Mutasi (`/movements`), Laporan Stok (`/reports`), Analisis Produk (`/reports/products`) |
-| **OTHER** | LAINNYA / OTHER | Asisten AI (`/assistant`), Pengaturan (`/settings`) |
+| Group          | Localized Header (ID / EN) | Included Navigation Items                                                                           |
+| :------------- | :------------------------- | :-------------------------------------------------------------------------------------------------- |
+| **MAIN**       | UTAMA / MAIN               | Dashboard (`/dashboard`)                                                                            |
+| **MANAGEMENT** | MANAJEMEN / MANAGEMENT     | Master Katalog (`/inventory`), Manajemen Kategori (`/categories`), Transaksi Stok (`/transactions`) |
+| **REPORTS**    | LAPORAN / REPORTS          | Riwayat Mutasi (`/movements`), Laporan Stok (`/reports`), Analisis Produk (`/reports/products`)     |
+| **OTHER**      | LAINNYA / OTHER            | Asisten AI (`/assistant`), Pengaturan (`/settings`)                                                 |
 
 Non-404 placeholder views have been provided for upcoming routes (`/transactions`, `/reports`, `/reports/products`, `/assistant`) displaying clear roadmap status, target version info, and quick return links to the active dashboard.
 
 ### E. Interactive Settings Page (`/settings`)
 
 The new Settings center organizes application configuration into 5 accessible tabbed submenus:
+
 1. **Profil Pengguna**: View user account email, user ID, and authoritative system role (`admin_gudang` or `owner`). Enables safe editing of `full_name` via `updateProfileNameAction` (2–100 chars validation). System role is strictly immutable and cannot be escalated.
 2. **Tampilan & Tema**: Quick configuration for theme (Terang / Gelap) and locale (Bahasa Indonesia / English).
 3. **Akun & Keamanan**: Displays session security status and roadmap notice for password management.
@@ -78,6 +79,7 @@ The new Settings center organizes application configuration into 5 accessible ta
 ### A. Vitest Unit Test Suite
 
 Executed command: `npm run test:unit`
+
 - **Total Test Files**: 21 passed (21 total)
 - **Total Tests**: 199 passed (199 total, 0 failed, 0 skipped)
 - **Execution Duration**: 9.50s
@@ -114,18 +116,21 @@ PASS  tests/unit/catalog-table-columns.test.ts (4 tests)
 ### B. TypeScript Strict Compilation
 
 Executed command: `npx tsc --noEmit`
+
 - **Output**: Clean exit (code 0)
 - **Errors**: 0 TypeScript compilation errors
 
 ### C. ESLint Validation
 
 Executed command: `npm run lint`
+
 - **Output**: Clean exit (code 0)
 - **Errors**: 0 ESLint errors
 
 ### D. Next.js Production Build (Turbopack)
 
 Executed command: `npm run build`
+
 - **Output**: Clean exit (code 0)
 - **Route Generation**: 36 / 36 static and dynamic routes generated successfully in 18.0s compilation time.
 
@@ -148,6 +153,7 @@ Route (app)
 ### E. Next-Devtools Runtime Verification
 
 Queried via `next-devtools` MCP server on active dev server (`http://localhost:3000`):
+
 - `get_errors`: `{"configErrors":[],"sessionErrors":[]}`
 - `get_compilation_issues`: `{"issues":[]}`
 - `compile_route` on all new routes (`/settings`, `/transactions`, `/reports`, `/reports/products`, `/assistant`): All returned `issues: []`.
@@ -157,40 +163,40 @@ Queried via `next-devtools` MCP server on active dev server (`http://localhost:3
 
 ## 4. File Modification Register
 
-| File Path | Action | Description |
-| :--- | :--- | :--- |
-| `messages/id/auth.json` | Modified | Added `demoFilledNotice` and `logout.confirmDialog` strings. |
-| `messages/en/auth.json` | Modified | Added English translations for demo filled banner and logout dialog. |
-| `messages/id/sidebar.json` | Modified | Defined 4 menu groups (`main`, `management`, `reports`, `other`), item labels, and tooltips. |
-| `messages/en/sidebar.json` | Modified | English translation for 4 menu groups and tooltips. |
-| `messages/id/navigation.json` | Modified | Added `productAnalysis` and `settings` navigation labels. |
-| `messages/en/navigation.json` | Modified | English navigation labels. |
-| `messages/id/dashboard.json` | Modified | Added localized table headers and 5-submenu `settings` dictionary. |
-| `messages/en/dashboard.json` | Modified | English dashboard and settings strings. |
-| `src/app/actions/auth-actions.ts` | Modified | Added `getDemoCredentialsAction` and `updateProfileNameAction` with safe `revalidatePath` error handling. |
-| `src/features/auth/login-form.tsx` | Modified | Refactored demo buttons to only auto-fill credentials with accessible feedback; manual submit required. |
-| `src/features/auth/logout-button.tsx` | Modified | Implemented `LogoutConfirmationDialog` modal with Cancel/Confirm controls and `'icon'` variant with tooltip. |
-| `src/components/shared/locale-switcher.tsx` | Modified | Added `'icon'` variant with Radix UI `Tooltip`. |
-| `src/components/shared/theme-toggle.tsx` | Modified | Added Radix UI `Tooltip` and `cn` styling support. |
-| `src/components/shared/app-sidebar.tsx` | Modified | Restructured navigation into 4 semantic groups; rendered icon-only footer buttons with tooltips; bounded container height. |
-| `src/components/shared/app-header.tsx` | Modified | Added desktop hamburger toggle; removed duplicate theme, language, and logout controls; expanded breadcrumbs. |
-| `src/components/shared/dashboard-shell.tsx` | Modified | Managed sidebar collapse state with cookie persistence and desktop toggle handler. |
-| `src/app/[locale]/layout.tsx` | Modified | Wrapped root application layout in `<TooltipProvider delayDuration={200}>`. |
-| `src/features/dashboard/kpi-stat-card.tsx` | Modified | Added responsive font sizing and tabular numerals to prevent IDR currency clipping. |
-| `src/app/[locale]/(dashboard)/dashboard/page.tsx` | Modified | Adjusted KPI card grid to `sm:grid-cols-2 xl:grid-cols-4`. |
-| `src/features/dashboard/recent-movements-card.tsx` | Modified | Wrapped table in `w-full overflow-x-auto` container and localized table headers. |
-| `src/features/dashboard/low-stock-watchlist.tsx` | Modified | Wrapped table in `w-full overflow-x-auto` container and localized table headers. |
-| `src/features/settings/settings-view.tsx` | Created | Interactive Settings component supporting 5 submenus with profile name update and role immutability. |
-| `src/app/[locale]/(dashboard)/settings/page.tsx` | Created | Page route for `/settings`. |
-| `src/app/[locale]/(dashboard)/transactions/page.tsx` | Created | Non-404 roadmap view for transactions. |
-| `src/app/[locale]/(dashboard)/reports/page.tsx` | Created | Non-404 roadmap view for reports. |
-| `src/app/[locale]/(dashboard)/reports/products/page.tsx` | Created | Non-404 roadmap view for product analysis. |
-| `src/app/[locale]/(dashboard)/assistant/page.tsx` | Created | Non-404 roadmap view for AI assistant. |
-| `tests/unit/demo-accounts-fill.test.ts` | Created | Unit tests verifying demo autofill and server action safety. |
-| `tests/unit/logout-confirmation.test.ts` | Created | Unit tests verifying logout confirmation dialog copy in ID and EN. |
-| `tests/unit/sidebar-navigation.test.ts` | Created | Unit tests verifying 4 menu groups and icon footer contract. |
-| `tests/unit/responsive-dashboard.test.ts` | Created | Unit tests verifying dashboard table localization and container contracts. |
-| `tests/unit/settings-support.test.ts` | Created | Unit tests verifying profile name validation, role immutability, and submenus. |
+| File Path                                                | Action   | Description                                                                                                                |
+| :------------------------------------------------------- | :------- | :------------------------------------------------------------------------------------------------------------------------- |
+| `messages/id/auth.json`                                  | Modified | Added `demoFilledNotice` and `logout.confirmDialog` strings.                                                               |
+| `messages/en/auth.json`                                  | Modified | Added English translations for demo filled banner and logout dialog.                                                       |
+| `messages/id/sidebar.json`                               | Modified | Defined 4 menu groups (`main`, `management`, `reports`, `other`), item labels, and tooltips.                               |
+| `messages/en/sidebar.json`                               | Modified | English translation for 4 menu groups and tooltips.                                                                        |
+| `messages/id/navigation.json`                            | Modified | Added `productAnalysis` and `settings` navigation labels.                                                                  |
+| `messages/en/navigation.json`                            | Modified | English navigation labels.                                                                                                 |
+| `messages/id/dashboard.json`                             | Modified | Added localized table headers and 5-submenu `settings` dictionary.                                                         |
+| `messages/en/dashboard.json`                             | Modified | English dashboard and settings strings.                                                                                    |
+| `src/app/actions/auth-actions.ts`                        | Modified | Added `getDemoCredentialsAction` and `updateProfileNameAction` with safe `revalidatePath` error handling.                  |
+| `src/features/auth/login-form.tsx`                       | Modified | Refactored demo buttons to only auto-fill credentials with accessible feedback; manual submit required.                    |
+| `src/features/auth/logout-button.tsx`                    | Modified | Implemented `LogoutConfirmationDialog` modal with Cancel/Confirm controls and `'icon'` variant with tooltip.               |
+| `src/components/shared/locale-switcher.tsx`              | Modified | Added `'icon'` variant with Radix UI `Tooltip`.                                                                            |
+| `src/components/shared/theme-toggle.tsx`                 | Modified | Added Radix UI `Tooltip` and `cn` styling support.                                                                         |
+| `src/components/shared/app-sidebar.tsx`                  | Modified | Restructured navigation into 4 semantic groups; rendered icon-only footer buttons with tooltips; bounded container height. |
+| `src/components/shared/app-header.tsx`                   | Modified | Added desktop hamburger toggle; removed duplicate theme, language, and logout controls; expanded breadcrumbs.              |
+| `src/components/shared/dashboard-shell.tsx`              | Modified | Managed sidebar collapse state with cookie persistence and desktop toggle handler.                                         |
+| `src/app/[locale]/layout.tsx`                            | Modified | Wrapped root application layout in `<TooltipProvider delayDuration={200}>`.                                                |
+| `src/features/dashboard/kpi-stat-card.tsx`               | Modified | Added responsive font sizing and tabular numerals to prevent IDR currency clipping.                                        |
+| `src/app/[locale]/(dashboard)/dashboard/page.tsx`        | Modified | Adjusted KPI card grid to `sm:grid-cols-2 xl:grid-cols-4`.                                                                 |
+| `src/features/dashboard/recent-movements-card.tsx`       | Modified | Wrapped table in `w-full overflow-x-auto` container and localized table headers.                                           |
+| `src/features/dashboard/low-stock-watchlist.tsx`         | Modified | Wrapped table in `w-full overflow-x-auto` container and localized table headers.                                           |
+| `src/features/settings/settings-view.tsx`                | Created  | Interactive Settings component supporting 5 submenus with profile name update and role immutability.                       |
+| `src/app/[locale]/(dashboard)/settings/page.tsx`         | Created  | Page route for `/settings`.                                                                                                |
+| `src/app/[locale]/(dashboard)/transactions/page.tsx`     | Created  | Non-404 roadmap view for transactions.                                                                                     |
+| `src/app/[locale]/(dashboard)/reports/page.tsx`          | Created  | Non-404 roadmap view for reports.                                                                                          |
+| `src/app/[locale]/(dashboard)/reports/products/page.tsx` | Created  | Non-404 roadmap view for product analysis.                                                                                 |
+| `src/app/[locale]/(dashboard)/assistant/page.tsx`        | Created  | Non-404 roadmap view for AI assistant.                                                                                     |
+| `tests/unit/demo-accounts-fill.test.ts`                  | Created  | Unit tests verifying demo autofill and server action safety.                                                               |
+| `tests/unit/logout-confirmation.test.ts`                 | Created  | Unit tests verifying logout confirmation dialog copy in ID and EN.                                                         |
+| `tests/unit/sidebar-navigation.test.ts`                  | Created  | Unit tests verifying 4 menu groups and icon footer contract.                                                               |
+| `tests/unit/responsive-dashboard.test.ts`                | Created  | Unit tests verifying dashboard table localization and container contracts.                                                 |
+| `tests/unit/settings-support.test.ts`                    | Created  | Unit tests verifying profile name validation, role immutability, and submenus.                                             |
 
 ---
 

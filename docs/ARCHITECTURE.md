@@ -74,13 +74,13 @@ Inventra is a **modular monolith** built on **Next.js App Router** with **Supaba
 
 ### 2.2 Layer Responsibilities
 
-| Layer | Responsibility | Planned Key Files |
-| :--- | :--- | :--- |
-| **Presentation** | UI rendering, user interaction, form state, i18n, theming | `src/app/**/page.tsx`, `src/components/**` |
-| **Application** | Request handling, Zod validation, auth enforcement, role checks | `src/app/**/actions.ts`, `src/middleware.ts`, `src/schemas/**` |
-| **Service** | Pure business logic, stock calculations, catalog import | `src/services/**` |
-| **Data Access** | Supabase queries, transactions, RLS enforcement | `src/lib/supabase/**` |
-| **Infrastructure** | External connections, environment configuration | `.env.local`, Supabase project |
+| Layer              | Responsibility                                                  | Planned Key Files                                              |
+| :----------------- | :-------------------------------------------------------------- | :------------------------------------------------------------- |
+| **Presentation**   | UI rendering, user interaction, form state, i18n, theming       | `src/app/**/page.tsx`, `src/components/**`                     |
+| **Application**    | Request handling, Zod validation, auth enforcement, role checks | `src/app/**/actions.ts`, `src/middleware.ts`, `src/schemas/**` |
+| **Service**        | Pure business logic, stock calculations, catalog import         | `src/services/**`                                              |
+| **Data Access**    | Supabase queries, transactions, RLS enforcement                 | `src/lib/supabase/**`                                          |
+| **Infrastructure** | External connections, environment configuration                 | `.env.local`, Supabase project                                 |
 
 ### 2.3 Key Principles
 
@@ -92,7 +92,6 @@ Inventra is a **modular monolith** built on **Next.js App Router** with **Supaba
 - **Code modularization (< 250 lines):** Maintain clean separation of concerns. Target file length is < 250 lines; any file exceeding 250 lines must be reviewed for modular decomposition into dedicated presentation, column, filter, domain, or service files. Avoid files exceeding 300 lines unless an architectural exemption is documented.
 
 ---
-
 
 ## 3. Directory Structure
 
@@ -188,12 +187,12 @@ inventra/
 
 Inventra uses `@supabase/ssr` to create Supabase clients appropriate for each execution context:
 
-| Context | Factory | Cookie Handling | Use Case |
-| :--- | :--- | :--- | :--- |
-| **Server Component** | `createServerClient()` | Read-only from request cookies | Data fetching in RSC |
-| **Server Action / Route Handler** | `createServerClient()` | Read/write cookies | Mutations, auth checks |
-| **Middleware** | `createServerClient()` | Read/write on request/response | Session refresh |
-| **Browser** | `createBrowserClient()` | Automatic (browser cookies) | Client-side interactions |
+| Context                           | Factory                 | Cookie Handling                | Use Case                 |
+| :-------------------------------- | :---------------------- | :----------------------------- | :----------------------- |
+| **Server Component**              | `createServerClient()`  | Read-only from request cookies | Data fetching in RSC     |
+| **Server Action / Route Handler** | `createServerClient()`  | Read/write cookies             | Mutations, auth checks   |
+| **Middleware**                    | `createServerClient()`  | Read/write on request/response | Session refresh          |
+| **Browser**                       | `createBrowserClient()` | Automatic (browser cookies)    | Client-side interactions |
 
 ### 4.2 Client Rules
 
@@ -224,11 +223,8 @@ import { z } from 'zod'
 export const stockMovementSchema = z.object({
   productId: z.string().uuid(),
   type: z.enum(['IN', 'OUT']),
-  quantity: z
-    .number()
-    .int({ message: 'validation.quantity.integer' })
-    .positive({ message: 'validation.quantity.positive' }),
-  note: z.string().min(1, { message: 'validation.note.required' }),
+  quantity: z.number().int({ message: 'validation.quantity.integer' }).positive({ message: 'validation.quantity.positive' }),
+  note: z.string().min(1, { message: 'validation.note.required' })
 })
 
 export type StockMovementInput = z.infer<typeof stockMovementSchema>
@@ -238,13 +234,16 @@ export type StockMovementInput = z.infer<typeof stockMovementSchema>
 
 ```typescript
 // Example: Form component (planned)
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { stockMovementSchema, type StockMovementInput } from '@/schemas/stock-movement-schema'
+import { useForm } from 'react-hook-form'
+
+import { stockMovementSchema } from '@/schemas/stock-movement-schema'
+
+import type { StockMovementInput } from '@/schemas/stock-movement-schema'
 
 const form = useForm<StockMovementInput>({
   resolver: zodResolver(stockMovementSchema),
-  defaultValues: { type: 'IN', quantity: 1, note: '' },
+  defaultValues: { type: 'IN', quantity: 1, note: '' }
 })
 ```
 
@@ -293,11 +292,11 @@ Return result to client
 
 ### 6.1 Service Responsibilities
 
-| Service | Responsibility |
-| :--- | :--- |
+| Service             | Responsibility                                                                  |
+| :------------------ | :------------------------------------------------------------------------------ |
 | `inventory-service` | Stock calculations, mutation logic, available stock checks, inventory valuation |
-| `catalog-service` | Fetch from DummyJSON, transform to product format, seed/reset database |
-| `movement-service` | Query movement history, apply filters (SKU, type, date) |
+| `catalog-service`   | Fetch from DummyJSON, transform to product format, seed/reset database          |
+| `movement-service`  | Query movement history, apply filters (SKU, type, date)                         |
 
 ### 6.2 Service Rules
 
@@ -320,11 +319,11 @@ Return result to client
 
 ### 7.2 Translation Responsibilities
 
-| Layer | Translation Approach |
-| :--- | :--- |
-| **Server Components** | `getTranslations()` from `next-intl/server` |
-| **Client Components** | `useTranslations()` hook |
-| **Zod validation messages** | Translation keys as message values, resolved at display time |
+| Layer                          | Translation Approach                                                    |
+| :----------------------------- | :---------------------------------------------------------------------- |
+| **Server Components**          | `getTranslations()` from `next-intl/server`                             |
+| **Client Components**          | `useTranslations()` hook                                                |
+| **Zod validation messages**    | Translation keys as message values, resolved at display time            |
 | **Server-side error messages** | Translation keys returned to client, rendered by the presentation layer |
 
 ### 7.3 Rules
@@ -358,10 +357,10 @@ Return result to client
 
 ### 9.1 Roles
 
-| Role | Code | Access |
-| :--- | :--- | :--- |
-| Warehouse Admin | `admin_gudang` | Full CRUD on inventory and stock movements |
-| Business Owner | `owner` | Full read access, stock mutations, summary metrics |
+| Role            | Code           | Access                                             |
+| :-------------- | :------------- | :------------------------------------------------- |
+| Warehouse Admin | `admin_gudang` | Full CRUD on inventory and stock movements         |
+| Business Owner  | `owner`        | Full read access, stock mutations, summary metrics |
 
 ### 9.2 Authorization Flow
 
@@ -397,13 +396,13 @@ Redirect to login or 403 page
 
 ### 10.1 Error Categories
 
-| Category | Handling | User Feedback |
-| :--- | :--- | :--- |
-| **Validation Error** | Zod parse failure | Field-level error messages via React Hook Form |
-| **Business Logic Error** | Service returns error result | Toast notification with translated message |
-| **Auth Error** | Middleware redirect | Redirect to login page |
-| **Database Error** | Caught in try-catch | Generic error message (no details exposed) |
-| **Network Error** | Caught in try-catch | Retry prompt or generic error |
+| Category                 | Handling                     | User Feedback                                  |
+| :----------------------- | :--------------------------- | :--------------------------------------------- |
+| **Validation Error**     | Zod parse failure            | Field-level error messages via React Hook Form |
+| **Business Logic Error** | Service returns error result | Toast notification with translated message     |
+| **Auth Error**           | Middleware redirect          | Redirect to login page                         |
+| **Database Error**       | Caught in try-catch          | Generic error message (no details exposed)     |
+| **Network Error**        | Caught in try-catch          | Retry prompt or generic error                  |
 
 ### 10.2 Error Response Format
 
@@ -413,7 +412,7 @@ All internal API responses follow this contract:
 interface ActionResult<T = unknown> {
   success: boolean
   data: T | null
-  error: string | null  // Translation key for user-facing message
+  error: string | null // Translation key for user-facing message
 }
 ```
 
@@ -463,13 +462,13 @@ interface ActionResult<T = unknown> {
 
 ## 12. Technology Decisions
 
-| Decision | Rationale |
-| :--- | :--- |
-| **Supabase over custom backend** | Built-in Auth, PostgreSQL, RLS, and real-time — reduces scope for a time-boxed assessment. |
-| **No ORM (no Prisma)** | Direct Supabase client queries are sufficient. Avoids additional abstraction for a small schema. |
-| **No Axios** | Native `fetch` is built into Next.js with caching support. No need for an HTTP wrapper. |
-| **Zod + React Hook Form** | Type-safe validation shared between client and server. React Hook Form handles form state efficiently. |
-| **Zustand over Context for UI state** | Avoids unnecessary re-renders for frequently changing UI state (sidebar, filters). |
-| **next-intl over raw i18n** | First-class Next.js App Router support with server/client component integration. |
-| **Vitest over Jest** | Faster execution, native ESM support, and already installed as a dev dependency. |
-| **Supabase SQL migrations over ORM migrations** | Direct SQL gives full control over schema, indexes, RLS policies, and functions. |
+| Decision                                        | Rationale                                                                                              |
+| :---------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| **Supabase over custom backend**                | Built-in Auth, PostgreSQL, RLS, and real-time — reduces scope for a time-boxed assessment.             |
+| **No ORM (no Prisma)**                          | Direct Supabase client queries are sufficient. Avoids additional abstraction for a small schema.       |
+| **No Axios**                                    | Native `fetch` is built into Next.js with caching support. No need for an HTTP wrapper.                |
+| **Zod + React Hook Form**                       | Type-safe validation shared between client and server. React Hook Form handles form state efficiently. |
+| **Zustand over Context for UI state**           | Avoids unnecessary re-renders for frequently changing UI state (sidebar, filters).                     |
+| **next-intl over raw i18n**                     | First-class Next.js App Router support with server/client component integration.                       |
+| **Vitest over Jest**                            | Faster execution, native ESM support, and already installed as a dev dependency.                       |
+| **Supabase SQL migrations over ORM migrations** | Direct SQL gives full control over schema, indexes, RLS policies, and functions.                       |

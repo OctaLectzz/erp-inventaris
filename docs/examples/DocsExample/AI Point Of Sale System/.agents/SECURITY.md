@@ -56,12 +56,13 @@ NexPOS implements a **defense-in-depth** security strategy with multiple overlap
 
 ```typescript
 // src/schemas/auth.schema.ts
-const passwordSchema = z.string()
+const passwordSchema = z
+  .string()
   .min(8, 'validation.password.minLength')
   .regex(/[A-Z]/, 'validation.password.uppercase')
   .regex(/[a-z]/, 'validation.password.lowercase')
   .regex(/[0-9]/, 'validation.password.number')
-  .regex(/[^A-Za-z0-9]/, 'validation.password.special');
+  .regex(/[^A-Za-z0-9]/, 'validation.password.special')
 ```
 
 ### 2.3 OAuth Security
@@ -98,12 +99,12 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
 ### 3.2 Permission Enforcement Points
 
-| Layer | Enforcement |
-|:---|:---|
-| **Middleware** | Route-level access control (page access) |
-| **API Route** | Per-endpoint role check before processing |
-| **UI** | Conditional rendering based on role (hide/disable elements) |
-| **Database** | Row Level Security policies (defense in depth) |
+| Layer          | Enforcement                                                 |
+| :------------- | :---------------------------------------------------------- |
+| **Middleware** | Route-level access control (page access)                    |
+| **API Route**  | Per-endpoint role check before processing                   |
+| **UI**         | Conditional rendering based on role (hide/disable elements) |
+| **Database**   | Row Level Security policies (defense in depth)              |
 
 ### 3.3 API Route Protection Pattern
 
@@ -111,18 +112,20 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 // Every API route must validate auth and role
 export async function GET(request: Request): Promise<Response> {
   // 1. Get session from Supabase
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser()
   if (!user) {
-    return apiResponse(null, 'Unauthorized', 401);
+    return apiResponse(null, 'Unauthorized', 401)
   }
 
   // 2. Fetch profile and check role
   const profile = await prisma.profile.findUnique({
     where: { userId: user.id }
-  });
+  })
 
   if (!hasPermission(profile.role, 'categories.read')) {
-    return apiResponse(null, 'Forbidden', 403);
+    return apiResponse(null, 'Forbidden', 403)
   }
 
   // 3. Proceed with business logic
@@ -137,27 +140,22 @@ export async function GET(request: Request): Promise<Response> {
 
 **Double validation** — validate on both client AND server:
 
-| Layer | Tool | Purpose |
-|:---|:---|:---|
-| Client-side | Zod + React Hook Form | UX (instant feedback) |
-| Server-side (API) | Zod | Security (never trust client) |
-| Database | Prisma schema constraints | Data integrity |
+| Layer             | Tool                      | Purpose                       |
+| :---------------- | :------------------------ | :---------------------------- |
+| Client-side       | Zod + React Hook Form     | UX (instant feedback)         |
+| Server-side (API) | Zod                       | Security (never trust client) |
+| Database          | Prisma schema constraints | Data integrity                |
 
 ### 4.2 Validation Rules
 
 ```typescript
 // ALWAYS validate request bodies in API routes
 export async function POST(request: Request): Promise<Response> {
-  const body = await request.json();
-  const result = createCategorySchema.safeParse(body);
+  const body = await request.json()
+  const result = createCategorySchema.safeParse(body)
 
   if (!result.success) {
-    return apiResponse(
-      null,
-      'Validation failed',
-      400,
-      result.error.flatten()
-    );
+    return apiResponse(null, 'Validation failed', 400, result.error.flatten())
   }
 
   // Use result.data (validated + typed)
@@ -178,13 +176,13 @@ export async function POST(request: Request): Promise<Response> {
 
 ### 5.1 Rate Limiting
 
-| Endpoint | Limit | Window |
-|:---|:---|:---|
-| Auth (login/register) | 5 requests | Per minute |
-| API routes (general) | 60 requests | Per minute |
-| File upload | 10 requests | Per minute |
-| AI chat | 20 requests | Per minute |
-| WhatsApp webhook | 100 requests | Per minute |
+| Endpoint              | Limit        | Window     |
+| :-------------------- | :----------- | :--------- |
+| Auth (login/register) | 5 requests   | Per minute |
+| API routes (general)  | 60 requests  | Per minute |
+| File upload           | 10 requests  | Per minute |
+| AI chat               | 20 requests  | Per minute |
+| WhatsApp webhook      | 100 requests | Per minute |
 
 Implementation: Use Vercel's built-in rate limiting or `@upstash/ratelimit` with Redis.
 
@@ -196,8 +194,8 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL,
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Max-Age': '86400',
-};
+  'Access-Control-Max-Age': '86400'
+}
 ```
 
 ### 5.3 API Response Security
@@ -209,10 +207,10 @@ const corsHeaders = {
 
 ```typescript
 // ✅ CORRECT: Generic user-facing error
-return apiResponse(null, 'An error occurred while processing your request', 500);
+return apiResponse(null, 'An error occurred while processing your request', 500)
 
 // ❌ WRONG: Exposing internal details
-return apiResponse(null, `Database connection failed: ${error.message}`, 500);
+return apiResponse(null, `Database connection failed: ${error.message}`, 500)
 ```
 
 ---
@@ -249,16 +247,16 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=.. # Public (safe, restricted by RLS)
 
 ```typescript
 // Upload validation rules
-const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const MAX_FILES_PER_REQUEST = 5;
+const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif']
+const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+const MAX_FILES_PER_REQUEST = 5
 
 // Validation before upload
 function validateFile(file: File): boolean {
-  if (!ALLOWED_FILE_TYPES.includes(file.type)) return false;
-  if (file.size > MAX_FILE_SIZE) return false;
+  if (!ALLOWED_FILE_TYPES.includes(file.type)) return false
+  if (file.size > MAX_FILE_SIZE) return false
   // Check magic bytes for content validation
-  return true;
+  return true
 }
 ```
 
@@ -283,10 +281,10 @@ function validateFile(file: File): boolean {
 ```typescript
 // API route: /api/whatsapp/webhook
 export async function POST(request: Request): Promise<Response> {
-  const serviceSecret = request.headers.get('X-WA-Service-Secret');
+  const serviceSecret = request.headers.get('X-WA-Service-Secret')
 
   if (serviceSecret !== process.env.WA_SERVICE_SECRET) {
-    return apiResponse(null, 'Unauthorized', 401);
+    return apiResponse(null, 'Unauthorized', 401)
   }
 
   // Process webhook...
@@ -334,33 +332,33 @@ export async function POST(request: Request): Promise<Response> {
 const securityHeaders = [
   {
     key: 'X-DNS-Prefetch-Control',
-    value: 'on',
+    value: 'on'
   },
   {
     key: 'Strict-Transport-Security',
-    value: 'max-age=63072000; includeSubDomains; preload',
+    value: 'max-age=63072000; includeSubDomains; preload'
   },
   {
     key: 'X-Content-Type-Options',
-    value: 'nosniff',
+    value: 'nosniff'
   },
   {
     key: 'X-Frame-Options',
-    value: 'DENY',
+    value: 'DENY'
   },
   {
     key: 'X-XSS-Protection',
-    value: '1; mode=block',
+    value: '1; mode=block'
   },
   {
     key: 'Referrer-Policy',
-    value: 'origin-when-cross-origin',
+    value: 'origin-when-cross-origin'
   },
   {
     key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(), geolocation=()',
-  },
-];
+    value: 'camera=(), microphone=(), geolocation=()'
+  }
+]
 ```
 
 ---
@@ -369,14 +367,14 @@ const securityHeaders = [
 
 ### 10.1 Logging
 
-| Event | Log Level | Storage |
-|:---|:---|:---|
-| Successful login | INFO | Application logs |
-| Failed login attempt | WARN | Application logs + Audit table |
-| Unauthorized access attempt | WARN | Application logs + Audit table |
-| API rate limit exceeded | WARN | Application logs |
-| Database error | ERROR | Application logs |
-| Security rule violation | CRITICAL | Application logs + Alert |
+| Event                       | Log Level | Storage                        |
+| :-------------------------- | :-------- | :----------------------------- |
+| Successful login            | INFO      | Application logs               |
+| Failed login attempt        | WARN      | Application logs + Audit table |
+| Unauthorized access attempt | WARN      | Application logs + Audit table |
+| API rate limit exceeded     | WARN      | Application logs               |
+| Database error              | ERROR     | Application logs               |
+| Security rule violation     | CRITICAL  | Application logs + Alert       |
 
 ### 10.2 Audit Trail
 
@@ -392,9 +390,9 @@ await prisma.auditLog.create({
     entityId: productId,
     oldValues: previousProduct,
     newValues: updatedProduct,
-    ipAddress: request.headers.get('x-forwarded-for'),
-  },
-});
+    ipAddress: request.headers.get('x-forwarded-for')
+  }
+})
 ```
 
 ### 10.3 Vulnerability Prevention Checklist

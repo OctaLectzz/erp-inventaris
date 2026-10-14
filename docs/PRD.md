@@ -48,13 +48,13 @@ Build a functional, well-tested Mini ERP inventory application that demonstrates
 
 ### Assessment Scoring Breakdown
 
-| Aspect | Weight |
-| :--- | :--- |
-| Business logic (SKU, stock, mutations, history) | 40% |
-| Architecture, state management, code quality, tests | 30% |
-| UI/UX and summary (navigation, empty/error states) | 15% |
-| Security and data handling | 10% |
-| Documentation and Git history | 5% |
+| Aspect                                              | Weight |
+| :-------------------------------------------------- | :----- |
+| Business logic (SKU, stock, mutations, history)     | 40%    |
+| Architecture, state management, code quality, tests | 30%    |
+| UI/UX and summary (navigation, empty/error states)  | 15%    |
+| Security and data handling                          | 10%    |
+| Documentation and Git history                       | 5%     |
 
 > Score 85+ = very strong. 70–84 = meets expectations. Below 70 = does not meet expectations.
 > AI integration is bonus credit beyond the main scoring.
@@ -150,12 +150,12 @@ Build a functional, well-tested Mini ERP inventory application that demonstrates
 
 ### 6.3 Validation Rules
 
-| Input | Accepted | Rejected |
-| :--- | :--- | :--- |
-| Quantity | Positive integers (1, 2, 10, …) | 0, -1, 3.5, null, undefined, "" |
-| Stock OUT quantity | ≤ current stock | > current stock |
-| SKU | Unique, non-empty string | Duplicate, empty |
-| Note/reference | Non-empty string | Empty |
+| Input              | Accepted                        | Rejected                        |
+| :----------------- | :------------------------------ | :------------------------------ |
+| Quantity           | Positive integers (1, 2, 10, …) | 0, -1, 3.5, null, undefined, "" |
+| Stock OUT quantity | ≤ current stock                 | > current stock                 |
+| SKU                | Unique, non-empty string        | Duplicate, empty                |
+| Note/reference     | Non-empty string                | Empty                           |
 
 ### 6.4 Stock Consistency Rule
 
@@ -167,12 +167,12 @@ This invariant must hold at all times. The server is the authority — clients n
 
 ### 6.5 Example Scenarios (from Assessment Brief)
 
-| Scenario | Expected Result |
-| :--- | :--- |
-| Receive 10 units, opening stock 4 | Stock = 14; history records 4 → 14 |
-| Issue 3 units from stock 14 | Stock = 11; history records 14 → 11 |
-| Issue 12 units from stock 11 | Rejected; stock and history unchanged |
-| Quantity: 0, negative, or decimal | Rejected; no changes |
+| Scenario                                          | Expected Result                          |
+| :------------------------------------------------ | :--------------------------------------- |
+| Receive 10 units, opening stock 4                 | Stock = 14; history records 4 → 14       |
+| Issue 3 units from stock 14                       | Stock = 11; history records 14 → 11      |
+| Issue 12 units from stock 11                      | Rejected; stock and history unchanged    |
+| Quantity: 0, negative, or decimal                 | Rejected; no changes                     |
 | Reload after mutation; access different role page | Data and session intact; access per role |
 
 ---

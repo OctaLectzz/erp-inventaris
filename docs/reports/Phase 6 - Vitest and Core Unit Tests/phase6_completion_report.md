@@ -24,6 +24,7 @@ Semua quality gates (`vitest`, `tsc --noEmit`, `eslint`, `prettier`, dan `npm ru
 ## 2. Kondisi Awal dan Gap Pengujian yang Ditemukan
 
 Sebelum Phase 6, audit repositori mengidentifikasi kondisi dan celah pengujian berikut:
+
 1. **Ketiadaan Pemisahan Eksekusi Unit vs Live**:
    Sebelumnya, menjalankan `vitest run` memicu seluruh pengujian sekaligus termasuk pengujian live yang membutuhkan koneksi internet dan variabel lingkungan `.env.local`. Pengembang tidak memiliki skrip untuk menjalankan pengujian unit murni secara instan saat offline.
 2. **Ketiadaan Skema Zod Domain Inventaris**:
@@ -38,6 +39,7 @@ Sebelum Phase 6, audit repositori mengidentifikasi kondisi dan celah pengujian b
 ## 3. Berkas yang Dibuat dan Diubah
 
 ### A. Berkas Baru (Untracked)
+
 1. **`src/schemas/inventory-schema.ts`**:
    - `stockMutationInputSchema`: Memvalidasi `productId` (UUID RFC 4122), `type` (`'IN' | 'OUT'`), `quantity` (bilangan bulat positif $> 0$), dan `note` (string $3–500$ karakter).
    - `productInputSchema`: Memvalidasi format SKU, nama, kategori, unit, harga non-negatif, dan stok non-negatif.
@@ -60,6 +62,7 @@ Sebelum Phase 6, audit repositori mengidentifikasi kondisi dan celah pengujian b
    - 8 pengujian unit: Tipe mutasi sah, konsistensi stok sebelum/sesudah, penolakan catatan pendek ($< 3$ karakter), dan validasi foreign key.
 
 ### B. Berkas yang Diperbarui (Modified)
+
 1. **`package.json`**:
    - Penambahan skrip pengujian:
      - `"test": "vitest run"` (menjalankan seluruh 165 pengujian).
@@ -72,12 +75,14 @@ Sebelum Phase 6, audit repositori mengidentifikasi kondisi dan celah pengujian b
 ## 4. Rincian Pengujian Unit dan Bukti Perilaku Domain
 
 ### A. SKU & Katalog Produk (`catalog-domain.test.ts`)
+
 - **SKU DummyJSON**: Mempertahankan dan mengkapitalkan SKU bawaan (misal `beauty-mascara-01` ➔ `BEAUTY-MASCARA-01`).
 - **Fallback Deterministi**: Jika SKU kosong, sistem membuat format `CATEGORY-ID` dengan padding (misal ID 7 kategori groceries ➔ `GROC-007`).
 - **Konversi Kurs USD ➔ IDR**: Menggunakan rasio acuan tetap proyek ($1\text{ USD} = 16.000\text{ IDR}$). Nilai $9.99\text{ USD}$ dikonversi dan dibulatkan menjadi $159.840\text{ IDR}$. Nilai negatif, $NaN$, atau tak terhingga menghasilkan $0\text{ IDR}$.
 - **Perlindungan Stok Operasional**: Menjamin bahwa saat metadata produk diperbarui, kolom `stock` operasional di gudang tidak pernah tertimpa oleh data eksternal DummyJSON.
 
 ### B. Mutasi Stok & Bukti Invarian (`stock-mutation-domain.test.ts`)
+
 - **Validasi Kuantitas**: Menolak nilai kuantitas $0$, $-5$, desimal $2.5$, string, dan $NaN$.
 - **Mutasi Masuk (Stock IN)**: Menambah stok dengan benar (misal awal $10$, IN $5$ ➔ stok akhir $15$).
 - **Mutasi Keluar (Stock OUT)**: Mengurangi stok dengan benar (misal awal $15$, OUT $3$ ➔ stok akhir $12$). Mengizinkan pengeluaran seluruh stok hingga $0$.
@@ -86,6 +91,7 @@ Sebelum Phase 6, audit repositori mengidentifikasi kondisi dan celah pengujian b
 - **Tanpa State Parsial**: Kegagalan validasi atau kalkulasi menjamin tidak ada perubahan parsial pada data referensi.
 
 ### C. Ringkasan Inventaris & Aturan Ambang Batas (< 5) (`inventory-summary.test.ts`)
+
 - **Uji Batas Ambang Low Stock**:
   - $stok = 0 \rightarrow$ Low Stock (`true`)
   - $stok = 1 \rightarrow$ Low Stock (`true`)
@@ -96,6 +102,7 @@ Sebelum Phase 6, audit repositori mengidentifikasi kondisi dan celah pengujian b
 - **Katalog Kosong**: Mengembalikan $0$ untuk seluruh metrik tanpa melempar exception runtime.
 
 ### D. Integritas Buku Besar Mutasi (`stock-ledger-domain.test.ts`)
+
 - **Tipe Mutasi**: Hanya menerima tipe diskriminan `'IN'` dan `'OUT'`. Menolak `'TRANSFER'`, `'ADJUST'`, atau tipe tidak sah lainnya.
 - **Konsistensi Saldo**: Memverifikasi bahwa $stok_{sesudah} = stok_{sebelum} \pm kuantitas$. Jika ada baris riwayat yang tidak konsisten, validator menolak baris tersebut.
 - **Catatan Wajib**: Menolak mutasi dengan catatan kosong atau kurang dari 3 karakter.
@@ -105,11 +112,14 @@ Sebelum Phase 6, audit repositori mengidentifikasi kondisi dan celah pengujian b
 ## 5. Pemisahan Suite dan Hasil Eksekusi Test
 
 ### A. Pengujian Unit Murni Offline (`npm run test:unit`)
+
 Perintah: `vitest run --exclude "**/*live*"`
+
 - Lingkungan: In-memory (Node runtime), 0 network call, tidak memerlukan Supabase online atau secret `.env.local`.
 - Hasil: **10 test files passed, 140 tests passed** (Durasi eksekusi pengujian: $829\text{ms}$).
 
 Daftar suite unit test:
+
 1. `tests/unit/stock-mutation-domain.test.ts` (15 tests) — **Lulus**
 2. `tests/unit/catalog-domain.test.ts` (11 tests) — **Lulus**
 3. `tests/unit/stock-ledger-domain.test.ts` (8 tests) — **Lulus**
@@ -122,16 +132,21 @@ Daftar suite unit test:
 10. `tests/supabase/sql-syntax-and-contract.test.ts` (23 tests) — **Lulus**
 
 ### B. Pengujian Integrasi Live Supabase (`npm run test:live`)
+
 Perintah: `vitest run live`
+
 - Lingkungan: Supabase instance live (`vwzlvsggpuvmkubkzfzp.supabase.co`).
 - Hasil: **2 test files passed, 25 tests passed**.
 
 Daftar suite live test:
+
 1. `tests/auth/live-auth.test.ts` (4 tests) — **Lulus**
 2. `tests/supabase/live-integration.test.ts` (21 tests) — **Lulus**
 
 ### C. Pengujian Penuh Keseluruhan (`npm run test`)
+
 Perintah: `vitest run`
+
 - Hasil: **12 test files passed, 165 tests passed** (100% kelulusan).
 
 ---
@@ -139,7 +154,8 @@ Perintah: `vitest run`
 ## 6. Laporan Status Tooling Coverage
 
 Sesuai aturan ketat proyek:
-> *"Jangan memasang dependency coverage baru tanpa izin. Laporkan coverage bila benar-benar dihasilkan. Jangan mengklaim 100% coverage jika tidak diukur."*
+
+> _"Jangan memasang dependency coverage baru tanpa izin. Laporkan coverage bila benar-benar dihasilkan. Jangan mengklaim 100% coverage jika tidak diukur."_
 
 - **Pemeriksaan Paket Coverage**: Paket `@vitest/coverage-v8` dan `@vitest/coverage-istanbul` tidak terpasang di `node_modules` atau `devDependencies`.
 - **Tindakan**: Kami **tidak memasang paket baru** secara sepihak. Oleh karena itu, metrik coverage persentase baris (lcov/v8) tidak diukur secara sintetis dan kami **tidak mengklaim angka coverage yang tidak terverifikasi**.

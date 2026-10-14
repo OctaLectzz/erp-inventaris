@@ -1,7 +1,9 @@
 # Implementation Plan — Phase 6: Vitest & Core Unit Tests
 
 ## Goal Description
+
 Establish a comprehensive, isolated, and deterministic unit testing suite for the core domain logic of Inventra (Mini ERP Inventory Management). This includes pure domain logic for:
+
 1. **Catalog & SKU Engine**: Deterministic SKU generation, fixed exchange rate USD-to-IDR conversion, incomplete payload sanitization, and idempotent catalog synchronization preserving operational stock.
 2. **Stock Mutation & Invariant Engine**: Positive integer validation, stock IN/OUT computation, overdraft protection (insufficient stock rejection), and mathematical invariant verification ($stock_{after} = stock_{before} \pm quantity$).
 3. **Inventory Summary & KPI Engine**: Correct SKU counting, total unit summing, asset valuation, and the critical low-stock threshold rule strictly defined as $stock < 5$ (not $\le 5$).
@@ -71,7 +73,9 @@ graph TD
 ### Component 1: Domain Schemas & Calculation Services
 
 #### `[NEW]` [inventory-schema.ts](file:///c:/Experience/Projects/inventra/src/schemas/inventory-schema.ts)
+
 Zod validation schemas for stock mutations and product catalog operations:
+
 - `stockMutationInputSchema`:
   - `productId`: UUID string (`z.string().uuid()`).
   - `type`: Discriminated enum `'IN' | 'OUT'`.
@@ -86,7 +90,9 @@ Zod validation schemas for stock mutations and product catalog operations:
   - `stock`: Non-negative integer (`z.number().int().nonnegative()`).
 
 #### `[NEW]` [inventory-domain.ts](file:///c:/Experience/Projects/inventra/src/services/inventory-domain.ts)
+
 Pure domain computation and business invariant verification functions:
+
 - `calculateStockMutation(currentStock: number, type: MovementType, quantity: number): StockMutationCalculationResult`
   - Validates positive integer for quantity and non-negative integer for current stock.
   - If `type === 'OUT'` and `quantity > currentStock`: Returns `{ success: false, error: 'INSUFFICIENT_STOCK', message: 'Stok tidak mencukupi' }`.
@@ -109,16 +115,21 @@ Pure domain computation and business invariant verification functions:
 ### Component 2: Test Infrastructure, Fixtures & Mocks
 
 #### `[NEW]` [inventory-fixtures.ts](file:///c:/Experience/Projects/inventra/tests/fixtures/inventory-fixtures.ts)
+
 Reusable, deterministic domain object factories for testing:
+
 - `createMockProduct(overrides?: Partial<Product>): Product`
 - `createMockStockMovement(overrides?: Partial<StockMovement>): StockMovement`
 - `createMockDummyJsonProduct(overrides?: Partial<DummyJsonProduct>): DummyJsonProduct`
 
 #### `[NEW]` [supabase-mock.ts](file:///c:/Experience/Projects/inventra/tests/mocks/supabase-mock.ts)
+
 Deterministic in-memory mock factory for Supabase client queries, RPC calls, and errors without network reliance.
 
 #### `[MODIFY]` [package.json](file:///c:/Experience/Projects/inventra/package.json)
+
 Add standard NPM scripts for test execution separation without modifying any dependencies:
+
 ```json
 {
   "scripts": {
@@ -135,6 +146,7 @@ Add standard NPM scripts for test execution separation without modifying any dep
 ### Component 3: Unit Test Suites
 
 #### `[NEW]` [catalog-domain.test.ts](file:///c:/Experience/Projects/inventra/tests/unit/catalog-domain.test.ts)
+
 1. **SKU Uniqueness & Formatting**:
    - Generates clean uppercase deterministic SKUs from DummyJSON attributes.
    - Falls back to `CATEGORY-ID` formatting when `product.sku` is empty or missing.
@@ -149,6 +161,7 @@ Add standard NPM scripts for test execution separation without modifying any dep
    - Verifies operational stock preservation: updating existing product metadata does not alter existing warehouse stock levels.
 
 #### `[NEW]` [stock-mutation-domain.test.ts](file:///c:/Experience/Projects/inventra/tests/unit/stock-mutation-domain.test.ts)
+
 1. **Quantity Input Validation**:
    - Rejects zero quantity ($0$).
    - Rejects negative quantities ($-1, -100$).
@@ -168,6 +181,7 @@ Add standard NPM scripts for test execution separation without modifying any dep
    - Asserts zero partial state on calculation failures.
 
 #### `[NEW]` [inventory-summary.test.ts](file:///c:/Experience/Projects/inventra/tests/unit/inventory-summary.test.ts)
+
 1. **Catalog Aggregations**:
    - Correctly counts total SKUs.
    - Correctly sums total stock units.
@@ -184,6 +198,7 @@ Add standard NPM scripts for test execution separation without modifying any dep
    - Rejects or filters negative stock rows safely.
 
 #### `[NEW]` [stock-ledger-domain.test.ts](file:///c:/Experience/Projects/inventra/tests/unit/stock-ledger-domain.test.ts)
+
 1. **Movement Type Validation**:
    - Validates `'IN'` and `'OUT'`.
    - Rejects unsupported types like `'TRANSFER'`, `'ADJUST'`, `'VOID'`.
@@ -197,37 +212,39 @@ Add standard NPM scripts for test execution separation without modifying any dep
 ## Verification Plan
 
 ### Automated Tests
+
 1. **Run Pure Unit Tests (Fast & Offline)**:
    ```bash
    npx vitest run --exclude "**/*live*"
    ```
-   *Expected: All unit tests pass in $< 500\text{ms}$ with zero network calls.*
+   _Expected: All unit tests pass in $< 500\text{ms}$ with zero network calls._
 2. **Run Live Tests (Against Supabase Live Instance)**:
    ```bash
    npx vitest run tests/**/live-*.test.ts
    ```
-   *Expected: All live tests pass against live Supabase instance.*
+   _Expected: All live tests pass against live Supabase instance._
 3. **Run Full Test Suite**:
    ```bash
    npx vitest run
    ```
-   *Expected: All existing 124 tests + new unit tests pass (100% pass rate).*
+   _Expected: All existing 124 tests + new unit tests pass (100% pass rate)._
 4. **TypeScript Verification**:
    ```bash
    npx tsc --noEmit
    ```
-   *Expected: 0 errors.*
+   _Expected: 0 errors._
 5. **Linting Check**:
    ```bash
    npm run lint
    ```
-   *Expected: 0 errors, 0 warnings.*
+   _Expected: 0 errors, 0 warnings._
 6. **Production Build**:
    ```bash
    npm run build
    ```
-   *Expected: Turbopack compiles successfully; all routes generated.*
+   _Expected: Turbopack compiles successfully; all routes generated._
 
 ### Manual Verification
+
 1. Inspect test separation: Verify that `npx vitest run --exclude "**/*live*"` executes with internet disconnected or missing `.env.local` without throwing errors.
 2. Verify that low stock rule asserts strictly $stock < 5$ (border tests on $4, 5, 6$).

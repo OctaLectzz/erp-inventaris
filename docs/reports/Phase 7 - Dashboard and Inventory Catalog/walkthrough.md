@@ -1,7 +1,9 @@
 # Walkthrough: Phase 7 — Dashboard & Inventory Catalog
 
 ## Overview
+
 Phase 7 of **Inventra** has been fully implemented and verified according to project specifications. The application now features:
+
 - A live Supabase inventory dashboard with pure domain calculations (`inventory-domain.ts`).
 - An interactive, responsive inventory catalog data table (`/[locale]/inventory`) with search, category filtering, stock health filter, and pagination.
 - Modal forms for creating and editing products (`admin_gudang` role) with **strict stock immutability** (stock field completely omitted from catalog operations; initial stock is $0$ unit, modifications reserved for stock movement RPCs).
@@ -13,6 +15,7 @@ Phase 7 of **Inventra** has been fully implemented and verified according to pro
 ## Changes Made
 
 ### 1. Domain Schemas & Types
+
 - **[inventory-schema.ts](file:///c:/Experience/Projects/inventra/src/schemas/inventory-schema.ts)**:
   - Added `productCatalogInputSchema`: validates `sku, name, category, unit, price, description, imageUrl` while strictly omitting `stock`.
   - Added `productCatalogUpdateSchema`: extends input schema with UUID `id`.
@@ -21,6 +24,7 @@ Phase 7 of **Inventra** has been fully implemented and verified according to pro
   - Added `ProductCatalogFilter` interface.
 
 ### 2. Service & Server Actions Layer
+
 - **[product-service.ts](file:///c:/Experience/Projects/inventra/src/services/product-service.ts)**:
   - `getInventoryDashboardData`: loads live rows and calculates KPI metrics using `calculateInventorySummary`.
   - `getInventoryCatalogData`: queries catalog with search (SKU/name), category, and stock health filter.
@@ -30,6 +34,7 @@ Phase 7 of **Inventra** has been fully implemented and verified according to pro
   - `updateProductAction`: checks `admin_gudang` role, checks SKU uniqueness, updates metadata without modifying `stock`.
 
 ### 3. UI Components & Features
+
 - **[badge.tsx](file:///c:/Experience/Projects/inventra/src/components/ui/badge.tsx)**: Semantic badges with `warning`, `success`, `destructive`, and `accent` variants.
 - **[dialog.tsx](file:///c:/Experience/Projects/inventra/src/components/ui/dialog.tsx)**: Accessible dialog using Radix UI primitives.
 - **[textarea.tsx](file:///c:/Experience/Projects/inventra/src/components/ui/textarea.tsx)**: Styled textarea component.
@@ -38,12 +43,13 @@ Phase 7 of **Inventra** has been fully implemented and verified according to pro
 - **[catalog-table.tsx](file:///c:/Experience/Projects/inventra/src/features/catalog/catalog-table.tsx)**: Client table with search, category select, stock status select, responsive card view on mobile, pagination, and role-based action buttons.
 
 ### 4. App Router Routes & Layout
-- **[layout.tsx](file:///c:/Experience/Projects/inventra/src/app/[locale]/(dashboard)/layout.tsx)**: Integrated `DashboardNav` on desktop header and mobile sub-nav bar.
+
+- **[layout.tsx](<file:///c:/Experience/Projects/inventra/src/app/[locale]/(dashboard)/layout.tsx>)**: Integrated `DashboardNav` on desktop header and mobile sub-nav bar.
 - **[proxy.ts](file:///c:/Experience/Projects/inventra/src/proxy.ts)**: Protected `/inventory` route alongside `/dashboard`.
-- **[dashboard/page.tsx](file:///c:/Experience/Projects/inventra/src/app/[locale]/(dashboard)/dashboard/page.tsx)**: Live Supabase metrics, formatted IDR valuation, and **Low Stock Watchlist** card.
-- **[inventory/page.tsx](file:///c:/Experience/Projects/inventra/src/app/[locale]/(dashboard)/inventory/page.tsx)**: Catalog page Server Component.
-- **[inventory/loading.tsx](file:///c:/Experience/Projects/inventra/src/app/[locale]/(dashboard)/inventory/loading.tsx)**: Skeleton loading state.
-- **[inventory/error.tsx](file:///c:/Experience/Projects/inventra/src/app/[locale]/(dashboard)/inventory/error.tsx)**: Error boundary.
+- **[dashboard/page.tsx](<file:///c:/Experience/Projects/inventra/src/app/[locale]/(dashboard)/dashboard/page.tsx>)**: Live Supabase metrics, formatted IDR valuation, and **Low Stock Watchlist** card.
+- **[inventory/page.tsx](<file:///c:/Experience/Projects/inventra/src/app/[locale]/(dashboard)/inventory/page.tsx>)**: Catalog page Server Component.
+- **[inventory/loading.tsx](<file:///c:/Experience/Projects/inventra/src/app/[locale]/(dashboard)/inventory/loading.tsx>)**: Skeleton loading state.
+- **[inventory/error.tsx](<file:///c:/Experience/Projects/inventra/src/app/[locale]/(dashboard)/inventory/error.tsx>)**: Error boundary.
 
 ---
 
@@ -65,11 +71,11 @@ Phase 7 of **Inventra** has been fully implemented and verified according to pro
 
 ### Automated Quality Gates
 
-| Command | Scope | Result |
-| :--- | :--- | :---: |
-| `npm run test:unit` | 12 test suites, 157 unit tests | ✅ **157 / 157 Passed (100%)** |
-| `npm run test:live` | Live Supabase integration tests | ✅ **25 / 25 Passed (100%)** |
-| `npx tsc --noEmit` | TypeScript strict mode verification | ✅ **0 Errors** |
-| `npm run lint` | ESLint rules across project | ✅ **0 Errors, 0 Warnings** |
-| `npx prettier --check` | Code style & formatting | ✅ **Formatted** |
-| `npm run build` | Next.js 16 Turbopack production build | ✅ **Successful Build** |
+| Command                | Scope                                 |             Result             |
+| :--------------------- | :------------------------------------ | :----------------------------: |
+| `npm run test:unit`    | 12 test suites, 157 unit tests        | ✅ **157 / 157 Passed (100%)** |
+| `npm run test:live`    | Live Supabase integration tests       |  ✅ **25 / 25 Passed (100%)**  |
+| `npx tsc --noEmit`     | TypeScript strict mode verification   |        ✅ **0 Errors**         |
+| `npm run lint`         | ESLint rules across project           |  ✅ **0 Errors, 0 Warnings**   |
+| `npx prettier --check` | Code style & formatting               |        ✅ **Formatted**        |
+| `npm run build`        | Next.js 16 Turbopack production build |    ✅ **Successful Build**     |

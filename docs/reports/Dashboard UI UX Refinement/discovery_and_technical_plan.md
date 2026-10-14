@@ -1,4 +1,5 @@
 # INVENTRA — DASHBOARD UI/UX REFINEMENT
+
 ## Discovery, Skills Research, and Technical Implementation Plan (Batch 1)
 
 > **Document Status:** Draft for Review & User Approval  
@@ -12,11 +13,12 @@
 
 ## 1. Executive Summary & Context
 
-Fase 9 (*Final QA, Documentation & Assessment Submission*) telah tuntas diselesaikan dengan status 100% pass pada Requirement Traceability Matrix (RTM), verifikasi concurrency locking transaksi stok pada live Supabase, dan kepatuhan penuh terhadap 12 dokumen standar rekayasa.
+Fase 9 (_Final QA, Documentation & Assessment Submission_) telah tuntas diselesaikan dengan status 100% pass pada Requirement Traceability Matrix (RTM), verifikasi concurrency locking transaksi stok pada live Supabase, dan kepatuhan penuh terhadap 12 dokumen standar rekayasa.
 
 Pekerjaan saat ini adalah **subfase terpisah** yang berfokus pada **peningkatan kualitas pengalaman pengguna (UI/UX) pada dashboard dan antarmuka katalog Inventra**. Tujuan utama adalah mentransformasikan antarmuka operasional gudang menjadi produk kelas enterprise yang modern, bersih, intuitif, berkinerja tinggi, dan sepenuhnya aksesibel di perangkat desktop, tablet, maupun mobile.
 
 ### Prinsip Utama Batch 1:
+
 1. **Zero Code Changes:** Tidak ada perubahan kode aplikasi sebelum rencana disetujui secara eksplisit oleh pengguna.
 2. **Zero Unauthorized Dependencies:** Tidak memasang package npm baru (termasuk `@tanstack/react-table`) tanpa persetujuan eksplisit.
 3. **Zero Database / Security Schema Drift:** Skema PostgreSQL, RLS policies, RPC functions, dan tata kelola otorisasi RBAC tetap 100% utuh tanpa modifikasi.
@@ -29,6 +31,7 @@ Pekerjaan saat ini adalah **subfase terpisah** yang berfokus pada **peningkatan 
 Audit mendalam terhadap kode aktual (bukan sekadar membaca laporan fase sebelumnya) menghasilkan temuan-temuan berikut:
 
 ### 2.1 Kondisi Dashboard (`src/app/[locale]/(dashboard)/dashboard/page.tsx`)
+
 - **Sumber Data & Kalkulasi KPI:**
   - Data diambil melalui `getInventoryDashboardData(supabase)` di `src/services/product-service.ts`.
   - Mengambil seluruh baris produk (`supabase.from('products').select('*')`) dan menghitung ringkasan secara murni di memori melalui domain logic `calculateInventorySummary` (`src/services/inventory-domain.ts`).
@@ -44,6 +47,7 @@ Audit mendalam terhadap kode aktual (bukan sekadar membaca laporan fase sebelumn
   - Empty state pada watchlist stok rendah ditangani dengan baik (menampilkan pesan sukses hijau saat stok aman).
 
 ### 2.2 Kondisi Navigasi & Sidebar (`src/app/[locale]/(dashboard)/layout.tsx`)
+
 - **Struktur Saat Ini:**
   - Layout saat ini menggunakan **Top Navigation Bar** statis setinggi 64px (`h-16`) di bagian header, bukan sidebar lateral.
   - Terdapat `DashboardNav` (`src/features/dashboard/dashboard-nav.tsx`) yang merender 3 tautan tab horizontal: Dashboard (`/dashboard`), Katalog (`/inventory`), dan Riwayat Mutasi (`/movements`).
@@ -57,6 +61,7 @@ Audit mendalam terhadap kode aktual (bukan sekadar membaca laporan fase sebelumn
   - Tidak ada sidebar navigasi lateral di desktop yang khas pada aplikasi ERP/Enterprise Inventory.
 
 ### 2.3 Kondisi Data Table (`catalog-table.tsx` & `movement-table.tsx`)
+
 - **Status `@tanstack/react-table`:**
   - **Belum terpasang** di `package.json`. Tidak ada jejak impor TanStack Table di seluruh repositori.
   - Seluruh filtering, searching, dan paginasi saat ini dilakukan secara manual menggunakan custom React `useState` + `useMemo` dengan tag HTML native `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<td>`.
@@ -64,13 +69,14 @@ Audit mendalam terhadap kode aktual (bukan sekadar membaca laporan fase sebelumn
   - Kolom: SKU, Nama Produk (termasuk thumbnail gambar opsional), Kategori, Satuan, Harga Referensi (IDR), Sisa Stok, Status Kesehatan Stok, dan Tombol Aksi (Edit).
   - Pencarian: Filter in-memory terhadap SKU dan Nama produk.
   - Filter: Dropdown native `<select>` untuk Kategori dan Status Stok (`all`, `low_stock`, `normal`).
-  - Paginasi: Sederhana (10 item per halaman) dengan tombol *Previous* / *Next*.
+  - Paginasi: Sederhana (10 item per halaman) dengan tombol _Previous_ / _Next_.
   - **Kekurangan:** Tidak ada fitur **Column Sorting** (klik header untuk urutkan berdasarkan SKU, Nama, Stok, atau Harga); tidak ada column visibility toggle; tidak menggunakan abstraksi headless table yang modular.
 - **Aksi Berdasarkan Peran (RBAC):**
   - Admin Gudang: Menampilkan tombol "Tambah Produk" dan "Edit" di setiap baris.
-  - Owner: Menampilkan banner notifikasi *Read-Only Notice* dengan tombol mutasi dan edit tersembunyi. Server Actions tetap memvalidasi hak akses di layer backend.
+  - Owner: Menampilkan banner notifikasi _Read-Only Notice_ dengan tombol mutasi dan edit tersembunyi. Server Actions tetap memvalidasi hak akses di layer backend.
 
 ### 2.4 Kondisi Design System & UI Tokens
+
 - **Palet Warna & Tokens (`globals.css`):**
   - Menggunakan token semantic berbasis Tailwind CSS v4 `@theme inline` dan OKLCH.
   - Brand Navy: `oklch(0.291 0.064 250.3)` (`#0F2D4A`).
@@ -93,13 +99,13 @@ Sesuai instruksi, evaluasi dilakukan terhadap skill yang tersedia di lingkungan 
 
 ### 3.1 Skills yang Ditemukan di Lingkungan Antigravity (.agents/skills)
 
-| Nama Skill | Sumber / Lokasi | Tujuan & Cakupan | Aturan Penting | Relevansi untuk Inventra | Potensi Konflik / Precedence |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **`frontend-design`** | Anthropic (`.agents/skills/frontend-design/SKILL.md`) | Panduan arah visual distingtif, tipografi, hierarki, dan tata letak profesional tanpa elemen klise AI. | - Hindari all-caps label berlebihan.<br>- Batasi panjang baris < 80 karakter.<br>- Gunakan motion hanya untuk merespons aksi.<br>- Tulis copy ringkas dan fungsional. | **SANGAT TINGGI:** Fondasi utama untuk memastikan dashboard terlihat seperti enterprise ERP berkelas, bukan template standar. | Tidak ada. Sesuai dengan filosofi desain di `docs/DESIGN.md`. |
-| **`ui-ux-pro-max`** | NextLevelBuilder (`.agents/skills/ui-ux-pro-max/SKILL.md`) | Basis data kecerdasan desain UI/UX (79 style, 119 pedoman UX, aksesibilitas WCAG 2.2, aturan tabel data-dense). | - Kontras teks normal $\ge 4.5:1$.<br>- Touch target minimum $44 \times 44$ px.<br>- Penanganan tabel responsif (horizontal scroll wrapper / card layout).<br>- Jangan andalkan warna semata untuk status.<br>- Fokus indikator yang jelas. | **SANGAT TINGGI:** Membantu audit aksesibilitas, densitas data tabel, navigasi touch, dan state loading/empty. | Tidak ada. Sangat selaras dengan WCAG 2.2 AA di `SECURITY.md` dan `DESIGN.md`. |
-| **`nextjs-shadcn`** | Anthropic (`.agents/skills/nextjs-shadcn/SKILL.md`) | Pola integrasi komponen shadcn/ui dan arsitektur Next.js App Router. Termasuk panduan khusus `sidebar.md`. | - Letakkan provider navigasi dan shared layout di layout route.<br>- Pertahankan Server Components seminimal mungkin dibatasi oleh Client boundaries.<br>- Kelola state collapsible sidebar via cookie untuk mencegah hydration mismatch. | **SANGAT TINGGI:** Menjadi cetak biru arsitektur pembuatan sidebar dan integrasi shadcn komponen. | Di `nextjs-shadcn` disebutkan penggunaan `bun`, namun `AGENTS.md` mengatur prioritas mutlak: **HANYA gunakan npm**. Aturan `AGENTS.md` menang. |
-| **`tailwind-v4-shadcn`** | Workspace (`.agents/skills/tailwind-v4-shadcn/SKILL.md`) | Konfigurasi Tailwind CSS v4 dengan pattern `@theme inline`, variabel CSS OKLCH, dan tema gelap. | - Pertahankan variabel CSS di `globals.css`.<br>- Hindari arbitrary hex hardcoded di JSX.<br>- Komposisi utility class yang efisien. | **TINGGI:** Memastikan styling sidebar dan tabel mematuhi arsitektur token yang sudah ada. | Tidak ada. Repositori sudah menggunakan Tailwind v4. |
-| **`optimized-nextjs-typescript`** | Workspace (`.agents/skills/optimized-nextjs-typescript/SKILL.md`) | Praktik terbaik performa, SSR vs Client boundaries, dan TypeScript strict mode. | - Minimalkan bundle size Client Components.<br>- Hindari `any` (strict mode).<br>- Pisahkan komponen data fetching dari komponen presentasi interaktif. | **TINGGI:** Memastikan penambahan TanStack Table dan Sidebar interaktif tidak membebani performa client bundle. | Tidak ada. |
+| Nama Skill                        | Sumber / Lokasi                                                   | Tujuan & Cakupan                                                                                                | Aturan Penting                                                                                                                                                                                                                              | Relevansi untuk Inventra                                                                                                      | Potensi Konflik / Precedence                                                                                                                   |
+| :-------------------------------- | :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`frontend-design`**             | Anthropic (`.agents/skills/frontend-design/SKILL.md`)             | Panduan arah visual distingtif, tipografi, hierarki, dan tata letak profesional tanpa elemen klise AI.          | - Hindari all-caps label berlebihan.<br>- Batasi panjang baris < 80 karakter.<br>- Gunakan motion hanya untuk merespons aksi.<br>- Tulis copy ringkas dan fungsional.                                                                       | **SANGAT TINGGI:** Fondasi utama untuk memastikan dashboard terlihat seperti enterprise ERP berkelas, bukan template standar. | Tidak ada. Sesuai dengan filosofi desain di `docs/DESIGN.md`.                                                                                  |
+| **`ui-ux-pro-max`**               | NextLevelBuilder (`.agents/skills/ui-ux-pro-max/SKILL.md`)        | Basis data kecerdasan desain UI/UX (79 style, 119 pedoman UX, aksesibilitas WCAG 2.2, aturan tabel data-dense). | - Kontras teks normal $\ge 4.5:1$.<br>- Touch target minimum $44 \times 44$ px.<br>- Penanganan tabel responsif (horizontal scroll wrapper / card layout).<br>- Jangan andalkan warna semata untuk status.<br>- Fokus indikator yang jelas. | **SANGAT TINGGI:** Membantu audit aksesibilitas, densitas data tabel, navigasi touch, dan state loading/empty.                | Tidak ada. Sangat selaras dengan WCAG 2.2 AA di `SECURITY.md` dan `DESIGN.md`.                                                                 |
+| **`nextjs-shadcn`**               | Anthropic (`.agents/skills/nextjs-shadcn/SKILL.md`)               | Pola integrasi komponen shadcn/ui dan arsitektur Next.js App Router. Termasuk panduan khusus `sidebar.md`.      | - Letakkan provider navigasi dan shared layout di layout route.<br>- Pertahankan Server Components seminimal mungkin dibatasi oleh Client boundaries.<br>- Kelola state collapsible sidebar via cookie untuk mencegah hydration mismatch.   | **SANGAT TINGGI:** Menjadi cetak biru arsitektur pembuatan sidebar dan integrasi shadcn komponen.                             | Di `nextjs-shadcn` disebutkan penggunaan `bun`, namun `AGENTS.md` mengatur prioritas mutlak: **HANYA gunakan npm**. Aturan `AGENTS.md` menang. |
+| **`tailwind-v4-shadcn`**          | Workspace (`.agents/skills/tailwind-v4-shadcn/SKILL.md`)          | Konfigurasi Tailwind CSS v4 dengan pattern `@theme inline`, variabel CSS OKLCH, dan tema gelap.                 | - Pertahankan variabel CSS di `globals.css`.<br>- Hindari arbitrary hex hardcoded di JSX.<br>- Komposisi utility class yang efisien.                                                                                                        | **TINGGI:** Memastikan styling sidebar dan tabel mematuhi arsitektur token yang sudah ada.                                    | Tidak ada. Repositori sudah menggunakan Tailwind v4.                                                                                           |
+| **`optimized-nextjs-typescript`** | Workspace (`.agents/skills/optimized-nextjs-typescript/SKILL.md`) | Praktik terbaik performa, SSR vs Client boundaries, dan TypeScript strict mode.                                 | - Minimalkan bundle size Client Components.<br>- Hindari `any` (strict mode).<br>- Pisahkan komponen data fetching dari komponen presentasi interaktif.                                                                                     | **TINGGI:** Memastikan penambahan TanStack Table dan Sidebar interaktif tidak membebani performa client bundle.               | Tidak ada.                                                                                                                                     |
 
 ### 3.2 Penelusuran Skills Ekosistem Terbuka (`npx skills find`)
 
@@ -121,6 +127,7 @@ Melalui mekanisme Skills CLI (`npx skills find`), dilakukan pencarian spesifik u
 ## 4. Analisis Dependensi & Komponen
 
 ### 4.1 Status Dependensi `@tanstack/react-table`
+
 - `@tanstack/react-table` saat ini **TIDAK TERPASANG** di `package.json`.
 - Versi stabil saat ini di ekosistem npm adalah `^8.21.2`.
 - Ukuran bundle core terbilang ringan (~14 kB minified gzipped) dan tidak membawa dependensi runtime pihak ketiga yang berat.
@@ -131,7 +138,9 @@ Melalui mekanisme Skills CLI (`npx skills find`), dilakukan pencarian spesifik u
 - **Catatan Arsitektur:** `AGENTS.md` mengecualikan TanStack Query dan ORM, namun `@tanstack/react-table` adalah headless UI table utility yang sepenuhnya berjalan di layer presentasi/klien dan selaras dengan pola shadcn Data Table.
 
 ### 4.2 Kebutuhan Komponen shadcn/ui Tambahan
+
 Untuk mendukung antarmuka enterprise dashboard dan TanStack Data Table, komponen UI dasar berikut diusulkan untuk ditambahkan ke `src/components/ui/`:
+
 1. `table.tsx` — Primitif tabel semantic shadcn (`Table`, `TableHeader`, `TableBody`, `TableHead`, `TableRow`, `TableCell`).
 2. `sheet.tsx` — Primitif slide-over drawer berbasis `@radix-ui/react-dialog` (sudah terpasang di dependencies) untuk navigasi mobile yang elegan.
 3. `dropdown-menu.tsx` — Untuk filter menu, toggle column visibility, dan aksi cepat.
@@ -143,7 +152,9 @@ Untuk mendukung antarmuka enterprise dashboard dan TanStack Data Table, komponen
 ## 5. Rencana Arsitektur & Desain Teknis
 
 ### 5.1 Komponen yang Dipertahankan (Preserved Assets)
+
 Untuk menjamin integritas fungsional dan mencegah regresi:
+
 1. **Core Domain & Services:**
    - `src/services/inventory-domain.ts` (kalkulasi invariant stok, summary KPI, threshold $< 5$).
    - `src/services/product-service.ts` (query database `products`, kategori, dashboard metrics).
@@ -206,6 +217,7 @@ src/
 ## 6. Rancangan Antarmuka & Wireframe
 
 ### 6.1 Rancangan Sidebar Navigasi (`app-sidebar.tsx`)
+
 - **Desktop ($\ge 1024$px):**
   - Posisi: Fixed di sisi kiri layar dengan lebar 256px (`w-64`) atau mini-rail 64px (`w-16`) saat collapsed.
   - Header Sidebar: Logo Boxes + Teks "Inventra" + Badge versi.
@@ -225,6 +237,7 @@ src/
   - Menampilkan navigasi lengkap dengan touch target ramah jari ($\ge 44 \times 44$ px).
 
 #### Desktop Layout Wireframe:
+
 ```text
 +----------------------------------------------------------------------------------------------------+
 | [Logo] INVENTRA       | Breadcrumb: Dashboard > Overview                  [ID/EN] [Theme] [Logout] |
@@ -251,6 +264,7 @@ src/
 ```
 
 #### Mobile Layout Wireframe:
+
 ```text
 +----------------------------------------------------+
 | [= Menu]  INVENTRA               [ID/EN] [Profile] |
@@ -279,6 +293,7 @@ src/
 ### 6.2 Rancangan Kolom dan Fitur TanStack React Table Katalog
 
 Struktur kolom yang didefinisikan secara kuat (`ColumnDef<Product>[]`):
+
 1. **SKU (`sku`):**
    - Header: Sortable (A-Z / Z-A).
    - Cell: Badge font monospaced (`font-mono font-bold text-primary`).
@@ -305,6 +320,7 @@ Struktur kolom yang didefinisikan secara kuat (`ColumnDef<Product>[]`):
    - Pada peran Owner: Kolom ini otomatis disembunyikan via `columnVisibility`.
 
 #### Fitur Interaktif TanStack Table:
+
 - **Global Search:** Input pencarian multi-atribut (mencocokkan SKU dan Nama).
 - **Faceted Filters:** Dropdown multi-select kategori dan status stok.
 - **Sorting State:** Klik header kolom dengan indikator panah atas/bawah/netral.
@@ -313,6 +329,7 @@ Struktur kolom yang didefinisikan secara kuat (`ColumnDef<Product>[]`):
 - **Empty State Elegan:** Menampilkan ilustrasi dan tombol "Reset Filter" saat pencarian tidak menghasilkan data.
 
 #### Catalog Table Wireframe:
+
 ```text
 +----------------------------------------------------------------------------------------------------+
 | KATALOG INVENTARIS PRODUK                                                         [+ Tambah Produk]|
@@ -336,7 +353,9 @@ Struktur kolom yang didefinisikan secara kuat (`ColumnDef<Product>[]`):
 ## 7. Strategi Aksesibilitas, Responsivitas, dan i18n
 
 ### 7.1 Standar Aksesibilitas (WCAG 2.2 AA)
+
 Mengacu pada pedoman `ui-ux-pro-max` dan `DESIGN.md`:
+
 1. **Rasio Kontras:**
    - Teks normal memiliki kontras minimal $4.5:1$ terhadap background di mode terang maupun gelap.
    - Elemen interaktif dan border memiliki kontras minimal $3:1$.
@@ -352,13 +371,15 @@ Mengacu pada pedoman `ui-ux-pro-max` dan `DESIGN.md`:
    - Tabel TanStack menggunakan markup HTML semantic native `<table>`, `<thead>`, `<tbody>`, `<th>`, `<td>` dengan scope yang benar.
 
 ### 7.2 Strategi Responsif (Desktop, Tablet, Mobile)
-| Breakpoint | Target Layar | Perilaku Sidebar | Perilaku Dashboard | Perilaku Tabel Katalog |
-| :--- | :--- | :--- | :--- | :--- |
-| **Desktop** ($\ge 1024$px) | Laptop & Monitor ($1280 \times 800+$) | Sidebar tetap terlihat di kiri (lebar 256px), dapat diciutkan ke mini-rail (64px). | Grid 4 kolom untuk KPI, 2 kolom untuk Watchlist & Mutasi Terkini. | Full Data Table dengan seluruh kolom terlihat, sorting, dan filter toolbar lengkap. |
-| **Tablet** ($768$px – $1023$px) | iPad & Tablet Portabel | Sidebar otomatis diciutkan menjadi icon rail atau drawer samping. | Grid 2 kolom untuk KPI, watchlist dan mutasi bertumpuk vertikal. | Data Table dengan wrapper `overflow-x-auto` yang mulus atau kolom sekunder disembunyikan default. |
-| **Mobile** ($< 768$px) | Smartphone ($375 \times 667+$) | Sidebar disembunyikan; diakses melalui tombol hamburger menjadi slide-over Drawer Sheet. | Grid 1–2 kolom untuk KPI, card ringkas berurutan vertikal. | Tampilan hybrid: data table dengan scroll horizontal ramah sentuh atau card layout terpadu. |
+
+| Breakpoint                      | Target Layar                          | Perilaku Sidebar                                                                         | Perilaku Dashboard                                                | Perilaku Tabel Katalog                                                                            |
+| :------------------------------ | :------------------------------------ | :--------------------------------------------------------------------------------------- | :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| **Desktop** ($\ge 1024$px)      | Laptop & Monitor ($1280 \times 800+$) | Sidebar tetap terlihat di kiri (lebar 256px), dapat diciutkan ke mini-rail (64px).       | Grid 4 kolom untuk KPI, 2 kolom untuk Watchlist & Mutasi Terkini. | Full Data Table dengan seluruh kolom terlihat, sorting, dan filter toolbar lengkap.               |
+| **Tablet** ($768$px – $1023$px) | iPad & Tablet Portabel                | Sidebar otomatis diciutkan menjadi icon rail atau drawer samping.                        | Grid 2 kolom untuk KPI, watchlist dan mutasi bertumpuk vertikal.  | Data Table dengan wrapper `overflow-x-auto` yang mulus atau kolom sekunder disembunyikan default. |
+| **Mobile** ($< 768$px)          | Smartphone ($375 \times 667+$)        | Sidebar disembunyikan; diakses melalui tombol hamburger menjadi slide-over Drawer Sheet. | Grid 1–2 kolom untuk KPI, card ringkas berurutan vertikal.        | Tampilan hybrid: data table dengan scroll horizontal ramah sentuh atau card layout terpadu.       |
 
 ### 7.3 Strategi i18n & Tema
+
 1. **Dukungan Dua Bahasa Penuh:**
    - Seluruh teks antarmuka baru menggunakan `next-intl` dengan kamus `messages/id/` (default) dan `messages/en/`.
    - Tidak ada teks hardcoded Bahasa Indonesia maupun Bahasa Inggris di dalam komponen JSX.
@@ -373,6 +394,7 @@ Mengacu pada pedoman `ui-ux-pro-max` dan `DESIGN.md`:
 Untuk memastikan tidak ada regresi dan seluruh peningkatan berfungsi dengan sempurna:
 
 ### 8.1 Automated Unit Tests (Vitest)
+
 1. **Table Filtering & Sorting Logic Test:**
    - Menulis pengujian unit untuk fungsi komparator sorting TanStack Table (string SKU, nama case-insensitive, angka harga, angka stok).
    - Menulis pengujian filter faceted (kombinasi kategori + ambang batas stok $< 5$).
@@ -380,7 +402,9 @@ Untuk memastikan tidak ada regresi dan seluruh peningkatan berfungsi dengan semp
    - Menjalankan seluruh 171 tes unit yang ada saat ini (`npm run test:unit`) untuk memastikan tidak ada efek samping pada auth, product service, atau domain inventory logic.
 
 ### 8.2 Browser Subagent Verification (E2E & Responsiveness)
+
 Menggunakan tool `browser_subagent` untuk menguji alur visual di browser aktual:
+
 1. **Desktop Flow (1440x900):**
    - Login sebagai `admin_gudang` dan `owner`.
    - Verifikasi tampilan sidebar desktop dan navigasi antar halaman.
@@ -446,6 +470,6 @@ Sebelum masuk ke tahap eksekusi kode (Batch 2), hal-hal berikut memerlukan perse
 3. **Persetujuan desain Layout Shell:**
    - Penggantian layout top header menjadi **Persistent Left Sidebar** pada desktop dan **Slide-over Drawer Sheet** pada mobile.
 4. **Persetujuan penambahan fitur Dashboard:**
-   - Penambahan kartu *Aktivitas Mutasi Terkini* pada halaman overview dashboard di samping *Watchlist Stok Menipis*.
+   - Penambahan kartu _Aktivitas Mutasi Terkini_ pada halaman overview dashboard di samping _Watchlist Stok Menipis_.
 5. **Persetujuan Urutan Batch Pengerjaan:**
    - Persetujuan untuk mengeksekusi implementasi secara bertahap mulai dari Batch 2.

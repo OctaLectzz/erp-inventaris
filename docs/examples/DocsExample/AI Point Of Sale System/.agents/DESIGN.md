@@ -185,10 +185,10 @@ All colors are defined as CSS variables in `src/app/globals.css` using HSL value
 
 ```css
 /* Primary Font: Inter (modern, clean, highly readable) */
---font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+--font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
 /* Monospace: JetBrains Mono (for code, receipts, order IDs) */
---font-mono: "JetBrains Mono", ui-monospace, monospace;
+--font-mono: 'JetBrains Mono', ui-monospace, monospace;
 ```
 
 ### 3.2 Type Scale
@@ -209,19 +209,19 @@ All colors are defined as CSS variables in `src/app/globals.css` using HSL value
 Load fonts via `next/font/google` in the root layout for optimal performance:
 
 ```typescript
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from 'next/font/google'
 
 const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap'
+})
 
 const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  display: "swap",
-});
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap'
+})
 ```
 
 ---
@@ -440,31 +440,31 @@ Use descriptive icon imports:
 
 ```typescript
 import {
-  LayoutDashboard, // Dashboard
-  Package, // Products
-  FolderOpen, // Categories
-  ShoppingCart, // Orders / POS
-  BarChart3, // Reports
-  Bot, // AI Assistant
-  MessageCircle, // WhatsApp
-  Settings, // Settings
-  Users, // Team / Users
-  LogOut, // Logout
-  Sun, // Light mode
-  Moon, // Dark mode
-  Globe, // Language
-  Bell, // Notifications
-  Search, // Search
-  Plus, // Add/Create
-  Pencil, // Edit
-  Trash2, // Delete
-  MoreHorizontal, // More actions
-  ChevronDown, // Dropdown
   AlertTriangle, // Warning
+  BarChart3, // Reports
+  Bell, // Notifications
+  Bot, // AI Assistant
   CheckCircle, // Success
-  XCircle, // Error
+  ChevronDown, // Dropdown
+  FolderOpen, // Categories
+  Globe, // Language
   Info, // Info
-} from "lucide-react";
+  LayoutDashboard, // Dashboard
+  LogOut, // Logout
+  MessageCircle, // WhatsApp
+  Moon, // Dark mode
+  MoreHorizontal, // More actions
+  Package, // Products
+  Pencil, // Edit
+  Plus, // Add/Create
+  Search, // Search
+  Settings, // Settings
+  ShoppingCart, // Orders / POS
+  Sun, // Light mode
+  Trash2, // Delete
+  Users, // Team / Users
+  XCircle // Error
+} from 'lucide-react'
 ```
 
 ---
@@ -534,7 +534,7 @@ All base styles target mobile. Use breakpoint prefixes to add complexity:
 
 ```html
 <!-- Example: KPI Cards Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
   <StatCard />
   <StatCard />
   <StatCard />

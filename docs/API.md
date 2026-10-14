@@ -44,18 +44,18 @@ Every server action:
 
 ### 2.1 Sign In
 
-| Property | Value |
-| :--- | :--- |
-| **Type** | Server Action |
-| **Location** | `src/app/(auth)/login/actions.ts` (planned) |
-| **Auth Required** | No |
-| **Role Required** | None |
+| Property          | Value                                       |
+| :---------------- | :------------------------------------------ |
+| **Type**          | Server Action                               |
+| **Location**      | `src/app/(auth)/login/actions.ts` (planned) |
+| **Auth Required** | No                                          |
+| **Role Required** | None                                        |
 
 **Input (Zod schema: `loginSchema`):**
 
 ```typescript
 {
-  email: string    // Valid email format
+  email: string // Valid email format
   password: string // Non-empty
 }
 ```
@@ -68,20 +68,20 @@ Every server action:
 
 **Error Responses:**
 
-| Scenario | Error Key |
-| :--- | :--- |
+| Scenario            | Error Key                        |
+| :------------------ | :------------------------------- |
 | Invalid credentials | `auth.error.invalid_credentials` |
-| Validation failure | `auth.error.validation` |
-| Server error | `common.error.server` |
+| Validation failure  | `auth.error.validation`          |
+| Server error        | `common.error.server`            |
 
 ### 2.2 Sign Out
 
-| Property | Value |
-| :--- | :--- |
-| **Type** | Server Action |
-| **Location** | `src/app/(auth)/actions.ts` (planned) |
-| **Auth Required** | Yes |
-| **Role Required** | Any authenticated |
+| Property          | Value                                 |
+| :---------------- | :------------------------------------ |
+| **Type**          | Server Action                         |
+| **Location**      | `src/app/(auth)/actions.ts` (planned) |
+| **Auth Required** | Yes                                   |
+| **Role Required** | Any authenticated                     |
 
 **Input:** None.
 
@@ -99,32 +99,29 @@ Redirects to `/login` after sign out.
 
 ### 3.1 Get Products (Server Component Data Fetching)
 
-| Property | Value |
-| :--- | :--- |
-| **Type** | Server Component query (not an action) |
-| **Auth Required** | Yes |
-| **Role Required** | `admin_gudang`, `owner` |
+| Property          | Value                                  |
+| :---------------- | :------------------------------------- |
+| **Type**          | Server Component query (not an action) |
+| **Auth Required** | Yes                                    |
+| **Role Required** | `admin_gudang`, `owner`                |
 
 Products are fetched directly in Server Components via the Supabase server client:
 
 ```typescript
 // Planned: Direct query in Server Component
-const { data: products } = await supabase
-  .from('products')
-  .select('*')
-  .order('name')
+const { data: products } = await supabase.from('products').select('*').order('name')
 ```
 
 **Note:** This is not an API endpoint — it's a direct database query in a Server Component, protected by RLS.
 
 ### 3.2 Import Catalog from DummyJSON
 
-| Property | Value |
-| :--- | :--- |
-| **Type** | Server Action |
-| **Location** | `src/services/catalog-service.ts` → called by action (planned) |
-| **Auth Required** | Yes |
-| **Role Required** | `admin_gudang` |
+| Property          | Value                                                          |
+| :---------------- | :------------------------------------------------------------- |
+| **Type**          | Server Action                                                  |
+| **Location**      | `src/services/catalog-service.ts` → called by action (planned) |
+| **Auth Required** | Yes                                                            |
+| **Role Required** | `admin_gudang`                                                 |
 
 **Input:** None (fetches from `https://dummyjson.com/products?limit=30`).
 
@@ -152,20 +149,20 @@ const { data: products } = await supabase
 
 **Error Responses:**
 
-| Scenario | Error Key |
-| :--- | :--- |
+| Scenario                  | Error Key                       |
+| :------------------------ | :------------------------------ |
 | DummyJSON API unreachable | `catalog.error.api_unavailable` |
-| Database insert failure | `common.error.server` |
-| Unauthorized | `common.error.unauthorized` |
+| Database insert failure   | `common.error.server`           |
+| Unauthorized              | `common.error.unauthorized`     |
 
 ### 3.3 Reset Demo Data
 
-| Property | Value |
-| :--- | :--- |
-| **Type** | Server Action |
-| **Location** | `src/services/catalog-service.ts` → called by action (planned) |
-| **Auth Required** | Yes |
-| **Role Required** | `admin_gudang` |
+| Property          | Value                                                          |
+| :---------------- | :------------------------------------------------------------- |
+| **Type**          | Server Action                                                  |
+| **Location**      | `src/services/catalog-service.ts` → called by action (planned) |
+| **Auth Required** | Yes                                                            |
+| **Role Required** | `admin_gudang`                                                 |
 
 **Input:** None (or confirmation flag).
 
@@ -189,32 +186,32 @@ const { data: products } = await supabase
 
 ### 4.1 Record Stock Movement (IN / OUT)
 
-| Property | Value |
-| :--- | :--- |
-| **Type** | Server Action |
-| **Location** | `src/app/(dashboard)/stock-movements/actions.ts` (planned) |
-| **Auth Required** | Yes |
-| **Role Required** | `admin_gudang`, `owner` |
+| Property          | Value                                                      |
+| :---------------- | :--------------------------------------------------------- |
+| **Type**          | Server Action                                              |
+| **Location**      | `src/app/(dashboard)/stock-movements/actions.ts` (planned) |
+| **Auth Required** | Yes                                                        |
+| **Role Required** | `admin_gudang`, `owner`                                    |
 
 **Input (Zod schema: `stockMovementSchema`):**
 
 ```typescript
 {
-  productId: string  // UUID of the product
+  productId: string // UUID of the product
   type: 'IN' | 'OUT' // Movement type
-  quantity: number   // Positive integer (validated by Zod: int(), positive())
-  note: string       // Non-empty reason/reference
+  quantity: number // Positive integer (validated by Zod: int(), positive())
+  note: string // Non-empty reason/reference
 }
 ```
 
 **Validation:**
 
-| Rule | Check Layer |
-| :--- | :--- |
-| `quantity` is a positive integer | Zod (client + server) |
-| `type` is 'IN' or 'OUT' | Zod (client + server) |
-| `note` is non-empty | Zod (client + server) |
-| `productId` exists in database | Service layer |
+| Rule                                 | Check Layer                           |
+| :----------------------------------- | :------------------------------------ |
+| `quantity` is a positive integer     | Zod (client + server)                 |
+| `type` is 'IN' or 'OUT'              | Zod (client + server)                 |
+| `note` is non-empty                  | Zod (client + server)                 |
+| `productId` exists in database       | Service layer                         |
 | Stock OUT `quantity` ≤ current stock | Database function (`FOR UPDATE` lock) |
 
 **Process:**
@@ -244,22 +241,22 @@ const { data: products } = await supabase
 
 **Error Responses:**
 
-| Scenario | Error Key | HTTP Status (if route handler) |
-| :--- | :--- | :--- |
-| Validation failure | `validation.error.*` | 400 |
-| Product not found | `stock.error.product_not_found` | 404 |
-| Insufficient stock (OUT > available) | `stock.error.insufficient_stock` | 409 |
-| Unauthorized | `common.error.unauthorized` | 401 |
-| Forbidden (wrong role) | `common.error.forbidden` | 403 |
-| Server/database error | `common.error.server` | 500 |
+| Scenario                             | Error Key                        | HTTP Status (if route handler) |
+| :----------------------------------- | :------------------------------- | :----------------------------- |
+| Validation failure                   | `validation.error.*`             | 400                            |
+| Product not found                    | `stock.error.product_not_found`  | 404                            |
+| Insufficient stock (OUT > available) | `stock.error.insufficient_stock` | 409                            |
+| Unauthorized                         | `common.error.unauthorized`      | 401                            |
+| Forbidden (wrong role)               | `common.error.forbidden`         | 403                            |
+| Server/database error                | `common.error.server`            | 500                            |
 
 ### 4.2 Get Movement History
 
-| Property | Value |
-| :--- | :--- |
-| **Type** | Server Component query or Server Action (for filtered/paginated queries) |
-| **Auth Required** | Yes |
-| **Role Required** | `admin_gudang`, `owner` |
+| Property          | Value                                                                    |
+| :---------------- | :----------------------------------------------------------------------- |
+| **Type**          | Server Component query or Server Action (for filtered/paginated queries) |
+| **Auth Required** | Yes                                                                      |
+| **Role Required** | `admin_gudang`, `owner`                                                  |
 
 **Input (filter parameters):**
 
@@ -311,20 +308,20 @@ interface StockMovementWithDetails {
 
 ### 5.1 Get Inventory Summary
 
-| Property | Value |
-| :--- | :--- |
-| **Type** | Server Component query |
-| **Auth Required** | Yes |
+| Property          | Value                   |
+| :---------------- | :---------------------- |
+| **Type**          | Server Component query  |
+| **Auth Required** | Yes                     |
 | **Role Required** | `admin_gudang`, `owner` |
 
 **Output:**
 
 ```typescript
 {
-  skuCount: number         // Total unique SKUs
-  totalUnits: number       // Sum of all product stock
-  lowStockCount: number    // Products with stock < 5
-  totalValue: number       // Sum of (price × stock) in IDR
+  skuCount: number // Total unique SKUs
+  totalUnits: number // Sum of all product stock
+  lowStockCount: number // Products with stock < 5
+  totalValue: number // Sum of (price × stock) in IDR
 }
 ```
 
@@ -336,14 +333,14 @@ interface StockMovementWithDetails {
 
 ### 6.1 Error Categories
 
-| Category | Handling | Response |
-| :--- | :--- | :--- |
-| **Validation** | Zod parse failure | Return field-level errors with translation keys |
-| **Authentication** | No valid session | Redirect to login or return 401 |
-| **Authorization** | Wrong role | Return 403 with translation key |
-| **Business Logic** | e.g., insufficient stock | Return error with specific translation key |
-| **Database** | Query failure | Log server-side, return generic error |
-| **External API** | DummyJSON unavailable | Return specific error, suggest retry |
+| Category           | Handling                 | Response                                        |
+| :----------------- | :----------------------- | :---------------------------------------------- |
+| **Validation**     | Zod parse failure        | Return field-level errors with translation keys |
+| **Authentication** | No valid session         | Redirect to login or return 401                 |
+| **Authorization**  | Wrong role               | Return 403 with translation key                 |
+| **Business Logic** | e.g., insufficient stock | Return error with specific translation key      |
+| **Database**       | Query failure            | Log server-side, return generic error           |
+| **External API**   | DummyJSON unavailable    | Return specific error, suggest retry            |
 
 ### 6.2 Error Rules
 
@@ -369,6 +366,7 @@ product.stock = initial_stock + SUM(movements WHERE type='IN') - SUM(movements W
 ```
 
 This invariant is maintained by:
+
 1. Atomic transactions (function handles both stock update and history insert).
 2. `stock_before` and `stock_after` are computed server-side from the current database state.
 3. Client-submitted `stock_before`/`stock_after` values are ignored.

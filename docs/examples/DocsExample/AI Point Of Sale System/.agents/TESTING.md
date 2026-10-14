@@ -62,35 +62,35 @@ npx playwright install
 
 ```typescript
 // vitest.config.ts
-import { defineConfig } from "vitest/config";
-import react from "@vitejs/plugin-react";
-import path from "path";
+import path from 'path'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [react()],
   test: {
-    environment: "jsdom",
+    environment: 'jsdom',
     globals: true,
-    setupFiles: ["./src/tests/setup.ts"],
-    include: ["src/**/*.test.{ts,tsx}"],
+    setupFiles: ['./src/tests/setup.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
     coverage: {
-      provider: "v8",
-      reporter: ["text", "html", "lcov"],
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
       exclude: [
-        "node_modules/",
-        "src/tests/",
-        "src/components/ui/", // shadcn components (pre-tested)
-        "**/*.d.ts",
-        "src/messages/",
-      ],
-    },
+        'node_modules/',
+        'src/tests/',
+        'src/components/ui/', // shadcn components (pre-tested)
+        '**/*.d.ts',
+        'src/messages/'
+      ]
+    }
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-});
+      '@': path.resolve(__dirname, './src')
+    }
+  }
+})
 ```
 
 ---
@@ -146,108 +146,111 @@ src/
 
 ```typescript
 // src/utils/format-currency.test.ts
-import { describe, it, expect } from "vitest";
-import { formatCurrency } from "./format-currency";
+import { describe, expect, it } from 'vitest'
 
-describe("formatCurrency", () => {
-  it("should format IDR currency correctly", () => {
-    expect(formatCurrency(50000, "IDR")).toBe("Rp 50.000");
-  });
+import { formatCurrency } from './format-currency'
 
-  it("should handle zero value", () => {
-    expect(formatCurrency(0, "IDR")).toBe("Rp 0");
-  });
+describe('formatCurrency', () => {
+  it('should format IDR currency correctly', () => {
+    expect(formatCurrency(50000, 'IDR')).toBe('Rp 50.000')
+  })
 
-  it("should handle decimal values", () => {
-    expect(formatCurrency(50000.5, "IDR")).toBe("Rp 50.001");
-  });
+  it('should handle zero value', () => {
+    expect(formatCurrency(0, 'IDR')).toBe('Rp 0')
+  })
 
-  it("should handle negative values", () => {
-    expect(formatCurrency(-50000, "IDR")).toBe("-Rp 50.000");
-  });
-});
+  it('should handle decimal values', () => {
+    expect(formatCurrency(50000.5, 'IDR')).toBe('Rp 50.001')
+  })
+
+  it('should handle negative values', () => {
+    expect(formatCurrency(-50000, 'IDR')).toBe('-Rp 50.000')
+  })
+})
 ```
 
 ### 4.2 Schema Validation Tests
 
 ```typescript
 // src/schemas/product.schema.test.ts
-import { describe, it, expect } from "vitest";
-import { createProductSchema } from "./product.schema";
+import { describe, expect, it } from 'vitest'
 
-describe("createProductSchema", () => {
-  it("should validate a valid product", () => {
+import { createProductSchema } from './product.schema'
+
+describe('createProductSchema', () => {
+  it('should validate a valid product', () => {
     const result = createProductSchema.safeParse({
-      nameId: "Burger Deluxe",
-      nameEn: "Deluxe Burger",
-      sku: "BRG-001",
+      nameId: 'Burger Deluxe',
+      nameEn: 'Deluxe Burger',
+      sku: 'BRG-001',
       price: 45000,
       stock: 25,
-      categoryId: "uuid-here",
-    });
-    expect(result.success).toBe(true);
-  });
+      categoryId: 'uuid-here'
+    })
+    expect(result.success).toBe(true)
+  })
 
-  it("should reject empty product name", () => {
+  it('should reject empty product name', () => {
     const result = createProductSchema.safeParse({
-      nameId: "",
-      nameEn: "Deluxe Burger",
-      sku: "BRG-001",
+      nameId: '',
+      nameEn: 'Deluxe Burger',
+      sku: 'BRG-001',
       price: 45000,
       stock: 25,
-      categoryId: "uuid-here",
-    });
-    expect(result.success).toBe(false);
-  });
+      categoryId: 'uuid-here'
+    })
+    expect(result.success).toBe(false)
+  })
 
-  it("should reject negative price", () => {
+  it('should reject negative price', () => {
     const result = createProductSchema.safeParse({
-      nameId: "Burger",
-      nameEn: "Burger",
-      sku: "BRG-001",
+      nameId: 'Burger',
+      nameEn: 'Burger',
+      sku: 'BRG-001',
       price: -100,
       stock: 25,
-      categoryId: "uuid-here",
-    });
-    expect(result.success).toBe(false);
-  });
+      categoryId: 'uuid-here'
+    })
+    expect(result.success).toBe(false)
+  })
 
-  it("should reject negative stock", () => {
+  it('should reject negative stock', () => {
     const result = createProductSchema.safeParse({
-      nameId: "Burger",
-      nameEn: "Burger",
-      sku: "BRG-001",
+      nameId: 'Burger',
+      nameEn: 'Burger',
+      sku: 'BRG-001',
       price: 45000,
       stock: -5,
-      categoryId: "uuid-here",
-    });
-    expect(result.success).toBe(false);
-  });
-});
+      categoryId: 'uuid-here'
+    })
+    expect(result.success).toBe(false)
+  })
+})
 ```
 
 ### 4.3 Business Logic Tests
 
 ```typescript
 // src/utils/generate-order-id.test.ts
-import { describe, it, expect, vi } from "vitest";
-import { generateOrderId } from "./generate-order-id";
+import { describe, expect, it, vi } from 'vitest'
 
-describe("generateOrderId", () => {
-  it("should generate order ID in correct format", () => {
-    vi.setSystemTime(new Date("2026-06-04"));
-    const orderId = generateOrderId(1);
-    expect(orderId).toBe("NX-20260604-0001");
-    vi.useRealTimers();
-  });
+import { generateOrderId } from './generate-order-id'
 
-  it("should pad sequence number to 4 digits", () => {
-    vi.setSystemTime(new Date("2026-06-04"));
-    const orderId = generateOrderId(42);
-    expect(orderId).toBe("NX-20260604-0042");
-    vi.useRealTimers();
-  });
-});
+describe('generateOrderId', () => {
+  it('should generate order ID in correct format', () => {
+    vi.setSystemTime(new Date('2026-06-04'))
+    const orderId = generateOrderId(1)
+    expect(orderId).toBe('NX-20260604-0001')
+    vi.useRealTimers()
+  })
+
+  it('should pad sequence number to 4 digits', () => {
+    vi.setSystemTime(new Date('2026-06-04'))
+    const orderId = generateOrderId(42)
+    expect(orderId).toBe('NX-20260604-0042')
+    vi.useRealTimers()
+  })
+})
 ```
 
 ---
@@ -258,63 +261,63 @@ describe("generateOrderId", () => {
 
 ```typescript
 // src/app/api/products/route.test.ts
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { GET, POST } from "./route";
-import { prisma } from "@/lib/prisma";
-import { createProductFactory } from "@/tests/factories/product.factory";
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { prisma } from '@/lib/prisma'
+import { createProductFactory } from '@/tests/factories/product.factory'
+
+import { GET, POST } from './route'
 
 // Mock Prisma
-vi.mock("@/lib/prisma");
+vi.mock('@/lib/prisma')
 
 // Mock Supabase Auth
-vi.mock("@/lib/supabase/server", () => ({
+vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn(() => ({
     auth: {
       getUser: vi.fn(() => ({
-        data: { user: { id: "test-user-id" } },
-      })),
-    },
-  })),
-}));
+        data: { user: { id: 'test-user-id' } }
+      }))
+    }
+  }))
+}))
 
-describe("Products API", () => {
-  describe("GET /api/products", () => {
-    it("should return paginated products", async () => {
-      const mockProducts = createProductFactory.buildList(5);
-      vi.mocked(prisma.product.findMany).mockResolvedValue(mockProducts);
-      vi.mocked(prisma.product.count).mockResolvedValue(5);
+describe('Products API', () => {
+  describe('GET /api/products', () => {
+    it('should return paginated products', async () => {
+      const mockProducts = createProductFactory.buildList(5)
+      vi.mocked(prisma.product.findMany).mockResolvedValue(mockProducts)
+      vi.mocked(prisma.product.count).mockResolvedValue(5)
 
-      const request = new Request(
-        "http://localhost/api/products?page=1&pageSize=10",
-      );
-      const response = await GET(request);
-      const data = await response.json();
+      const request = new Request('http://localhost/api/products?page=1&pageSize=10')
+      const response = await GET(request)
+      const data = await response.json()
 
-      expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
-      expect(data.data).toHaveLength(5);
-    });
+      expect(response.status).toBe(200)
+      expect(data.success).toBe(true)
+      expect(data.data).toHaveLength(5)
+    })
 
-    it("should return 401 for unauthenticated requests", async () => {
+    it('should return 401 for unauthenticated requests', async () => {
       // Override mock to return no user
       // ...test implementation
-    });
-  });
+    })
+  })
 
-  describe("POST /api/products", () => {
-    it("should create a product with valid data", async () => {
+  describe('POST /api/products', () => {
+    it('should create a product with valid data', async () => {
       // ...test implementation
-    });
+    })
 
-    it("should return 400 for invalid data", async () => {
+    it('should return 400 for invalid data', async () => {
       // ...test implementation
-    });
+    })
 
-    it("should return 403 for operators", async () => {
+    it('should return 403 for operators', async () => {
       // ...test implementation
-    });
-  });
-});
+    })
+  })
+})
 ```
 
 ### 5.2 Hook Tests
@@ -416,87 +419,87 @@ describe('ProductForm', () => {
 
 ```typescript
 // playwright.config.ts
-import { defineConfig } from "@playwright/test";
+import { defineConfig } from '@playwright/test'
 
 export default defineConfig({
-  testDir: "./src/tests/e2e",
+  testDir: './src/tests/e2e',
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: "html",
+  reporter: 'html',
   use: {
-    baseURL: "http://localhost:3000",
-    trace: "on-first-retry",
-    screenshot: "only-on-failure",
+    baseURL: 'http://localhost:3000',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure'
   },
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-  },
-});
+    command: 'npm run dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI
+  }
+})
 ```
 
 ### 7.2 E2E Test Scenarios
 
 ```typescript
 // src/tests/e2e/auth.spec.ts
-import { test, expect } from "@playwright/test";
+import { expect, test } from '@playwright/test'
 
-test.describe("Authentication", () => {
-  test("should login with valid credentials", async ({ page }) => {
-    await page.goto("/id/login");
+test.describe('Authentication', () => {
+  test('should login with valid credentials', async ({ page }) => {
+    await page.goto('/id/login')
 
-    await page.fill('[data-testid="email-input"]', "admin@nexpos.test");
-    await page.fill('[data-testid="password-input"]', "TestPass123!");
-    await page.click('[data-testid="login-button"]');
+    await page.fill('[data-testid="email-input"]', 'admin@nexpos.test')
+    await page.fill('[data-testid="password-input"]', 'TestPass123!')
+    await page.click('[data-testid="login-button"]')
 
-    await expect(page).toHaveURL(/\/dashboard/);
-    await expect(page.locator('[data-testid="dashboard-title"]')).toBeVisible();
-  });
+    await expect(page).toHaveURL(/\/dashboard/)
+    await expect(page.locator('[data-testid="dashboard-title"]')).toBeVisible()
+  })
 
-  test("should show error for invalid credentials", async ({ page }) => {
-    await page.goto("/id/login");
+  test('should show error for invalid credentials', async ({ page }) => {
+    await page.goto('/id/login')
 
-    await page.fill('[data-testid="email-input"]', "wrong@email.com");
-    await page.fill('[data-testid="password-input"]', "wrongpass");
-    await page.click('[data-testid="login-button"]');
+    await page.fill('[data-testid="email-input"]', 'wrong@email.com')
+    await page.fill('[data-testid="password-input"]', 'wrongpass')
+    await page.click('[data-testid="login-button"]')
 
-    await expect(page.locator('[data-testid="error-message"]')).toBeVisible();
-  });
+    await expect(page.locator('[data-testid="error-message"]')).toBeVisible()
+  })
 
-  test("should redirect unauthenticated users to login", async ({ page }) => {
-    await page.goto("/id/dashboard");
-    await expect(page).toHaveURL(/\/login/);
-  });
-});
+  test('should redirect unauthenticated users to login', async ({ page }) => {
+    await page.goto('/id/dashboard')
+    await expect(page).toHaveURL(/\/login/)
+  })
+})
 
 // src/tests/e2e/products.spec.ts
-test.describe("Product Management", () => {
+test.describe('Product Management', () => {
   test.beforeEach(async ({ page }) => {
     // Login as admin
-    await page.goto("/id/login");
-    await page.fill('[data-testid="email-input"]', "admin@nexpos.test");
-    await page.fill('[data-testid="password-input"]', "TestPass123!");
-    await page.click('[data-testid="login-button"]');
-    await page.waitForURL(/\/dashboard/);
-  });
+    await page.goto('/id/login')
+    await page.fill('[data-testid="email-input"]', 'admin@nexpos.test')
+    await page.fill('[data-testid="password-input"]', 'TestPass123!')
+    await page.click('[data-testid="login-button"]')
+    await page.waitForURL(/\/dashboard/)
+  })
 
-  test("should create a new product", async ({ page }) => {
-    await page.goto("/id/products");
-    await page.click('[data-testid="add-product-button"]');
+  test('should create a new product', async ({ page }) => {
+    await page.goto('/id/products')
+    await page.click('[data-testid="add-product-button"]')
 
-    await page.fill('[data-testid="product-name-id"]', "Burger Baru");
-    await page.fill('[data-testid="product-name-en"]', "New Burger");
-    await page.fill('[data-testid="product-price"]', "45000");
-    await page.fill('[data-testid="product-stock"]', "25");
+    await page.fill('[data-testid="product-name-id"]', 'Burger Baru')
+    await page.fill('[data-testid="product-name-en"]', 'New Burger')
+    await page.fill('[data-testid="product-price"]', '45000')
+    await page.fill('[data-testid="product-stock"]', '25')
     // Select category...
 
-    await page.click('[data-testid="save-button"]');
+    await page.click('[data-testid="save-button"]')
 
-    await expect(page.locator('[data-testid="toast-success"]')).toBeVisible();
-  });
-});
+    await expect(page.locator('[data-testid="toast-success"]')).toBeVisible()
+  })
+})
 ```
 
 ---
@@ -507,9 +510,9 @@ test.describe("Product Management", () => {
 
 ```typescript
 // src/tests/factories/product.factory.ts
-import { faker } from "@faker-js/faker";
+import { faker } from '@faker-js/faker'
 
-import type { Product } from "@/types/product.types";
+import type { Product } from '@/types/product.types'
 
 export function createMockProduct(overrides?: Partial<Product>): Product {
   return {
@@ -526,20 +529,19 @@ export function createMockProduct(overrides?: Partial<Product>): Product {
     costPrice: null,
     stock: faker.number.int({ min: 0, max: 100 }),
     minStockThreshold: 5,
-    unit: "pcs",
+    unit: 'pcs',
     weight: null,
-    status: "ACTIVE",
+    status: 'ACTIVE',
     createdAt: faker.date.recent(),
     updatedAt: faker.date.recent(),
-    ...overrides,
-  };
+    ...overrides
+  }
 }
 
 export const createProductFactory = {
   build: createMockProduct,
-  buildList: (count: number, overrides?: Partial<Product>): Product[] =>
-    Array.from({ length: count }, () => createMockProduct(overrides)),
-};
+  buildList: (count: number, overrides?: Partial<Product>): Product[] => Array.from({ length: count }, () => createMockProduct(overrides))
+}
 ```
 
 ---
@@ -582,8 +584,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: '20'
+          cache: 'npm'
       - run: npm ci
       - run: npx prisma generate
       - run: npm run test:coverage
@@ -595,8 +597,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: '20'
+          cache: 'npm'
       - run: npm ci
       - run: npx playwright install --with-deps
       - run: npm run test:e2e
