@@ -18,6 +18,49 @@ export const stockMutationInputSchema = z.object({
 export type StockMutationInput = z.infer<typeof stockMutationInputSchema>
 
 /**
+ * Item in a multi-item batch stock mutation transaction.
+ */
+export const batchStockItemSchema = z.object({
+  productId: z.string().uuid({ message: 'invalidProductId' }),
+  sku: z.string().optional(),
+  name: z.string().optional(),
+  currentStock: z.number().int().nonnegative().optional(),
+  quantity: z
+    .number({ message: 'quantityMustBeNumber' })
+    .int({ message: 'quantityMustBeInteger' })
+    .positive({ message: 'quantityMustBePositive' })
+    .max(2147483647, { message: 'quantityOverflow' })
+})
+
+export type BatchStockItem = z.infer<typeof batchStockItemSchema>
+
+/**
+ * Validation schema for multi-item atomic stock mutation transaction (Batch 2).
+ * Enforces:
+ * - Transaction type must be strictly 'IN' or 'OUT'
+ * - Non-empty items list (1 to 100 items)
+ * - Unique product IDs within the same transaction
+ * - Reference note between 3 and 500 characters
+ */
+export const batchStockMutationSchema = z.object({
+  type: z.enum(['IN', 'OUT'], { message: 'invalidMovementType' }),
+  note: z.string().trim().min(3, { message: 'noteMinLength' }).max(500, { message: 'noteMaxLength' }),
+  items: z
+    .array(batchStockItemSchema)
+    .min(1, { message: 'batchMustContainAtLeastOneItem' })
+    .max(100, { message: 'batchItemLimitExceeded' })
+    .refine(
+      (items) => {
+        const ids = items.map((i) => i.productId)
+        return new Set(ids).size === ids.length
+      },
+      { message: 'duplicateProductInBatch' }
+    )
+})
+
+export type BatchStockMutationInput = z.infer<typeof batchStockMutationSchema>
+
+/**
  * Validation schema for product catalog creation / updates.
  */
 export const productInputSchema = z.object({

@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { productCatalogInputSchema, productCatalogUpdateSchema } from '@/schemas/inventory-schema'
 import { requireAuth } from '@/services/auth-service'
+import { canManageCatalog } from '@/types/auth'
 import { toProduct } from '@/types/inventory'
 
 import type { ProductCatalogInput, ProductCatalogUpdate } from '@/schemas/inventory-schema'
@@ -36,11 +37,11 @@ export async function createProductAction(input: ProductCatalogInput, locale = '
     }
   }
 
-  if (profile.role !== 'admin_gudang') {
+  if (!canManageCatalog(profile.role)) {
     return {
       success: false,
       error: 'FORBIDDEN',
-      message: 'Hanya peran Admin Gudang yang memiliki izin untuk menambahkan produk baru.'
+      message: 'Hanya peran Administrator yang memiliki izin untuk menambahkan produk baru.'
     }
   }
 
@@ -153,11 +154,11 @@ export async function updateProductAction(input: ProductCatalogUpdate, locale = 
     }
   }
 
-  if (profile.role !== 'admin_gudang') {
+  if (!canManageCatalog(profile.role)) {
     return {
       success: false,
       error: 'FORBIDDEN',
-      message: 'Hanya peran Admin Gudang yang memiliki izin untuk mengubah informasi produk.'
+      message: 'Hanya peran Administrator yang memiliki izin untuk mengubah informasi produk.'
     }
   }
 

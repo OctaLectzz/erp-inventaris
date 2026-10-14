@@ -1,6 +1,6 @@
+import { createClient as createSupabaseJsClient } from '@supabase/supabase-js'
 import * as fs from 'fs'
 import * as path from 'path'
-import { createClient as createSupabaseJsClient } from '@supabase/supabase-js'
 import { describe, expect, it } from 'vitest'
 
 import type { Database } from '@/types/database'
@@ -36,8 +36,11 @@ const adminPassword = process.env.DEMO_ADMIN_PASSWORD || ''
 const ownerEmail = process.env.DEMO_OWNER_EMAIL || 'owner@inventra.demo'
 const ownerPassword = process.env.DEMO_OWNER_PASSWORD || ''
 
+const staffEmail = process.env.DEMO_STAFF_EMAIL || 'staff@inventra.demo'
+const staffPassword = process.env.DEMO_STAFF_PASSWORD || ''
+
 describe('Live Supabase Auth & RBAC Profile Integration', () => {
-  it('should authenticate live Admin Gudang account and verify authoritative profile role', async () => {
+  it('should authenticate live Administrator account and verify authoritative profile role', async () => {
     expect(supabaseUrl, 'NEXT_PUBLIC_SUPABASE_URL must be defined').toBeTruthy()
     expect(anonKey, 'NEXT_PUBLIC_SUPABASE_ANON_KEY must be defined').toBeTruthy()
     expect(adminPassword, 'DEMO_ADMIN_PASSWORD must be defined').toBeTruthy()
@@ -61,14 +64,44 @@ describe('Live Supabase Auth & RBAC Profile Integration', () => {
 
     expect(profileError).toBeNull()
     expect(profile).toBeDefined()
-    expect(profile?.role).toBe('admin_gudang')
+    expect(['administrator', 'admin_gudang']).toContain(profile?.role)
     expect(profile?.email).toBe(adminEmail)
     expect(profile?.full_name).toBeTruthy()
 
     await client.auth.signOut()
   })
 
-  it('should authenticate live Owner account and verify authoritative profile role', async () => {
+  it('should authenticate live Staff Gudang account and verify authoritative profile role', async () => {
+    expect(supabaseUrl, 'NEXT_PUBLIC_SUPABASE_URL must be defined').toBeTruthy()
+    expect(anonKey, 'NEXT_PUBLIC_SUPABASE_ANON_KEY must be defined').toBeTruthy()
+    expect(staffPassword, 'DEMO_STAFF_PASSWORD must be defined').toBeTruthy()
+
+    const client = createSupabaseJsClient<Database>(supabaseUrl, anonKey, {
+      auth: { persistSession: false, autoRefreshToken: false }
+    })
+
+    const { data: authData, error: authError } = await client.auth.signInWithPassword({
+      email: staffEmail,
+      password: staffPassword
+    })
+
+    expect(authError).toBeNull()
+    expect(authData.user).toBeDefined()
+    expect(authData.session).toBeDefined()
+    expect(authData.user?.email).toBe(staffEmail)
+
+    const { data: profile, error: profileError } = await client.from('profiles').select('*').eq('id', authData.user!.id).single()
+
+    expect(profileError).toBeNull()
+    expect(profile).toBeDefined()
+    expect(profile?.role).toBe('staff_gudang')
+    expect(profile?.email).toBe(staffEmail)
+    expect(profile?.full_name).toBeTruthy()
+
+    await client.auth.signOut()
+  })
+
+  it('should authenticate live Auditor account and verify authoritative profile role', async () => {
     expect(supabaseUrl, 'NEXT_PUBLIC_SUPABASE_URL must be defined').toBeTruthy()
     expect(anonKey, 'NEXT_PUBLIC_SUPABASE_ANON_KEY must be defined').toBeTruthy()
     expect(ownerPassword, 'DEMO_OWNER_PASSWORD must be defined').toBeTruthy()
@@ -92,7 +125,7 @@ describe('Live Supabase Auth & RBAC Profile Integration', () => {
 
     expect(profileError).toBeNull()
     expect(profile).toBeDefined()
-    expect(profile?.role).toBe('owner')
+    expect(['auditor', 'owner']).toContain(profile?.role)
     expect(profile?.email).toBe(ownerEmail)
     expect(profile?.full_name).toBeTruthy()
 

@@ -1,9 +1,26 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { Bell, Check, CheckCircle2, Database, Info, Laptop, Loader2, Lock, Moon, Palette, Shield, ShieldCheck, Sun, User } from 'lucide-react'
+import {
+  Bell,
+  Check,
+  CheckCircle2,
+  Database,
+  Info,
+  Laptop,
+  Loader2,
+  Lock,
+  Moon,
+  Package,
+  Palette,
+  Shield,
+  ShieldCheck,
+  Sun,
+  User,
+  UserCheck
+} from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useTheme } from 'next-themes'
+import { useState, useTransition } from 'react'
 
 import { updateProfileNameAction } from '@/app/actions/auth-actions'
 import { Badge } from '@/components/ui/badge'
@@ -38,7 +55,9 @@ export function SettingsView({ profile, locale }: SettingsViewProps) {
   const [profileError, setProfileError] = useState<string | null>(null)
   const [isSavingName, startTransition] = useTransition()
 
-  const isAdmin = profile.role === 'admin_gudang' || profile.role === 'administrator'
+  const isAdministrator = profile.role === 'administrator' || profile.role === 'admin_gudang'
+  const isStaff = profile.role === 'staff_gudang'
+  const roleTitle = isAdministrator ? tAuth('roles.administrator') : isStaff ? tAuth('roles.staff_gudang') : tAuth('roles.auditor')
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault()
@@ -218,8 +237,14 @@ export function SettingsView({ profile, locale }: SettingsViewProps) {
                     <Label className="text-foreground text-xs font-semibold">{t('profile.roleLabel')}</Label>
                     <div className="flex max-w-md items-center gap-2.5">
                       <div className="border-border bg-muted/40 text-foreground flex flex-1 items-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold">
-                        <Shield className="text-accent h-4 w-4 shrink-0" aria-hidden="true" />
-                        <span>{isAdmin ? tAuth('roles.admin_gudang') : tAuth('roles.owner')}</span>
+                        {isAdministrator ? (
+                          <Shield className="text-accent h-4 w-4 shrink-0" aria-hidden="true" />
+                        ) : isStaff ? (
+                          <Package className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden="true" />
+                        ) : (
+                          <UserCheck className="text-primary h-4 w-4 shrink-0" aria-hidden="true" />
+                        )}
+                        <span>{roleTitle}</span>
                         <span className="text-muted-foreground font-mono text-[10px]">({profile.role})</span>
                       </div>
                     </div>

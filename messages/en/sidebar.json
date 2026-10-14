@@ -15,6 +15,14 @@
     "reports": "REPORTS",
     "other": "OTHER"
   },
+  "status": {
+    "planned": "Planned",
+    "roadmap": "Roadmap",
+    "batch3": "Batch 3",
+    "batch4": "Batch 4",
+    "batch3Notice": "In-depth reporting & analytics module scheduled for Batch 3 release.",
+    "batch4Notice": "Intelligent AI Assistant module scheduled for Batch 4 release."
+  },
   "tooltips": {
     "theme": "Switch Theme",
     "language": "Switch Language",

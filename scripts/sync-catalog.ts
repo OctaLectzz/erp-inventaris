@@ -1,6 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
 import * as fs from 'fs'
 import * as path from 'path'
+import { createClient } from '@supabase/supabase-js'
 
 import { syncCatalogFromDummyJson } from '../src/services/catalog-sync'
 

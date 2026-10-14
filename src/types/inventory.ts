@@ -82,6 +82,24 @@ export interface StockMutationSuccessData {
   note: string
 }
 
+export interface BatchStockMovementItemResult {
+  movement_id: string
+  product_id: string
+  sku: string
+  name: string
+  quantity: number
+  stock_before: number
+  stock_after: number
+}
+
+export interface BatchStockMutationSuccessData {
+  batch_id: string
+  type: MovementType
+  note: string
+  items_count: number
+  movements: BatchStockMovementItemResult[]
+}
+
 export type StockMutationResult =
   | {
       success: true

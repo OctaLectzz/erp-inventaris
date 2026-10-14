@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AlertCircle, CheckCircle2, Eye, EyeOff, KeyRound, Loader2, Lock, Mail, Shield, UserCheck } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Eye, EyeOff, KeyRound, Loader2, Lock, Mail, Package, Shield, UserCheck } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
+import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { getDemoCredentialsAction, signInAction } from '@/app/actions/auth-actions'
@@ -77,7 +77,12 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
       if (creds.success && creds.email && creds.password) {
         setValue('email', creds.email, { shouldValidate: true, shouldDirty: true })
         setValue('password', creds.password, { shouldValidate: true, shouldDirty: true })
-        const roleLabel = role === 'admin_gudang' ? tAuth('roles.admin_gudang') : tAuth('roles.owner')
+        const roleLabel =
+          role === 'administrator' || role === 'admin_gudang'
+            ? tAuth('roles.administrator')
+            : role === 'staff_gudang'
+              ? tAuth('roles.staff_gudang')
+              : tAuth('roles.auditor')
         setDemoFeedback(tAuth('login.demoFilledNotice', { role: roleLabel }))
       } else {
         setErrorMessage(tAuth('login.genericError'))
@@ -90,7 +95,7 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
   }
 
   return (
-    <div className="w-full max-w-md space-y-6">
+    <div className="w-full max-w-md space-y-6 sm:max-w-xl">
       <Card className="border-border bg-card shadow-lg">
         <CardHeader className="space-y-2 pb-6 text-center">
           <div className="bg-primary text-primary-foreground mx-auto flex h-12 w-12 items-center justify-center rounded-xl shadow-sm">
@@ -214,43 +219,65 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
           </div>
 
           {/* Quick Demo Evaluation Buttons */}
-          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-            {/* Admin Gudang Demo Button */}
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+            {/* Administrator Demo Button */}
             <button
               type="button"
               disabled={isPending || isFetchingDemo}
-              onClick={() => handleSelectDemoAccount('admin_gudang')}
-              className="border-border bg-secondary/40 hover:border-accent hover:bg-secondary/70 focus:ring-accent flex flex-col items-start gap-1 rounded-lg border p-3 text-left transition-all focus:ring-2 focus:outline-none disabled:opacity-60"
+              onClick={() => handleSelectDemoAccount('administrator')}
+              className="border-border bg-secondary/40 hover:border-accent hover:bg-secondary/70 focus:ring-accent flex flex-col items-start gap-1 rounded-lg border p-2.5 text-left transition-all focus:ring-2 focus:outline-none disabled:opacity-60"
             >
               <div className="flex w-full items-center justify-between">
                 <span className="text-primary inline-flex items-center gap-1.5 text-xs font-bold">
-                  <Shield className="text-accent h-3.5 w-3.5" aria-hidden="true" />
-                  {tAuth('roles.admin_gudang')}
+                  <Shield className="text-accent h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span className="truncate">{tAuth('roles.administrator')}</span>
                 </span>
-                {isFetchingDemo && activeDemoRole === 'admin_gudang' && (
-                  <Loader2 className="text-accent h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                {isFetchingDemo && (activeDemoRole === 'administrator' || activeDemoRole === 'admin_gudang') && (
+                  <Loader2 className="text-accent h-3.5 w-3.5 shrink-0 animate-spin" aria-hidden="true" />
                 )}
               </div>
               <p className="text-muted-foreground line-clamp-1 font-mono text-[11px]">admin@inventra.demo</p>
               <p className="text-muted-foreground/80 mt-1 line-clamp-2 text-[10px]">{tAuth('roles.adminDesc')}</p>
             </button>
 
-            {/* Owner Demo Button */}
+            {/* Staff Gudang Demo Button */}
             <button
               type="button"
               disabled={isPending || isFetchingDemo}
-              onClick={() => handleSelectDemoAccount('owner')}
-              className="border-border bg-secondary/40 hover:border-accent hover:bg-secondary/70 focus:ring-accent flex flex-col items-start gap-1 rounded-lg border p-3 text-left transition-all focus:ring-2 focus:outline-none disabled:opacity-60"
+              onClick={() => handleSelectDemoAccount('staff_gudang')}
+              className="border-border bg-secondary/40 hover:border-accent hover:bg-secondary/70 focus:ring-accent flex flex-col items-start gap-1 rounded-lg border p-2.5 text-left transition-all focus:ring-2 focus:outline-none disabled:opacity-60"
             >
               <div className="flex w-full items-center justify-between">
                 <span className="text-primary inline-flex items-center gap-1.5 text-xs font-bold">
-                  <UserCheck className="text-accent h-3.5 w-3.5" aria-hidden="true" />
-                  {tAuth('roles.owner')}
+                  <Package className="text-accent h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span className="truncate">{tAuth('roles.staff_gudang')}</span>
                 </span>
-                {isFetchingDemo && activeDemoRole === 'owner' && <Loader2 className="text-accent h-3.5 w-3.5 animate-spin" aria-hidden="true" />}
+                {isFetchingDemo && activeDemoRole === 'staff_gudang' && (
+                  <Loader2 className="text-accent h-3.5 w-3.5 shrink-0 animate-spin" aria-hidden="true" />
+                )}
+              </div>
+              <p className="text-muted-foreground line-clamp-1 font-mono text-[11px]">staff@inventra.demo</p>
+              <p className="text-muted-foreground/80 mt-1 line-clamp-2 text-[10px]">{tAuth('roles.staffDesc')}</p>
+            </button>
+
+            {/* Auditor Demo Button */}
+            <button
+              type="button"
+              disabled={isPending || isFetchingDemo}
+              onClick={() => handleSelectDemoAccount('auditor')}
+              className="border-border bg-secondary/40 hover:border-accent hover:bg-secondary/70 focus:ring-accent flex flex-col items-start gap-1 rounded-lg border p-2.5 text-left transition-all focus:ring-2 focus:outline-none disabled:opacity-60"
+            >
+              <div className="flex w-full items-center justify-between">
+                <span className="text-primary inline-flex items-center gap-1.5 text-xs font-bold">
+                  <UserCheck className="text-accent h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span className="truncate">{tAuth('roles.auditor')}</span>
+                </span>
+                {isFetchingDemo && (activeDemoRole === 'auditor' || activeDemoRole === 'owner') && (
+                  <Loader2 className="text-accent h-3.5 w-3.5 shrink-0 animate-spin" aria-hidden="true" />
+                )}
               </div>
               <p className="text-muted-foreground line-clamp-1 font-mono text-[11px]">owner@inventra.demo</p>
-              <p className="text-muted-foreground/80 mt-1 line-clamp-2 text-[10px]">{tAuth('roles.ownerDesc')}</p>
+              <p className="text-muted-foreground/80 mt-1 line-clamp-2 text-[10px]">{tAuth('roles.auditorDesc')}</p>
             </button>
           </div>
 

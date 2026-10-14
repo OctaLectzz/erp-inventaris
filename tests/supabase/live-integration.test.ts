@@ -1,6 +1,6 @@
+import { createClient } from '@supabase/supabase-js'
 import * as fs from 'fs'
 import * as path from 'path'
-import { createClient } from '@supabase/supabase-js'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import type { Database } from '@/types/database'
@@ -154,20 +154,20 @@ describe.runIf(hasLiveCredentials)('Live Supabase Integration & Security Gates',
       }
     })
 
-    it('allows admin_gudang to view only own profile', async () => {
+    it('allows administrator to view only own profile', async () => {
       const { data, error } = await adminClient.from('profiles').select('*')
       expect(error).toBeNull()
       expect(data).toHaveLength(1)
       expect(data![0].id).toBe(adminUserId)
-      expect(data![0].role).toBe('admin_gudang')
+      expect(['administrator', 'admin_gudang']).toContain(data![0].role)
     })
 
-    it('allows owner to view only own profile', async () => {
+    it('allows auditor to view only own profile', async () => {
       const { data, error } = await ownerClient.from('profiles').select('*')
       expect(error).toBeNull()
       expect(data).toHaveLength(1)
       expect(data![0].id).toBe(ownerUserId)
-      expect(data![0].role).toBe('owner')
+      expect(['auditor', 'owner']).toContain(data![0].role)
     })
 
     it('rejects self-role elevation attempts by admin_gudang', async () => {

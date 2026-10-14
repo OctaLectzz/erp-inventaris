@@ -40,14 +40,20 @@ interface DemoAccountConfig {
 const DEMO_ACCOUNTS: DemoAccountConfig[] = [
   {
     email: process.env.DEMO_ADMIN_EMAIL || 'admin@inventra.demo',
-    fullName: 'Admin Gudang Demo',
-    role: 'admin_gudang',
+    fullName: 'Administrator Demo',
+    role: 'administrator',
     envPasswordKey: 'DEMO_ADMIN_PASSWORD'
   },
   {
+    email: process.env.DEMO_STAFF_EMAIL || 'staff@inventra.demo',
+    fullName: 'Staf Gudang Demo',
+    role: 'staff_gudang',
+    envPasswordKey: 'DEMO_STAFF_PASSWORD'
+  },
+  {
     email: process.env.DEMO_OWNER_EMAIL || 'owner@inventra.demo',
-    fullName: 'Business Owner Demo',
-    role: 'owner',
+    fullName: 'Auditor & Owner Demo',
+    role: 'auditor',
     envPasswordKey: 'DEMO_OWNER_PASSWORD'
   }
 ]
@@ -115,11 +121,15 @@ async function main(): Promise<void> {
           console.log(`  Profile upserted successfully.`)
         }
       } else {
-        if (profile.role !== account.role && !isDryRun) {
+        if (!isDryRun && (profile.role !== account.role || profile.full_name !== account.fullName)) {
           console.log(`  Synchronizing profile role from ${profile.role} to ${account.role}...`)
-          await adminClient.from('profiles').update({ role: account.role }).eq('id', existing.id)
+          await adminClient.from('profiles').update({ role: account.role, full_name: account.fullName }).eq('id', existing.id)
+          await adminClient.auth.admin.updateUserById(existing.id, {
+            app_metadata: { role: account.role },
+            user_metadata: { full_name: account.fullName }
+          })
         }
-        console.log(`  Authoritative profile verified: role=${account.role}, name=${profile.full_name}`)
+        console.log(`  Authoritative profile verified: role=${account.role}, name=${account.fullName}`)
       }
     } else {
       if (isDryRun) {

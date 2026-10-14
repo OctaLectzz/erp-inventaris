@@ -1,11 +1,12 @@
-import Link from 'next/link'
 import { AlertTriangle, ArrowRight, CheckCircle2 } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
+import Link from 'next/link'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { formatCurrencyIDR } from '@/lib/formatters'
 
 import type { Product } from '@/types/inventory'
 
@@ -17,14 +18,6 @@ interface LowStockWatchlistProps {
 
 export async function LowStockWatchlist({ products, locale }: LowStockWatchlistProps) {
   const t = await getTranslations({ locale, namespace: 'dashboard' })
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(locale === 'id' ? 'id-ID' : 'en-US', {
-      style: 'currency',
-      currency: 'IDR',
-      maximumFractionDigits: 0
-    }).format(amount)
-  }
 
   return (
     <Card className="border-border shadow-xs">
@@ -77,7 +70,9 @@ export async function LowStockWatchlist({ products, locale }: LowStockWatchlistP
                         <span className="text-muted-foreground block text-[10px] uppercase">{p.category}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="py-2.5 text-right text-xs font-medium whitespace-nowrap">{formatCurrency(p.price)}</TableCell>
+                    <TableCell className="py-2.5 text-right text-xs font-medium whitespace-nowrap">
+                      {formatCurrencyIDR(p.price, { locale })}
+                    </TableCell>
                     <TableCell className="text-destructive py-2.5 text-right font-mono font-bold whitespace-nowrap">
                       {p.stock} {p.unit}
                     </TableCell>

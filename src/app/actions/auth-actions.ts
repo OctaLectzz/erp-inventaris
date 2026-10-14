@@ -124,8 +124,19 @@ export interface DemoCredentialsResult {
  * Does not execute sign in, ensuring user must manually click submit.
  */
 export async function getDemoCredentialsAction(role: UserRole): Promise<DemoCredentialsResult> {
-  const email = role === 'admin_gudang' ? process.env.DEMO_ADMIN_EMAIL : process.env.DEMO_OWNER_EMAIL
-  const password = role === 'admin_gudang' ? process.env.DEMO_ADMIN_PASSWORD : process.env.DEMO_OWNER_PASSWORD
+  let email: string | undefined
+  let password: string | undefined
+
+  if (role === 'administrator' || role === 'admin_gudang') {
+    email = process.env.DEMO_ADMIN_EMAIL
+    password = process.env.DEMO_ADMIN_PASSWORD
+  } else if (role === 'staff_gudang') {
+    email = process.env.DEMO_STAFF_EMAIL
+    password = process.env.DEMO_STAFF_PASSWORD
+  } else if (role === 'auditor' || role === 'owner') {
+    email = process.env.DEMO_OWNER_EMAIL
+    password = process.env.DEMO_OWNER_PASSWORD
+  }
 
   if (!email || !password) {
     return {

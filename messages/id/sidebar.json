@@ -15,6 +15,14 @@
     "reports": "REPORTS",
     "other": "OTHER"
   },
+  "status": {
+    "planned": "Direncanakan",
+    "roadmap": "Roadmap",
+    "batch3": "Batch 3",
+    "batch4": "Batch 4",
+    "batch3Notice": "Modul laporan & analitik mendalam dijadwalkan pada rilis Batch 3.",
+    "batch4Notice": "Modul AI Assistant cerdas dijadwalkan pada rilis Batch 4."
+  },
   "tooltips": {
     "theme": "Ganti Tema",
     "language": "Ganti Bahasa",

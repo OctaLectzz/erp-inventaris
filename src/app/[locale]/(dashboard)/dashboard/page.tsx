@@ -1,11 +1,12 @@
-import { connection } from 'next/server'
 import { AlertTriangle, Banknote, Boxes, CheckCircle2, Package, ShieldAlert, ShieldCheck, Sparkles } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { connection } from 'next/server'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { KpiStatCard } from '@/features/dashboard/kpi-stat-card'
 import { LowStockWatchlist } from '@/features/dashboard/low-stock-watchlist'
 import { RecentMovementsCard } from '@/features/dashboard/recent-movements-card'
+import { formatCurrencyIDR, formatNumber } from '@/lib/formatters'
 import { createClient } from '@/lib/supabase/server'
 import { requireAuth } from '@/services/auth-service'
 import { getInventoryDashboardData } from '@/services/product-service'
@@ -45,19 +46,16 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     getStockMovements(supabase, { page: 1, pageSize: 5 })
   ])
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(locale === 'id' ? 'id-ID' : 'en-US', {
-      style: 'currency',
-      currency: 'IDR',
-      maximumFractionDigits: 0
-    }).format(amount)
-  }
+  const isAdministrator = profile.role === 'administrator' || profile.role === 'admin_gudang'
+  const isStaff = profile.role === 'staff_gudang'
 
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat(locale === 'id' ? 'id-ID' : 'en-US').format(num)
-  }
+  const roleTitle = isAdministrator ? tAuth('roles.administrator') : isStaff ? tAuth('roles.staff_gudang') : tAuth('roles.auditor')
 
-  const isAdmin = profile.role === 'admin_gudang' || profile.role === 'administrator'
+  const roleDesc = isAdministrator
+    ? tDashboard('adminCapabilitiesDesc')
+    : isStaff
+      ? tDashboard('staffCapabilitiesDesc')
+      : tDashboard('auditorCapabilitiesDesc')
 
   return (
     <div className="space-y-6">
@@ -77,28 +75,39 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       </div>
 
       {/* Role Authorization Status Banner */}
-      <Card className={`border shadow-2xs ${isAdmin ? 'border-accent/40 bg-accent/5' : 'border-primary/30 bg-secondary/50'}`}>
+      <Card
+        className={`border shadow-2xs ${
+          isAdministrator ? 'border-accent/40 bg-accent/5' : isStaff ? 'border-primary/40 bg-primary/5' : 'border-muted-foreground/30 bg-secondary/50'
+        }`}
+      >
         <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3.5">
             <div
               className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                isAdmin ? 'bg-accent text-accent-foreground' : 'bg-primary text-primary-foreground'
+                isAdministrator
+                  ? 'bg-accent text-accent-foreground'
+                  : isStaff
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground'
               }`}
             >
-              {isAdmin ? <ShieldCheck className="h-5 w-5" aria-hidden="true" /> : <ShieldAlert className="h-5 w-5" aria-hidden="true" />}
+              {isAdministrator || isStaff ? (
+                <ShieldCheck className="h-5 w-5" aria-hidden="true" />
+              ) : (
+                <ShieldAlert className="h-5 w-5" aria-hidden="true" />
+              )}
             </div>
             <div className="space-y-0.5">
               <h2 className="text-foreground text-sm font-bold">
-                {tDashboard('roleCardTitle')}:{' '}
-                <span className="text-primary font-semibold">{isAdmin ? tAuth('roles.admin_gudang') : tAuth('roles.owner')}</span>
+                {tDashboard('roleCardTitle')}: <span className="text-primary font-semibold">{roleTitle}</span>
               </h2>
-              <p className="text-muted-foreground text-xs">{isAdmin ? tDashboard('adminCapabilitiesDesc') : tDashboard('ownerCapabilitiesDesc')}</p>
+              <p className="text-muted-foreground text-xs leading-relaxed">{roleDesc}</p>
             </div>
           </div>
 
           <div className="shrink-0 text-xs">
             <span className="border-border bg-card text-foreground inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-mono font-medium">
-              <span className={`h-2 w-2 rounded-full ${isAdmin ? 'bg-accent' : 'bg-primary'}`} />
+              <span className={`h-2 w-2 rounded-full ${isAdministrator ? 'bg-accent' : isStaff ? 'bg-primary' : 'bg-muted-foreground'}`} />
               Role: {profile.role}
             </span>
           </div>
@@ -110,7 +119,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         {/* Total Catalog SKUs */}
         <KpiStatCard
           title={tDashboard('kpi.totalProducts')}
-          value={formatNumber(summary.totalSkus)}
+          value={formatNumber(summary.totalSkus, locale)}
           description={tDashboard('kpiDescriptions.skus')}
           icon={Package}
           variant="secondary"
@@ -119,16 +128,19 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         {/* Total Stock Units */}
         <KpiStatCard
           title={tDashboard('kpi.totalStock')}
-          value={formatNumber(summary.totalUnits)}
+          value={formatNumber(summary.totalUnits, locale)}
           description={tDashboard('kpiDescriptions.units')}
           icon={Boxes}
           variant="accent"
         />
 
-        {/* Total Valuation */}
+        {/* Total Valuation with Compact View & Full Tooltip */}
         <KpiStatCard
           title={tDashboard('valuation')}
-          value={formatCurrency(summary.totalInventoryValue)}
+          value={formatCurrencyIDR(summary.totalInventoryValue, { locale, compact: true })}
+          tooltip={tDashboard('valuationExactTooltip', {
+            amount: formatCurrencyIDR(summary.totalInventoryValue, { locale, compact: false })
+          })}
           description={tDashboard('kpiDescriptions.valuation')}
           icon={Banknote}
           variant="secondary"
@@ -137,7 +149,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         {/* Low Stock Alerts */}
         <KpiStatCard
           title={tDashboard('kpi.lowStockAlerts')}
-          value={formatNumber(summary.lowStockCount)}
+          value={formatNumber(summary.lowStockCount, locale)}
           description={tDashboard('kpiDescriptions.lowStock')}
           icon={AlertTriangle}
           variant="destructive"
@@ -147,7 +159,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       {/* Dual Section: Low Stock Watchlist & Recent Activity */}
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
         {/* Low Stock Watchlist */}
-        <LowStockWatchlist products={lowStockProducts} locale={locale} isAdmin={isAdmin} />
+        <LowStockWatchlist products={lowStockProducts} locale={locale} isAdmin={isAdministrator} />
 
         {/* Recent Movements Activity Feed */}
         <RecentMovementsCard movements={recentMovements} locale={locale} />

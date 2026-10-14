@@ -175,6 +175,14 @@ export type Database = {
         }
         Returns: Json
       }
+      record_batch_stock_movements: {
+        Args: {
+          p_type: string
+          p_items: Json
+          p_note: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

@@ -1,8 +1,5 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import {
   ArrowDownUp,
   ArrowLeftRight,
@@ -18,6 +15,9 @@ import {
   UserCheck
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useState } from 'react'
 
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
@@ -42,7 +42,12 @@ export function AppHeader({ locale, profile, isCollapsed = false, onToggleSideba
   const tSidebar = useTranslations('sidebar')
   const tAuth = useTranslations('auth')
 
-  const isAdmin = profile.role === 'admin_gudang' || profile.role === 'administrator'
+  const isAdministrator = profile.role === 'administrator' || profile.role === 'admin_gudang'
+  const isStaff = profile.role === 'staff_gudang'
+
+  const roleTitle = isAdministrator ? tAuth('roles.administrator') : isStaff ? tAuth('roles.staff_gudang') : tAuth('roles.auditor')
+
+  const roleDesc = isAdministrator ? tAuth('roles.adminDesc') : isStaff ? tAuth('roles.staffDesc') : tAuth('roles.auditorDesc')
 
   // Determine current active section for dynamic breadcrumb
   let currentSection = tNav('links.dashboard')
@@ -167,11 +172,21 @@ export function AppHeader({ locale, profile, isCollapsed = false, onToggleSideba
               <div
                 className={cn(
                   'flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold',
-                  isAdmin ? 'border-accent/30 bg-accent/10 text-accent-foreground dark:text-accent' : 'border-primary/30 bg-secondary text-primary'
+                  isAdministrator
+                    ? 'border-accent/30 bg-accent/10 text-accent-foreground dark:text-accent'
+                    : isStaff
+                      ? 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400'
+                      : 'border-primary/30 bg-secondary text-primary'
                 )}
               >
-                {isAdmin ? <Shield className="text-accent h-4 w-4 shrink-0" /> : <UserCheck className="text-primary h-4 w-4 shrink-0" />}
-                <span>{isAdmin ? tAuth('roles.admin_gudang') : tAuth('roles.owner')}</span>
+                {isAdministrator ? (
+                  <Shield className="text-accent h-4 w-4 shrink-0" />
+                ) : isStaff ? (
+                  <Package className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                ) : (
+                  <UserCheck className="text-primary h-4 w-4 shrink-0" />
+                )}
+                <span>{roleTitle}</span>
               </div>
             </div>
 
@@ -230,18 +245,22 @@ export function AppHeader({ locale, profile, isCollapsed = false, onToggleSideba
           <span
             className={cn(
               'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold shadow-2xs',
-              isAdmin
+              isAdministrator
                 ? 'border-accent/30 bg-accent/15 text-accent-foreground dark:text-accent border'
-                : 'border-primary/30 bg-secondary text-primary border'
+                : isStaff
+                  ? 'border border-amber-500/30 bg-amber-500/15 text-amber-800 dark:text-amber-300'
+                  : 'border-primary/30 bg-secondary text-primary border'
             )}
-            title={isAdmin ? tAuth('roles.adminDesc') : tAuth('roles.ownerDesc')}
+            title={roleDesc}
           >
-            {isAdmin ? (
+            {isAdministrator ? (
               <Shield className="text-accent h-3.5 w-3.5" aria-hidden="true" />
+            ) : isStaff ? (
+              <Package className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" aria-hidden="true" />
             ) : (
               <UserCheck className="text-primary h-3.5 w-3.5" aria-hidden="true" />
             )}
-            <span className="hidden sm:inline">{isAdmin ? tAuth('roles.admin_gudang') : tAuth('roles.owner')}</span>
+            <span className="hidden sm:inline">{roleTitle}</span>
           </span>
         </div>
 
