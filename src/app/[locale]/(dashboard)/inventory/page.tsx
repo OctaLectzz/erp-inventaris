@@ -1,6 +1,6 @@
+import { connection } from 'next/server'
 import { Layers, Sparkles } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { connection } from 'next/server'
 
 import { CatalogTable } from '@/features/catalog/catalog-table'
 import { createClient } from '@/lib/supabase/server'

@@ -56,15 +56,15 @@ export async function LowStockWatchlist({ products, locale }: LowStockWatchlistP
             <span>{t('watchlist.empty')}</span>
           </div>
         ) : (
-          <div className="border-border overflow-hidden rounded-lg border">
+          <div className="border-border w-full overflow-x-auto rounded-lg border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="py-2.5">SKU</TableHead>
-                  <TableHead className="py-2.5">Nama Produk</TableHead>
-                  <TableHead className="py-2.5 text-right">Harga Satuan</TableHead>
-                  <TableHead className="py-2.5 text-right">Sisa Stok</TableHead>
-                  <TableHead className="py-2.5 text-center">Status</TableHead>
+                  <TableHead className="py-2.5 whitespace-nowrap">{t('watchlist.sku')}</TableHead>
+                  <TableHead className="py-2.5 whitespace-nowrap">{t('watchlist.productName')}</TableHead>
+                  <TableHead className="py-2.5 text-right whitespace-nowrap">{t('watchlist.unitPrice')}</TableHead>
+                  <TableHead className="py-2.5 text-right whitespace-nowrap">{t('watchlist.remainingStock')}</TableHead>
+                  <TableHead className="py-2.5 text-center whitespace-nowrap">{t('watchlist.status')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -84,7 +84,7 @@ export async function LowStockWatchlist({ products, locale }: LowStockWatchlistP
                     <TableCell className="py-2.5 text-center whitespace-nowrap">
                       <Badge variant="destructive" className="px-1.5 py-0.5 text-[10px]">
                         <AlertTriangle className="mr-1 h-2.5 w-2.5" aria-hidden="true" />
-                        Kritis (&lt; 5)
+                        {t('watchlist.criticalBadge')}
                       </Badge>
                     </TableCell>
                   </TableRow>

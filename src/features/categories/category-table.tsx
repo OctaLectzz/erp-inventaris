@@ -1,9 +1,9 @@
 'use client'
 
+import { useMemo, useState } from 'react'
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import { Folder, FolderPlus, FolderX, Pencil, Plus, RotateCcw, Search, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useMemo, useState } from 'react'
 
 import { DataTablePagination } from '@/components/shared/data-table/data-table-pagination'
 import { DataTableViewOptions } from '@/components/shared/data-table/data-table-view-options'
@@ -127,7 +127,7 @@ export function CategoryTable({ initialCategories, userRole, locale }: CategoryT
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {/* Search Input */}
             <div className="relative flex-1">
-              <Search className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              <Search className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" aria-hidden="true" />
               <Input
                 placeholder={t('categories.searchPlaceholder')}
                 value={globalFilter}
@@ -163,7 +163,7 @@ export function CategoryTable({ initialCategories, userRole, locale }: CategoryT
           </div>
 
           {/* Results Summary */}
-          <div className="mt-3 flex items-center justify-between border-t border-border pt-2.5 text-xs text-muted-foreground">
+          <div className="border-border text-muted-foreground mt-3 flex items-center justify-between border-t pt-2.5 text-xs">
             <span>
               {t('catalog.showingResults', {
                 count: table.getRowModel().rows.length,
@@ -171,7 +171,7 @@ export function CategoryTable({ initialCategories, userRole, locale }: CategoryT
               })}
             </span>
             {hasActiveFilters && (
-              <Button variant="ghost" size="xs" onClick={handleResetFilters} className="h-6 gap-1 text-[11px] text-primary hover:underline">
+              <Button variant="ghost" size="xs" onClick={handleResetFilters} className="text-primary h-6 gap-1 text-[11px] hover:underline">
                 <RotateCcw className="h-3 w-3" aria-hidden="true" />
                 <span>{t('catalog.resetFilter')}</span>
               </Button>
@@ -184,10 +184,10 @@ export function CategoryTable({ initialCategories, userRole, locale }: CategoryT
       {table.getFilteredRowModel().rows.length === 0 ? (
         <Card className="border-border">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+            <div className="bg-secondary text-muted-foreground mb-3 flex h-12 w-12 items-center justify-center rounded-full">
               {categories.length === 0 ? <FolderPlus className="h-6 w-6" aria-hidden="true" /> : <FolderX className="h-6 w-6" aria-hidden="true" />}
             </div>
-            <h3 className="text-sm font-semibold text-foreground">
+            <h3 className="text-foreground text-sm font-semibold">
               {categories.length === 0 ? t('categories.emptyState') : t('categories.emptySearch')}
             </h3>
             {hasActiveFilters ? (
@@ -208,7 +208,7 @@ export function CategoryTable({ initialCategories, userRole, locale }: CategoryT
       ) : (
         <>
           {/* Desktop & Tablet Table */}
-          <div className="hidden overflow-hidden rounded-lg border border-border bg-card shadow-xs md:block">
+          <div className="border-border bg-card hidden overflow-hidden rounded-lg border shadow-xs md:block">
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -244,12 +244,12 @@ export function CategoryTable({ initialCategories, userRole, locale }: CategoryT
                   <CardContent className="space-y-3 p-4 text-xs">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-primary/10 text-primary">
+                        <div className="border-border bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-md border">
                           <Folder className="h-4 w-4" aria-hidden="true" />
                         </div>
                         <div>
-                          <h4 className="font-semibold text-foreground">{cat.name}</h4>
-                          <span className="font-mono text-[11px] text-muted-foreground">{cat.slug}</span>
+                          <h4 className="text-foreground font-semibold">{cat.name}</h4>
+                          <span className="text-muted-foreground font-mono text-[11px]">{cat.slug}</span>
                         </div>
                       </div>
 
@@ -258,10 +258,10 @@ export function CategoryTable({ initialCategories, userRole, locale }: CategoryT
                       </Badge>
                     </div>
 
-                    {cat.description && <p className="border-t border-border pt-2 text-[11px] text-muted-foreground">{cat.description}</p>}
+                    {cat.description && <p className="border-border text-muted-foreground border-t pt-2 text-[11px]">{cat.description}</p>}
 
                     {isAdmin && (
-                      <div className="flex items-center justify-end gap-2 border-t border-border pt-2">
+                      <div className="border-border flex items-center justify-end gap-2 border-t pt-2">
                         <Button variant="outline" size="xs" onClick={() => handleOpenEdit(cat)} className="h-7 gap-1 text-xs">
                           <Pencil className="h-3 w-3" aria-hidden="true" />
                           <span>{t('categories.editCategory')}</span>
@@ -271,7 +271,7 @@ export function CategoryTable({ initialCategories, userRole, locale }: CategoryT
                           size="xs"
                           onClick={() => handleOpenDelete(cat)}
                           disabled={hasProducts}
-                          className="h-7 gap-1 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive disabled:opacity-30"
+                          className="text-destructive hover:bg-destructive/10 hover:text-destructive h-7 gap-1 text-xs disabled:opacity-30"
                         >
                           <Trash2 className="h-3 w-3" aria-hidden="true" />
                           <span>{t('categories.deleteCategory')}</span>

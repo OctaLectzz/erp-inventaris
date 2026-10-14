@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale } from 'next-intl/server'
 
 import { ThemeProvider } from '@/components/theme-provider'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { routing } from '@/i18n/routing'
 import { cn } from '@/lib/utils'
 
@@ -76,7 +77,7 @@ export default async function LocaleLayout({
       <body suppressHydrationWarning className="bg-background text-foreground flex min-h-full flex-col">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
           <NextIntlClientProvider locale={locale} messages={messages}>
-            {children}
+            <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

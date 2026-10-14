@@ -26,13 +26,27 @@
     "recentActivity": "Aktivitas Mutasi Terbaru",
     "emptyState": "Belum ada catatan mutasi inventaris."
   },
+  "recentMovements": {
+    "time": "Waktu",
+    "product": "Produk",
+    "type": "Tipe",
+    "quantity": "Kuantitas",
+    "finalStock": "Stok Akhir",
+    "subtitleCount": "5 transaksi mutasi stok fisik terbaru"
+  },
   "watchlist": {
     "title": "Daftar Pantau Stok Menipis (< 5 Unit)",
     "subtitle": "Produk dengan kuantitas stok di bawah batas aman minimum",
     "empty": "Semua produk saat ini memiliki stok aman (≥ 5 unit).",
     "viewCatalog": "Lihat di Katalog",
     "badgeWarning": "Perlu Restock",
-    "unitsLeft": "{count} unit tersisa"
+    "unitsLeft": "{count} unit tersisa",
+    "sku": "SKU",
+    "productName": "Nama Produk",
+    "unitPrice": "Harga Satuan",
+    "remainingStock": "Sisa Stok",
+    "status": "Status",
+    "criticalBadge": "Kritis (< 5)"
   },
   "securitySummary": {
     "title": "Ringkasan Keamanan & Otorisasi Sesi",
@@ -222,6 +236,81 @@
     "errors": {
       "tooLarge": "Ukuran file melebihi batas 2MB",
       "invalidType": "Format file tidak didukung. Harap gunakan PNG, JPG, atau WEBP"
+    }
+  },
+  "settings": {
+    "title": "Pengaturan Sistem",
+    "subtitle": "Kelola profil akun, preferensi antarmuka, dan tinjau status keamanan sistem",
+    "tabs": {
+      "profile": "Profil",
+      "appearance": "Tampilan",
+      "security": "Akun & Keamanan",
+      "notifications": "Preferensi Notifikasi",
+      "about": "Tentang Aplikasi"
+    },
+    "profile": {
+      "title": "Profil Pengguna",
+      "subtitle": "Informasi akun dan nama tampilan pengguna yang aktif",
+      "fullNameLabel": "Nama Lengkap",
+      "fullNamePlaceholder": "Masukkan nama lengkap...",
+      "emailLabel": "Alamat Email",
+      "roleLabel": "Peran Akses (RBAC)",
+      "saveButton": "Simpan Perubahan",
+      "savingButton": "Menyimpan...",
+      "successNotice": "Nama profil berhasil diperbarui.",
+      "roleNotice": "Peran pengguna dikelola secara terpusat oleh administrator basis data dan tidak dapat diubah secara mandiri demi kepatuhan keamanan.",
+      "emailNotice": "Alamat email terikat pada akun autentikasi utama."
+    },
+    "appearance": {
+      "title": "Tampilan & Bahasa",
+      "subtitle": "Sesuaikan tema antarmuka dan preferensi bahasa sistem",
+      "themeTitle": "Tema Antarmuka",
+      "themeSubtitle": "Pilih skema warna antarmuka yang nyaman untuk operasional gudang",
+      "themeLight": "Terang",
+      "themeDark": "Gelap",
+      "themeSystem": "Sistem",
+      "languageTitle": "Bahasa Sistem",
+      "languageSubtitle": "Pilih bahasa tampilan untuk seluruh modul Inventra ERP",
+      "langId": "Bahasa Indonesia",
+      "langEn": "English (US)"
+    },
+    "security": {
+      "title": "Akun & Keamanan Sistem",
+      "subtitle": "Tinjau status sesi aktif dan lapisan keamanan basis data",
+      "sessionTitle": "Sesi Pengguna Aktif",
+      "sessionSubtitle": "Informasi identitas otentikasi Supabase SSR",
+      "userId": "ID Pengguna",
+      "role": "Peran Otoritatif",
+      "status": "Status Sesi",
+      "statusActive": "Aktif & Terverifikasi",
+      "passwordTitle": "Kata Sandi",
+      "passwordSubtitle": "Manajemen kredensial login akun",
+      "passwordNotice": "Pengubahan kata sandi akun demo dinonaktifkan pada lingkungan evaluasi untuk menjaga integritas pengujian.",
+      "securityFeaturesTitle": "Proteksi Keamanan Aktif",
+      "guardRls": "Row-Level Security (RLS) di PostgreSQL",
+      "guardRlsDesc": "Setiap tabel diproteksi kebijakan isolasi baris berbasis peran.",
+      "guardLock": "Pessimistic Row Lock (FOR UPDATE)",
+      "guardLockDesc": "Mencegah mutasi stok ganda dan race conditions pada mutasi paralel.",
+      "guardImmutability": "Katalog & Ledger Immutability",
+      "guardImmutabilityDesc": "Kuantitas stok hanya dapat berubah melalui catatan mutasi atomik."
+    },
+    "notifications": {
+      "title": "Preferensi Notifikasi",
+      "subtitle": "Pengaturan pemberitahuan peringatan stok dan laporan otomatis",
+      "statusBadge": "Roadmap Mendatang (Batch Selanjutnya)",
+      "noticeTitle": "Fitur Notifikasi Direncanakan",
+      "noticeDesc": "Dukungan webhook peringatan stok menipis dan email digest harian dijadwalkan pada rilis mendatang. Tidak ada kontrol palsu yang aktif pada tahap ini."
+    },
+    "about": {
+      "title": "Tentang Inventra",
+      "subtitle": "Informasi versi dan arsitektur aplikasi Mini ERP",
+      "appName": "Inventra ERP Inventory Management",
+      "version": "Versi v0.1.0-dev",
+      "client": "PT. Syailendra Bumi Investama (DDistillers)",
+      "stackTitle": "Fondasi Teknologi",
+      "statusTitle": "Status Konektivitas",
+      "dbConnected": "Terhubung ke Supabase PostgreSQL Live",
+      "environment": "Environment: Development / Assessment Evaluation"
     }
   }
 }

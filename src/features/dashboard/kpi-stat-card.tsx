@@ -30,14 +30,19 @@ export function KpiStatCard({ title, value, description, icon: Icon, variant = '
   return (
     <Card className={cn('border-border shadow-2xs transition-shadow hover:shadow-xs', className)}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">{title}</CardTitle>
+        <CardTitle className="text-muted-foreground truncate pr-2 text-xs font-semibold tracking-wider uppercase">{title}</CardTitle>
         <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg', iconVariants[variant])}>
           <Icon className="h-4 w-4" aria-hidden="true" />
         </div>
       </CardHeader>
       <CardContent className="space-y-1">
-        <div className={cn('text-2xl font-bold tracking-tight sm:text-3xl', valueVariants[variant])}>{value}</div>
-        <p className="text-muted-foreground text-xs">{description}</p>
+        <div
+          className={cn('text-xl font-bold tracking-tight break-words tabular-nums sm:text-2xl sm:break-normal xl:text-3xl', valueVariants[variant])}
+          title={typeof value === 'string' ? value : String(value)}
+        >
+          {value}
+        </div>
+        <p className="text-muted-foreground text-xs leading-normal">{description}</p>
       </CardContent>
     </Card>
   )

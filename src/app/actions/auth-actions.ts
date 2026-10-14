@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
@@ -109,4 +110,104 @@ export async function signOutAction(currentLocale = 'id'): Promise<void> {
   }
 
   redirect(`/${currentLocale}/login`)
+}
+
+export interface DemoCredentialsResult {
+  success: boolean
+  email?: string
+  password?: string
+  error?: string
+}
+
+/**
+ * Returns pre-provisioned demo credentials for client form pre-population.
+ * Does not execute sign in, ensuring user must manually click submit.
+ */
+export async function getDemoCredentialsAction(role: UserRole): Promise<DemoCredentialsResult> {
+  const email = role === 'admin_gudang' ? process.env.DEMO_ADMIN_EMAIL : process.env.DEMO_OWNER_EMAIL
+  const password = role === 'admin_gudang' ? process.env.DEMO_ADMIN_PASSWORD : process.env.DEMO_OWNER_PASSWORD
+
+  if (!email || !password) {
+    return {
+      success: false,
+      error: 'DEMO_NOT_CONFIGURED'
+    }
+  }
+
+  return {
+    success: true,
+    email,
+    password
+  }
+}
+
+export interface UpdateProfileResult {
+  success: boolean
+  error?: string
+  message?: string
+}
+
+/**
+ * Safe Server Action for updating current user's full name.
+ * Role cannot be modified (enforced by DB trigger and query restriction).
+ */
+export async function updateProfileNameAction(fullName: string, currentLocale = 'id'): Promise<UpdateProfileResult> {
+  const trimmed = fullName.trim()
+  if (trimmed.length < 2 || trimmed.length > 100) {
+    return {
+      success: false,
+      error: 'INVALID_NAME',
+      message: 'Name must be between 2 and 100 characters'
+    }
+  }
+
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user },
+      error: authError
+    } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return {
+        success: false,
+        error: 'UNAUTHORIZED',
+        message: 'You must be logged in to update your profile'
+      }
+    }
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({
+        full_name: trimmed,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', user.id)
+
+    if (updateError) {
+      console.error('Error updating profile name:', updateError)
+      return {
+        success: false,
+        error: 'DB_ERROR',
+        message: updateError.message
+      }
+    }
+
+    try {
+      revalidatePath(`/${currentLocale}/settings`)
+      revalidatePath(`/${currentLocale}/dashboard`)
+    } catch {
+      // Safe fallback when executed outside Next.js request store (e.g. unit tests)
+    }
+
+    return {
+      success: true
+    }
+  } catch (err) {
+    console.error('Unhandled error in updateProfileNameAction:', err)
+    return {
+      success: false,
+      error: 'SERVER_ERROR'
+    }
+  }
 }

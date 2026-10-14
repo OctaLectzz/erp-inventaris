@@ -1,9 +1,9 @@
 'use client'
 
+import { useMemo, useState } from 'react'
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 import { AlertTriangle, CheckCircle2, Filter, Package, PackageX, Pencil, Plus, RotateCcw, Search, ShieldAlert } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useMemo, useState } from 'react'
 
 import { DataTablePagination } from '@/components/shared/data-table/data-table-pagination'
 import { DataTableViewOptions } from '@/components/shared/data-table/data-table-view-options'

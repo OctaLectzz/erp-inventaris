@@ -26,13 +26,27 @@
     "recentActivity": "Recent Stock Movement Activity",
     "emptyState": "No inventory movement records recorded yet."
   },
+  "recentMovements": {
+    "time": "Time",
+    "product": "Product",
+    "type": "Type",
+    "quantity": "Quantity",
+    "finalStock": "Final Stock",
+    "subtitleCount": "5 latest physical stock mutation records"
+  },
   "watchlist": {
     "title": "Low Stock Watchlist (< 5 Units)",
     "subtitle": "Products with current stock below the safety stock threshold",
     "empty": "All products currently have safe stock levels (≥ 5 units).",
     "viewCatalog": "View in Catalog",
     "badgeWarning": "Needs Restock",
-    "unitsLeft": "{count} units left"
+    "unitsLeft": "{count} units left",
+    "sku": "SKU",
+    "productName": "Product Name",
+    "unitPrice": "Unit Price",
+    "remainingStock": "Remaining Stock",
+    "status": "Status",
+    "criticalBadge": "Critical (< 5)"
   },
   "securitySummary": {
     "title": "Security & Session Authorization Summary",
@@ -222,6 +236,81 @@
     "errors": {
       "tooLarge": "File size exceeds 2MB limit",
       "invalidType": "File format not supported. Please use PNG, JPG, or WEBP"
+    }
+  },
+  "settings": {
+    "title": "System Settings",
+    "subtitle": "Manage account profile, display preferences, and review system security status",
+    "tabs": {
+      "profile": "Profile",
+      "appearance": "Appearance",
+      "security": "Account & Security",
+      "notifications": "Notification Preferences",
+      "about": "About Application"
+    },
+    "profile": {
+      "title": "User Profile",
+      "subtitle": "Account information and active user display name",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "Enter your full name...",
+      "emailLabel": "Email Address",
+      "roleLabel": "Access Role (RBAC)",
+      "saveButton": "Save Changes",
+      "savingButton": "Saving...",
+      "successNotice": "Profile name successfully updated.",
+      "roleNotice": "User role is centrally managed by database administrators and cannot be self-modified to ensure compliance.",
+      "emailNotice": "Email address is permanently bound to the primary authentication identity."
+    },
+    "appearance": {
+      "title": "Appearance & Language",
+      "subtitle": "Customize interface theme and system language preferences",
+      "themeTitle": "Interface Theme",
+      "themeSubtitle": "Choose a color scheme comfortable for warehouse operations",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "themeSystem": "System",
+      "languageTitle": "System Language",
+      "languageSubtitle": "Select display language across all Inventra ERP modules",
+      "langId": "Bahasa Indonesia",
+      "langEn": "English (US)"
+    },
+    "security": {
+      "title": "Account & System Security",
+      "subtitle": "Review active session status and database defense-in-depth layers",
+      "sessionTitle": "Active User Session",
+      "sessionSubtitle": "Supabase SSR authentication identity details",
+      "userId": "User ID",
+      "role": "Authoritative Role",
+      "status": "Session Status",
+      "statusActive": "Active & Verified",
+      "passwordTitle": "Password",
+      "passwordSubtitle": "Account login credential management",
+      "passwordNotice": "Password changes for demo accounts are disabled in the evaluation environment to maintain test integrity.",
+      "securityFeaturesTitle": "Active Security Protections",
+      "guardRls": "PostgreSQL Row-Level Security (RLS)",
+      "guardRlsDesc": "Every table is isolated with role-aware row-level policies.",
+      "guardLock": "Pessimistic Row Lock (FOR UPDATE)",
+      "guardLockDesc": "Prevents double-spending and race conditions during concurrent mutations.",
+      "guardImmutability": "Catalog & Ledger Immutability",
+      "guardImmutabilityDesc": "Stock quantities can only mutate through atomic transaction records."
+    },
+    "notifications": {
+      "title": "Notification Preferences",
+      "subtitle": "Stock threshold warnings and automated digest reports configuration",
+      "statusBadge": "Upcoming Roadmap (Next Batch)",
+      "noticeTitle": "Notification Features Planned",
+      "noticeDesc": "Low-stock webhook alerts and daily email digests are scheduled for an upcoming release. No fake controls are enabled in this version."
+    },
+    "about": {
+      "title": "About Inventra",
+      "subtitle": "Version details and Mini ERP architecture information",
+      "appName": "Inventra ERP Inventory Management",
+      "version": "Version v0.1.0-dev",
+      "client": "PT. Syailendra Bumi Investama (DDistillers)",
+      "stackTitle": "Technology Foundation",
+      "statusTitle": "Connectivity Status",
+      "dbConnected": "Connected to Supabase PostgreSQL Live",
+      "environment": "Environment: Development / Assessment Evaluation"
     }
   }
 }

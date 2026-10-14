@@ -32,12 +32,12 @@ export function DashboardShell({ locale, profile, initialCollapsed = false, chil
     <div className="bg-background text-foreground flex min-h-screen">
       {/* Desktop Persistent Lateral Sidebar (hidden on mobile/tablet, visible on lg) */}
       <div className="sticky top-0 hidden h-screen lg:flex lg:shrink-0">
-        <AppSidebar locale={locale} profile={profile} isCollapsed={isCollapsed} onToggleCollapse={handleToggleCollapse} />
+        <AppSidebar locale={locale} profile={profile} isCollapsed={isCollapsed} />
       </div>
 
       {/* Main Content Viewport */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <AppHeader locale={locale} profile={profile} />
+        <AppHeader locale={locale} profile={profile} isCollapsed={isCollapsed} onToggleSidebar={handleToggleCollapse} />
 
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">{children}</div>

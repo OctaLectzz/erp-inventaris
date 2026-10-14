@@ -1,6 +1,6 @@
-import { setRequestLocale } from 'next-intl/server'
 import { cookies } from 'next/headers'
 import { connection } from 'next/server'
+import { setRequestLocale } from 'next-intl/server'
 
 import { DashboardShell } from '@/components/shared/dashboard-shell'
 import { requireAuth } from '@/services/auth-service'

@@ -1,9 +1,9 @@
 'use client'
 
+import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { ArrowDownRight, ArrowUpRight, Calendar, Filter, PackageX, Plus, RotateCcw, Search, ShieldAlert, UserCheck } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
-import { useMemo, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -117,9 +117,9 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
     <div className="space-y-4">
       {/* Read-Only Notice for Owner */}
       {!isAdmin && (
-        <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-secondary/50 p-3.5 text-xs text-foreground">
+        <div className="border-primary/20 bg-secondary/50 text-foreground flex items-center justify-between rounded-lg border p-3.5 text-xs">
           <div className="flex items-center gap-2">
-            <ShieldAlert className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            <ShieldAlert className="text-primary h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{t('movements.readOnlyNotice')}</span>
           </div>
           <Badge variant="outline" className="text-[11px]">
@@ -134,7 +134,7 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             {/* Search Input */}
             <div className="relative flex-1">
-              <Search className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              <Search className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" aria-hidden="true" />
               <Input
                 placeholder={t('movements.searchPlaceholder')}
                 value={searchQuery}
@@ -150,14 +150,14 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
             <div className="flex flex-wrap items-center gap-2.5">
               {/* Type Filter */}
               <div className="flex items-center gap-1.5">
-                <Filter className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                <Filter className="text-muted-foreground h-3.5 w-3.5" aria-hidden="true" />
                 <select
                   value={selectedType}
                   onChange={(e) => {
                     setSelectedType(e.target.value as 'ALL' | 'IN' | 'OUT')
                     setCurrentPage(1)
                   }}
-                  className="h-9 rounded-md border border-input bg-background px-2.5 text-xs text-foreground shadow-xs focus:ring-1 focus:outline-hidden"
+                  className="border-input bg-background text-foreground h-9 rounded-md border px-2.5 text-xs shadow-xs focus:ring-1 focus:outline-hidden"
                   aria-label="Filter tipe mutasi"
                 >
                   <option value="ALL">{t('movements.allTypes')}</option>
@@ -168,7 +168,7 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
 
               {/* Start Date */}
               <div className="flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                <Calendar className="text-muted-foreground h-3.5 w-3.5" aria-hidden="true" />
                 <Input
                   type="date"
                   value={startDate}
@@ -183,7 +183,7 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
 
               {/* End Date */}
               <div className="flex items-center gap-1.5">
-                <span className="text-xs text-muted-foreground">-</span>
+                <span className="text-muted-foreground text-xs">-</span>
                 <Input
                   type="date"
                   value={endDate}
@@ -201,7 +201,7 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
                 <Button
                   size="sm"
                   onClick={() => setDialogOpen(true)}
-                  className="h-9 gap-1.5 bg-primary text-xs text-primary-foreground shadow-xs hover:bg-primary/90"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 gap-1.5 text-xs shadow-xs"
                 >
                   <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{t('movements.recordMutation')}</span>
@@ -211,7 +211,7 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
           </div>
 
           {/* Results Summary & Active Filters */}
-          <div className="mt-3 flex items-center justify-between border-t pt-2.5 text-xs text-muted-foreground">
+          <div className="text-muted-foreground mt-3 flex items-center justify-between border-t pt-2.5 text-xs">
             <span>
               {t('movements.showingResults', {
                 count: paginatedMovements.length,
@@ -219,7 +219,7 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
               })}
             </span>
             {(searchQuery || selectedType !== 'ALL' || startDate || endDate) && (
-              <Button variant="ghost" size="xs" onClick={handleResetFilters} className="h-6 gap-1 text-[11px] text-primary hover:underline">
+              <Button variant="ghost" size="xs" onClick={handleResetFilters} className="text-primary h-6 gap-1 text-[11px] hover:underline">
                 <RotateCcw className="h-3 w-3" aria-hidden="true" />
                 <span>{t('movements.resetFilter')}</span>
               </Button>
@@ -232,11 +232,11 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
       {filteredMovements.length === 0 ? (
         <Card className="border-border">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+            <div className="bg-secondary text-muted-foreground mb-3 flex h-12 w-12 items-center justify-center rounded-full">
               <PackageX className="h-6 w-6" aria-hidden="true" />
             </div>
-            <h3 className="text-sm font-semibold text-foreground">{t('movements.emptySearch')}</h3>
-            <p className="mt-1 max-w-sm text-xs text-muted-foreground">{t('movements.emptySubtitle')}</p>
+            <h3 className="text-foreground text-sm font-semibold">{t('movements.emptySearch')}</h3>
+            <p className="text-muted-foreground mt-1 max-w-sm text-xs">{t('movements.emptySubtitle')}</p>
             <Button variant="outline" size="sm" onClick={handleResetFilters} className="mt-4 gap-1.5 text-xs">
               <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{t('movements.resetFilter')}</span>
@@ -246,10 +246,10 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
       ) : (
         <>
           {/* Desktop & Tablet Table */}
-          <div className="hidden overflow-x-auto rounded-lg border border-border bg-card shadow-xs md:block">
+          <div className="border-border bg-card hidden overflow-x-auto rounded-lg border shadow-xs md:block">
             <table className="w-full border-collapse text-left text-xs">
               <thead>
-                <tr className="border-b border-border bg-muted/50 font-semibold text-muted-foreground">
+                <tr className="border-border bg-muted/50 text-muted-foreground border-b font-semibold">
                   <th className="px-4 py-3">{t('movements.columns.timestamp')}</th>
                   <th className="px-4 py-3">{t('movements.columns.sku')}</th>
                   <th className="px-4 py-3">{t('movements.columns.product')}</th>
@@ -260,23 +260,23 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
                   <th className="px-4 py-3">{t('movements.columns.note')}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-border divide-y">
                 {paginatedMovements.map((m) => {
                   const isIn = m.type === 'IN'
                   return (
-                    <tr key={m.id} className="transition-colors hover:bg-muted/30">
+                    <tr key={m.id} className="hover:bg-muted/30 transition-colors">
                       {/* Timestamp */}
-                      <td className="px-4 py-3 font-mono text-[11px] whitespace-nowrap text-muted-foreground">{formatDateTime(m.createdAt)}</td>
+                      <td className="text-muted-foreground px-4 py-3 font-mono text-[11px] whitespace-nowrap">{formatDateTime(m.createdAt)}</td>
 
                       {/* SKU */}
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <span className="font-mono text-xs font-bold text-primary">{m.product.sku}</span>
+                        <span className="text-primary font-mono text-xs font-bold">{m.product.sku}</span>
                       </td>
 
                       {/* Product Name & Category */}
                       <td className="px-4 py-3">
-                        <p className="max-w-xs truncate font-semibold text-foreground">{m.product.name}</p>
-                        <span className="font-mono text-[10px] text-muted-foreground uppercase">{m.product.category}</span>
+                        <p className="text-foreground max-w-xs truncate font-semibold">{m.product.name}</p>
+                        <span className="text-muted-foreground font-mono text-[10px] uppercase">{m.product.category}</span>
                       </td>
 
                       {/* Type Badge */}
@@ -304,20 +304,20 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
                       {/* Stock Transition (Before -> After) */}
                       <td className="px-4 py-3 text-center font-mono text-xs whitespace-nowrap">
                         <span className="text-muted-foreground">{m.stockBefore}</span>
-                        <span className="mx-1 text-muted-foreground/60">→</span>
-                        <span className="font-bold text-foreground">{m.stockAfter}</span>
+                        <span className="text-muted-foreground/60 mx-1">→</span>
+                        <span className="text-foreground font-bold">{m.stockAfter}</span>
                       </td>
 
                       {/* User Attribution */}
                       <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center gap-1.5 text-xs">
-                          <UserCheck className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
-                          <span className="font-medium text-foreground">{m.user?.fullName || 'Admin Gudang'}</span>
+                          <UserCheck className="text-muted-foreground h-3.5 w-3.5" aria-hidden="true" />
+                          <span className="text-foreground font-medium">{m.user?.fullName || 'Admin Gudang'}</span>
                         </div>
                       </td>
 
                       {/* Note */}
-                      <td className="max-w-xs px-4 py-3 text-xs text-muted-foreground">
+                      <td className="text-muted-foreground max-w-xs px-4 py-3 text-xs">
                         <p className="line-clamp-2">{m.note}</p>
                       </td>
                     </tr>
@@ -347,23 +347,23 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
                           <span>STOK KELUAR (OUT)</span>
                         </Badge>
                       )}
-                      <span className="font-mono text-[10px] text-muted-foreground">{formatDateTime(m.createdAt)}</span>
+                      <span className="text-muted-foreground font-mono text-[10px]">{formatDateTime(m.createdAt)}</span>
                     </div>
 
                     {/* Product Info */}
                     <div>
-                      <span className="font-mono text-xs font-bold text-primary">{m.product.sku}</span>
-                      <h4 className="font-semibold text-foreground">{m.product.name}</h4>
+                      <span className="text-primary font-mono text-xs font-bold">{m.product.sku}</span>
+                      <h4 className="text-foreground font-semibold">{m.product.name}</h4>
                     </div>
 
                     {/* Stock & Quantity Grid */}
-                    <div className="grid grid-cols-2 gap-2 rounded-md border border-border bg-muted/30 p-2 font-mono text-[11px]">
+                    <div className="border-border bg-muted/30 grid grid-cols-2 gap-2 rounded-md border p-2 font-mono text-[11px]">
                       <div>
-                        <span className="text-[10px] text-muted-foreground">Kuantitas: </span>
+                        <span className="text-muted-foreground text-[10px]">Kuantitas: </span>
                         <strong className={isIn ? 'text-emerald-600' : 'text-rose-600'}>{isIn ? `+${m.quantity}` : `-${m.quantity}`} unit</strong>
                       </div>
                       <div className="text-right">
-                        <span className="text-[10px] text-muted-foreground">Stok: </span>
+                        <span className="text-muted-foreground text-[10px]">Stok: </span>
                         <span>
                           {m.stockBefore} → <strong>{m.stockAfter}</strong>
                         </span>
@@ -372,11 +372,11 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
 
                     {/* User and Note */}
                     <div className="border-t pt-2 text-[11px]">
-                      <div className="flex items-center gap-1 text-muted-foreground">
+                      <div className="text-muted-foreground flex items-center gap-1">
                         <UserCheck className="h-3 w-3" aria-hidden="true" />
                         <span>Oleh: {m.user?.fullName || 'Admin Gudang'}</span>
                       </div>
-                      <p className="mt-1 text-muted-foreground italic">&ldquo;{m.note}&rdquo;</p>
+                      <p className="text-muted-foreground mt-1 italic">&ldquo;{m.note}&rdquo;</p>
                     </div>
                   </CardContent>
                 </Card>

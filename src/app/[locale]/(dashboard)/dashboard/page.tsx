@@ -1,6 +1,6 @@
+import { connection } from 'next/server'
 import { AlertTriangle, Banknote, Boxes, CheckCircle2, Package, ShieldAlert, ShieldCheck, Sparkles } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { connection } from 'next/server'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { KpiStatCard } from '@/features/dashboard/kpi-stat-card'
@@ -106,7 +106,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       </Card>
 
       {/* KPI Stat Cards Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {/* Total Catalog SKUs */}
         <KpiStatCard
           title={tDashboard('kpi.totalProducts')}

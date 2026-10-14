@@ -9,12 +9,28 @@
   "newProduct": "Add New Product",
   "userRole": "Account Role",
   "navigation": "Navigation",
+  "groups": {
+    "main": "MAIN",
+    "management": "MANAGEMENT",
+    "reports": "REPORTS",
+    "other": "OTHER"
+  },
+  "tooltips": {
+    "theme": "Switch Theme",
+    "language": "Switch Language",
+    "logout": "Log Out"
+  },
   "items": {
     "dashboard": "Dashboard",
     "catalog": "Product Catalog",
-    "stockIn": "Stock IN",
-    "stockOut": "Stock OUT",
+    "categories": "Product Categories",
+    "transactions": "Stock Transactions",
     "history": "Movement History",
-    "settings": "Settings"
+    "reports": "Analytics & Reports",
+    "productAnalysis": "Product Analysis",
+    "assistant": "AI Assistant",
+    "settings": "Settings",
+    "stockIn": "Stock IN",
+    "stockOut": "Stock OUT"
   }
 }

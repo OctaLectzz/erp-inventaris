@@ -16,6 +16,8 @@
     "transactions": "Transaksi Stok",
     "movements": "Mutasi Stok",
     "reports": "Laporan & Analisis",
-    "assistant": "AI Assistant"
+    "productAnalysis": "Analisis Produk",
+    "assistant": "AI Assistant",
+    "settings": "Pengaturan"
   }
 }

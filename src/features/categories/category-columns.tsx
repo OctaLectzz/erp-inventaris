@@ -40,12 +40,12 @@ export function getCategoryColumns({ locale, isAdmin, onEditCategory, onDeleteCa
         const cat = row.original
         return (
           <div className="flex min-w-40 items-center gap-2.5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-primary/10 text-primary">
+            <div className="border-border bg-primary/10 text-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-md border">
               <Folder className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
-              <span className="font-semibold text-foreground">{cat.name}</span>
-              <p className="font-mono text-[11px] text-muted-foreground">{cat.slug}</p>
+              <span className="text-foreground font-semibold">{cat.name}</span>
+              <p className="text-muted-foreground font-mono text-[11px]">{cat.slug}</p>
             </div>
           </div>
         )
@@ -74,7 +74,7 @@ export function getCategoryColumns({ locale, isAdmin, onEditCategory, onDeleteCa
       ),
       cell: ({ row }) => {
         const desc = row.getValue('description') as string | null
-        return <span className="line-clamp-1 max-w-xs text-xs text-muted-foreground">{desc || '-'}</span>
+        return <span className="text-muted-foreground line-clamp-1 max-w-xs text-xs">{desc || '-'}</span>
       },
       enableSorting: false
     },
@@ -106,7 +106,7 @@ export function getCategoryColumns({ locale, isAdmin, onEditCategory, onDeleteCa
         <DataTableColumnHeader column={column} title={t ? t('categories.columns.createdAt') : locale === 'en' ? 'Created At' : 'Dibuat Pada'} />
       ),
       cell: ({ row }) => (
-        <span className="font-mono text-[11px] whitespace-nowrap text-muted-foreground">{formatDate(row.getValue('createdAt'))}</span>
+        <span className="text-muted-foreground font-mono text-[11px] whitespace-nowrap">{formatDate(row.getValue('createdAt'))}</span>
       ),
       enableSorting: true
     }
@@ -127,7 +127,7 @@ export function getCategoryColumns({ locale, isAdmin, onEditCategory, onDeleteCa
               variant="ghost"
               size="xs"
               onClick={() => onEditCategory(cat)}
-              className="h-7 w-7 p-0 hover:bg-primary/10 hover:text-primary"
+              className="hover:bg-primary/10 hover:text-primary h-7 w-7 p-0"
               title={t ? t('categories.editCategory') : 'Edit'}
               aria-label={`Edit ${cat.name}`}
             >
@@ -139,7 +139,7 @@ export function getCategoryColumns({ locale, isAdmin, onEditCategory, onDeleteCa
               size="xs"
               onClick={() => onDeleteCategory(cat)}
               disabled={hasProducts}
-              className="h-7 w-7 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive disabled:opacity-30"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive h-7 w-7 p-0 disabled:opacity-30"
               title={hasProducts ? 'Tidak dapat dihapus karena masih memiliki produk' : t ? t('categories.deleteCategory') : 'Hapus'}
               aria-label={`Hapus ${cat.name}`}
             >

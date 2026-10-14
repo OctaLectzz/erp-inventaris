@@ -1,26 +1,25 @@
 'use client'
 
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import {
   ArrowDownUp,
   ArrowLeftRight,
   BarChart3,
   Boxes,
-  ChevronLeft,
-  ChevronRight,
+  FolderTree,
   LayoutDashboard,
+  LineChart,
   Package,
+  Settings,
   Shield,
   Sparkles,
-  Tag,
   UserCheck
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
-import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { LogoutButton } from '@/features/auth/logout-button'
 import { cn } from '@/lib/utils'
@@ -31,60 +30,94 @@ interface AppSidebarProps {
   locale: string
   profile: UserProfile
   isCollapsed?: boolean
-  onToggleCollapse?: () => void
   className?: string
 }
 
-export function AppSidebar({ locale, profile, isCollapsed = false, onToggleCollapse, className }: AppSidebarProps) {
+export function AppSidebar({ locale, profile, isCollapsed = false, className }: AppSidebarProps) {
   const pathname = usePathname()
-  const tNav = useTranslations('navigation')
   const tSidebar = useTranslations('sidebar')
   const tAuth = useTranslations('auth')
 
   const isAdmin = profile.role === 'admin_gudang' || profile.role === 'administrator'
 
-  const navItems = [
+  const menuGroups = [
     {
-      href: `/${locale}/dashboard`,
-      label: tNav('links.dashboard'),
-      icon: LayoutDashboard,
-      isActive: pathname === `/${locale}/dashboard` || pathname === '/dashboard'
+      id: 'main',
+      label: tSidebar('groups.main'),
+      items: [
+        {
+          href: `/${locale}/dashboard`,
+          label: tSidebar('items.dashboard'),
+          icon: LayoutDashboard,
+          isActive: pathname === `/${locale}/dashboard` || pathname === '/dashboard'
+        }
+      ]
     },
     {
-      href: `/${locale}/inventory`,
-      label: tNav('links.catalog'),
-      icon: Package,
-      isActive: pathname.startsWith(`/${locale}/inventory`) || pathname.startsWith('/inventory')
+      id: 'management',
+      label: tSidebar('groups.management'),
+      items: [
+        {
+          href: `/${locale}/inventory`,
+          label: tSidebar('items.catalog'),
+          icon: Package,
+          isActive: pathname.startsWith(`/${locale}/inventory`) || pathname.startsWith('/inventory')
+        },
+        {
+          href: `/${locale}/categories`,
+          label: tSidebar('items.categories'),
+          icon: FolderTree,
+          isActive: pathname.startsWith(`/${locale}/categories`) || pathname.startsWith('/categories')
+        },
+        {
+          href: `/${locale}/transactions`,
+          label: tSidebar('items.transactions'),
+          icon: ArrowDownUp,
+          isActive: pathname.startsWith(`/${locale}/transactions`) || pathname.startsWith('/transactions')
+        }
+      ]
     },
     {
-      href: `/${locale}/categories`,
-      label: tNav('links.categories'),
-      icon: Tag,
-      isActive: pathname.startsWith(`/${locale}/categories`) || pathname.startsWith('/categories')
+      id: 'reports',
+      label: tSidebar('groups.reports'),
+      items: [
+        {
+          href: `/${locale}/movements`,
+          label: tSidebar('items.history'),
+          icon: ArrowLeftRight,
+          isActive: pathname.startsWith(`/${locale}/movements`) || pathname.startsWith('/movements')
+        },
+        {
+          href: `/${locale}/reports`,
+          label: tSidebar('items.reports'),
+          icon: BarChart3,
+          isActive: (pathname.startsWith(`/${locale}/reports`) || pathname.startsWith('/reports')) && !pathname.includes('/reports/products')
+        },
+        {
+          href: `/${locale}/reports/products`,
+          label: tSidebar('items.productAnalysis'),
+          icon: LineChart,
+          isActive: pathname.includes('/reports/products')
+        }
+      ]
     },
     {
-      href: `/${locale}/transactions`,
-      label: tNav('links.transactions'),
-      icon: ArrowDownUp,
-      isActive: pathname.startsWith(`/${locale}/transactions`) || pathname.startsWith('/transactions')
-    },
-    {
-      href: `/${locale}/movements`,
-      label: tNav('links.movements'),
-      icon: ArrowLeftRight,
-      isActive: pathname.startsWith(`/${locale}/movements`) || pathname.startsWith('/movements')
-    },
-    {
-      href: `/${locale}/reports`,
-      label: tNav('links.reports'),
-      icon: BarChart3,
-      isActive: pathname.startsWith(`/${locale}/reports`) || pathname.startsWith('/reports')
-    },
-    {
-      href: `/${locale}/assistant`,
-      label: tNav('links.assistant'),
-      icon: Sparkles,
-      isActive: pathname.startsWith(`/${locale}/assistant`) || pathname.startsWith('/assistant')
+      id: 'other',
+      label: tSidebar('groups.other'),
+      items: [
+        {
+          href: `/${locale}/assistant`,
+          label: tSidebar('items.assistant'),
+          icon: Sparkles,
+          isActive: pathname.startsWith(`/${locale}/assistant`) || pathname.startsWith('/assistant')
+        },
+        {
+          href: `/${locale}/settings`,
+          label: tSidebar('items.settings'),
+          icon: Settings,
+          isActive: pathname.startsWith(`/${locale}/settings`) || pathname.startsWith('/settings')
+        }
+      ]
     }
   ]
 
@@ -99,8 +132,12 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
         )}
       >
         {/* Brand Header */}
-        <div className="border-border flex h-16 shrink-0 items-center justify-between border-b px-4">
-          <Link href={`/${locale}/dashboard`} className="flex items-center gap-3 overflow-hidden transition-opacity hover:opacity-85">
+        <div className="border-border flex h-16 shrink-0 items-center border-b px-4">
+          <Link
+            href={`/${locale}/dashboard`}
+            className="flex items-center gap-3 overflow-hidden transition-opacity hover:opacity-85"
+            aria-label="Inventra ERP Dashboard"
+          >
             <div className="bg-primary text-primary-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-lg shadow-xs">
               <Boxes className="h-5 w-5" aria-hidden="true" />
             </div>
@@ -111,23 +148,10 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
               </div>
             )}
           </Link>
-
-          {onToggleCollapse && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onToggleCollapse}
-              className="text-muted-foreground hover:text-foreground hidden h-8 w-8 lg:flex"
-              aria-label={isCollapsed ? tSidebar('expand') : tSidebar('collapse')}
-              title={isCollapsed ? tSidebar('expand') : tSidebar('collapse')}
-            >
-              {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-            </Button>
-          )}
         </div>
 
         {/* Role Badge Section */}
-        <div className="border-border border-b px-3 py-2.5">
+        <div className="border-border shrink-0 border-b px-3 py-2.5">
           {isCollapsed ? (
             <Tooltip>
               <TooltipTrigger asChild>
@@ -165,50 +189,56 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
           )}
         </div>
 
-        {/* Navigation Menu Links */}
-        <nav className="flex-1 space-y-1.5 overflow-y-auto px-2.5 py-4" aria-label={tSidebar('title')}>
-          {!isCollapsed && (
-            <p className="text-muted-foreground px-2.5 pb-1 text-[11px] font-semibold tracking-wider uppercase">{tSidebar('title')}</p>
-          )}
+        {/* Navigation Menu Links (Bounded vertical scroll) */}
+        <nav className="min-h-0 flex-1 space-y-4 overflow-y-auto px-2.5 py-3" aria-label={tSidebar('title')}>
+          {menuGroups.map((group, groupIdx) => (
+            <div key={group.id} className="space-y-1">
+              {!isCollapsed ? (
+                <p className="text-muted-foreground/80 px-2.5 pb-1 text-[10px] font-bold tracking-wider uppercase">{group.label}</p>
+              ) : (
+                groupIdx > 0 && <div className="border-border/60 my-2 border-t" />
+              )}
 
-          {navItems.map((item) => {
-            const Icon = item.icon
-            const content = (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-xs font-semibold transition-colors',
-                  item.isActive ? 'bg-primary text-primary-foreground shadow-xs' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-                  isCollapsed && 'justify-center px-0'
-                )}
-                aria-current={item.isActive ? 'page' : undefined}
-              >
-                <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                {!isCollapsed && <span className="truncate">{item.label}</span>}
-              </Link>
-            )
+              {group.items.map((item) => {
+                const Icon = item.icon
+                const content = (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-xs font-semibold transition-colors',
+                      item.isActive ? 'bg-primary text-primary-foreground shadow-xs' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                      isCollapsed && 'mx-auto h-9 w-9 justify-center p-0'
+                    )}
+                    aria-current={item.isActive ? 'page' : undefined}
+                  >
+                    <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    {!isCollapsed && <span className="truncate">{item.label}</span>}
+                  </Link>
+                )
 
-            if (isCollapsed) {
-              return (
-                <Tooltip key={item.href}>
-                  <TooltipTrigger asChild>{content}</TooltipTrigger>
-                  <TooltipContent side="right">
-                    <span>{item.label}</span>
-                  </TooltipContent>
-                </Tooltip>
-              )
-            }
+                if (isCollapsed) {
+                  return (
+                    <Tooltip key={item.href}>
+                      <TooltipTrigger asChild>{content}</TooltipTrigger>
+                      <TooltipContent side="right">
+                        <span>{item.label}</span>
+                      </TooltipContent>
+                    </Tooltip>
+                  )
+                }
 
-            return content
-          })}
+                return content
+              })}
+            </div>
+          ))}
         </nav>
 
-        {/* User Identity & Utility Footer */}
-        <div className="border-border mt-auto space-y-3 border-t p-3">
+        {/* User Identity & Utility Footer (Pinned without viewport overflow) */}
+        <div className="border-border mt-auto shrink-0 space-y-3 border-t p-3">
           {!isCollapsed && (
             <div className="flex items-center gap-2.5 px-1">
-              <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold">
+              <div className="bg-primary/10 text-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold">
                 {profile.fullName.slice(0, 2).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
@@ -218,13 +248,13 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
             </div>
           )}
 
-          {/* Controls Bar (Locale, Theme, Logout) */}
-          <div className={cn('flex items-center gap-1.5', isCollapsed ? 'flex-col items-center' : 'justify-between')}>
-            <div className="flex items-center gap-1">
-              <LocaleSwitcher />
+          {/* Controls Bar: Theme, Language, and Logout as Icons Only with Tooltips */}
+          <div className={cn('flex items-center gap-1.5', isCollapsed ? 'flex-col justify-center' : 'justify-between')}>
+            <div className={cn('flex items-center gap-1', isCollapsed && 'flex-col')}>
               <ThemeToggle />
+              <LocaleSwitcher variant="icon" />
             </div>
-            <LogoutButton locale={locale} />
+            <LogoutButton locale={locale} variant="icon" />
           </div>
         </div>
       </aside>

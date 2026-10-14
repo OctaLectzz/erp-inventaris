@@ -34,9 +34,7 @@ export async function RecentMovementsCard({ movements, locale }: RecentMovements
             <History className="text-primary h-4 w-4" aria-hidden="true" />
             <CardTitle className="text-foreground text-base font-bold">{t('tables.recentActivity')}</CardTitle>
           </div>
-          <CardDescription className="text-xs">
-            {movements.length > 0 ? `5 transaksi mutasi stok fisik terbaru` : t('tables.emptyState')}
-          </CardDescription>
+          <CardDescription className="text-xs">{movements.length > 0 ? t('recentMovements.subtitleCount') : t('tables.emptyState')}</CardDescription>
         </div>
 
         <Link href={`/${locale}/movements`}>
@@ -54,15 +52,15 @@ export async function RecentMovementsCard({ movements, locale }: RecentMovements
             <p className="font-medium">{t('tables.emptyState')}</p>
           </div>
         ) : (
-          <div className="border-border overflow-hidden rounded-lg border">
+          <div className="border-border w-full overflow-x-auto rounded-lg border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="py-2.5">Waktu</TableHead>
-                  <TableHead className="py-2.5">Produk</TableHead>
-                  <TableHead className="py-2.5 text-center">Tipe</TableHead>
-                  <TableHead className="py-2.5 text-right">Kuantitas</TableHead>
-                  <TableHead className="hidden py-2.5 text-right sm:table-cell">Stok Akhir</TableHead>
+                  <TableHead className="py-2.5 whitespace-nowrap">{t('recentMovements.time')}</TableHead>
+                  <TableHead className="py-2.5 whitespace-nowrap">{t('recentMovements.product')}</TableHead>
+                  <TableHead className="py-2.5 text-center whitespace-nowrap">{t('recentMovements.type')}</TableHead>
+                  <TableHead className="py-2.5 text-right whitespace-nowrap">{t('recentMovements.quantity')}</TableHead>
+                  <TableHead className="hidden py-2.5 text-right whitespace-nowrap sm:table-cell">{t('recentMovements.finalStock')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

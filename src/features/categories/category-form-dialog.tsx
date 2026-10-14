@@ -1,9 +1,9 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, CheckCircle2, Loader2, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { createCategoryAction, deleteCategoryAction, updateCategoryAction } from '@/app/actions/category-actions'
@@ -198,7 +198,7 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
       <Dialog open={open} onOpenChange={handleDialogChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-destructive">
+            <DialogTitle className="text-destructive flex items-center gap-2">
               <Trash2 className="h-5 w-5" aria-hidden="true" />
               <span>{t('categories.dialog.deleteConfirmTitle')}</span>
             </DialogTitle>
@@ -206,7 +206,7 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
           </DialogHeader>
 
           {serverError && (
-            <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+            <div className="border-destructive/30 bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg border p-3 text-xs">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <p className="font-medium">{serverError}</p>
             </div>
@@ -219,10 +219,10 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
             </div>
           )}
 
-          <div className="rounded-lg border border-border bg-secondary/50 p-3 text-xs">
+          <div className="border-border bg-secondary/50 rounded-lg border p-3 text-xs">
             <span className="text-muted-foreground">{t('categories.columns.name')}: </span>
-            <span className="font-bold text-foreground">{category?.name}</span>
-            <span className="ml-2 font-mono text-muted-foreground">({category?.slug})</span>
+            <span className="text-foreground font-bold">{category?.name}</span>
+            <span className="text-muted-foreground ml-2 font-mono">({category?.slug})</span>
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
@@ -264,7 +264,7 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
         </DialogHeader>
 
         {serverError && (
-          <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
+          <div className="border-destructive/30 bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg border p-3 text-xs">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <p className="font-medium">{serverError}</p>
           </div>
@@ -291,7 +291,7 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
               disabled={isSubmitting}
               aria-invalid={Boolean(errors.name)}
             />
-            {errors.name && <p className="text-[11px] text-destructive">{getTranslatedError(errors.name.message)}</p>}
+            {errors.name && <p className="text-destructive text-[11px]">{getTranslatedError(errors.name.message)}</p>}
           </div>
 
           {/* Slug Field */}
@@ -309,7 +309,7 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
               disabled={isSubmitting}
               aria-invalid={Boolean(errors.slug)}
             />
-            {errors.slug && <p className="text-[11px] text-destructive">{getTranslatedError(errors.slug.message)}</p>}
+            {errors.slug && <p className="text-destructive text-[11px]">{getTranslatedError(errors.slug.message)}</p>}
           </div>
 
           {/* Description Field */}
@@ -326,7 +326,7 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
               disabled={isSubmitting}
               aria-invalid={Boolean(errors.description)}
             />
-            {errors.description && <p className="text-[11px] text-destructive">{getTranslatedError(errors.description.message)}</p>}
+            {errors.description && <p className="text-destructive text-[11px]">{getTranslatedError(errors.description.message)}</p>}
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">

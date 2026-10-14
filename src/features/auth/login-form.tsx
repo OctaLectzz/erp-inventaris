@@ -7,7 +7,7 @@ import { AlertCircle, CheckCircle2, Eye, EyeOff, KeyRound, Loader2, Lock, Mail, 
 import { useTranslations } from 'next-intl'
 import { useForm } from 'react-hook-form'
 
-import { signInAction, signInDemoAction } from '@/app/actions/auth-actions'
+import { getDemoCredentialsAction, signInAction } from '@/app/actions/auth-actions'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -29,7 +29,9 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
 
   const [showPassword, setShowPassword] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [demoFeedback, setDemoFeedback] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [isFetchingDemo, setIsFetchingDemo] = useState(false)
   const [activeDemoRole, setActiveDemoRole] = useState<UserRole | null>(null)
 
   const {
@@ -65,22 +67,26 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
     })
   }
 
-  const handleDemoLogin = (role: UserRole) => {
+  const handleSelectDemoAccount = async (role: UserRole) => {
     setErrorMessage(null)
     setActiveDemoRole(role)
-    const demoEmail = role === 'admin_gudang' ? 'admin@inventra.demo' : 'owner@inventra.demo'
-    setValue('email', demoEmail)
+    setIsFetchingDemo(true)
 
-    startTransition(async () => {
-      const result = await signInDemoAction(role, locale)
-      if (result.success && result.redirectTo) {
-        router.push(result.redirectTo)
-        router.refresh()
-      } else if (!result.success) {
+    try {
+      const creds = await getDemoCredentialsAction(role)
+      if (creds.success && creds.email && creds.password) {
+        setValue('email', creds.email, { shouldValidate: true, shouldDirty: true })
+        setValue('password', creds.password, { shouldValidate: true, shouldDirty: true })
+        const roleLabel = role === 'admin_gudang' ? tAuth('roles.admin_gudang') : tAuth('roles.owner')
+        setDemoFeedback(tAuth('login.demoFilledNotice', { role: roleLabel }))
+      } else {
         setErrorMessage(tAuth('login.genericError'))
-        setActiveDemoRole(null)
       }
-    })
+    } catch {
+      setErrorMessage(tAuth('login.genericError'))
+    } finally {
+      setIsFetchingDemo(false)
+    }
   }
 
   return (
@@ -95,6 +101,18 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
         </CardHeader>
 
         <CardContent className="space-y-6">
+          {/* Demo Account Selection Feedback Banner */}
+          {demoFeedback && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="border-accent/40 bg-accent/10 text-accent-foreground dark:text-accent flex items-start gap-3 rounded-lg border p-3.5 text-xs font-semibold shadow-2xs"
+            >
+              <CheckCircle2 className="text-accent mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <p className="flex-1 leading-relaxed">{demoFeedback}</p>
+            </div>
+          )}
+
           {/* Error Banner */}
           {errorMessage && (
             <div
@@ -121,7 +139,7 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
                   type="email"
                   autoComplete="email"
                   placeholder={tAuth('login.emailPlaceholder')}
-                  disabled={isPending}
+                  disabled={isPending || isFetchingDemo}
                   className="pl-9"
                   aria-invalid={errors.email ? 'true' : 'false'}
                   aria-describedby={errors.email ? 'email-error' : undefined}
@@ -149,7 +167,7 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   placeholder={tAuth('login.passwordPlaceholder')}
-                  disabled={isPending}
+                  disabled={isPending || isFetchingDemo}
                   className="pr-10 pl-9"
                   aria-invalid={errors.password ? 'true' : 'false'}
                   aria-describedby={errors.password ? 'password-error' : undefined}
@@ -158,7 +176,7 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  disabled={isPending}
+                  disabled={isPending || isFetchingDemo}
                   className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors focus:outline-none"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
@@ -173,8 +191,8 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" size="lg" disabled={isPending} className="w-full gap-2 font-semibold shadow-xs">
-              {isPending && !activeDemoRole ? (
+            <Button type="submit" size="lg" disabled={isPending || isFetchingDemo} className="w-full gap-2 font-semibold shadow-xs">
+              {isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                   <span>{tAuth('login.submitting')}</span>
@@ -200,8 +218,8 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
             {/* Admin Gudang Demo Button */}
             <button
               type="button"
-              disabled={isPending}
-              onClick={() => handleDemoLogin('admin_gudang')}
+              disabled={isPending || isFetchingDemo}
+              onClick={() => handleSelectDemoAccount('admin_gudang')}
               className="border-border bg-secondary/40 hover:border-accent hover:bg-secondary/70 focus:ring-accent flex flex-col items-start gap-1 rounded-lg border p-3 text-left transition-all focus:ring-2 focus:outline-none disabled:opacity-60"
             >
               <div className="flex w-full items-center justify-between">
@@ -209,7 +227,9 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
                   <Shield className="text-accent h-3.5 w-3.5" aria-hidden="true" />
                   {tAuth('roles.admin_gudang')}
                 </span>
-                {isPending && activeDemoRole === 'admin_gudang' && <Loader2 className="text-accent h-3.5 w-3.5 animate-spin" aria-hidden="true" />}
+                {isFetchingDemo && activeDemoRole === 'admin_gudang' && (
+                  <Loader2 className="text-accent h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                )}
               </div>
               <p className="text-muted-foreground line-clamp-1 font-mono text-[11px]">admin@inventra.demo</p>
               <p className="text-muted-foreground/80 mt-1 line-clamp-2 text-[10px]">{tAuth('roles.adminDesc')}</p>
@@ -218,8 +238,8 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
             {/* Owner Demo Button */}
             <button
               type="button"
-              disabled={isPending}
-              onClick={() => handleDemoLogin('owner')}
+              disabled={isPending || isFetchingDemo}
+              onClick={() => handleSelectDemoAccount('owner')}
               className="border-border bg-secondary/40 hover:border-accent hover:bg-secondary/70 focus:ring-accent flex flex-col items-start gap-1 rounded-lg border p-3 text-left transition-all focus:ring-2 focus:outline-none disabled:opacity-60"
             >
               <div className="flex w-full items-center justify-between">
@@ -227,7 +247,7 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
                   <UserCheck className="text-accent h-3.5 w-3.5" aria-hidden="true" />
                   {tAuth('roles.owner')}
                 </span>
-                {isPending && activeDemoRole === 'owner' && <Loader2 className="text-accent h-3.5 w-3.5 animate-spin" aria-hidden="true" />}
+                {isFetchingDemo && activeDemoRole === 'owner' && <Loader2 className="text-accent h-3.5 w-3.5 animate-spin" aria-hidden="true" />}
               </div>
               <p className="text-muted-foreground line-clamp-1 font-mono text-[11px]">owner@inventra.demo</p>
               <p className="text-muted-foreground/80 mt-1 line-clamp-2 text-[10px]">{tAuth('roles.ownerDesc')}</p>

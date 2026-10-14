@@ -9,12 +9,28 @@
   "newProduct": "Tambah Produk Baru",
   "userRole": "Peran Akun",
   "navigation": "Navigasi",
+  "groups": {
+    "main": "MAIN",
+    "management": "MANAGEMENT",
+    "reports": "REPORTS",
+    "other": "OTHER"
+  },
+  "tooltips": {
+    "theme": "Ganti Tema",
+    "language": "Ganti Bahasa",
+    "logout": "Keluar dari Sesi"
+  },
   "items": {
     "dashboard": "Dashboard",
     "catalog": "Katalog Produk",
-    "stockIn": "Stok Masuk",
-    "stockOut": "Stok Keluar",
+    "categories": "Kategori Produk",
+    "transactions": "Transaksi Stok",
     "history": "Riwayat Mutasi",
-    "settings": "Pengaturan"
+    "reports": "Analitik & Laporan",
+    "productAnalysis": "Analisis Produk",
+    "assistant": "AI Assistant",
+    "settings": "Pengaturan",
+    "stockIn": "Stok Masuk",
+    "stockOut": "Stok Keluar"
   }
 }

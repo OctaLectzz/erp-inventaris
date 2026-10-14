@@ -1,5 +1,8 @@
 'use client'
 
+import { useState } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import {
   ArrowDownUp,
   ArrowLeftRight,
@@ -15,9 +18,6 @@ import {
   UserCheck
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState } from 'react'
 
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
@@ -31,9 +31,11 @@ import type { UserProfile } from '@/types/auth'
 interface AppHeaderProps {
   locale: string
   profile: UserProfile
+  isCollapsed?: boolean
+  onToggleSidebar?: () => void
 }
 
-export function AppHeader({ locale, profile }: AppHeaderProps) {
+export function AppHeader({ locale, profile, isCollapsed = false, onToggleSidebar }: AppHeaderProps) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const tNav = useTranslations('navigation')
@@ -52,66 +54,101 @@ export function AppHeader({ locale, profile }: AppHeaderProps) {
     currentSection = tNav('links.transactions')
   } else if (pathname.includes('/movements')) {
     currentSection = tNav('links.movements')
+  } else if (pathname.includes('/reports/products')) {
+    currentSection = tNav('links.productAnalysis')
   } else if (pathname.includes('/reports')) {
     currentSection = tNav('links.reports')
   } else if (pathname.includes('/assistant')) {
     currentSection = tNav('links.assistant')
+  } else if (pathname.includes('/settings')) {
+    currentSection = tNav('links.settings')
   }
 
   const navItems = [
     {
       href: `/${locale}/dashboard`,
-      label: tNav('links.dashboard'),
+      label: tSidebar('items.dashboard'),
       icon: LayoutDashboard,
       isActive: pathname === `/${locale}/dashboard` || pathname === '/dashboard'
     },
     {
       href: `/${locale}/inventory`,
-      label: tNav('links.catalog'),
+      label: tSidebar('items.catalog'),
       icon: Package,
       isActive: pathname.startsWith(`/${locale}/inventory`) || pathname.startsWith('/inventory')
     },
     {
       href: `/${locale}/categories`,
-      label: tNav('links.categories'),
+      label: tSidebar('items.categories'),
       icon: Tag,
       isActive: pathname.startsWith(`/${locale}/categories`) || pathname.startsWith('/categories')
     },
     {
       href: `/${locale}/transactions`,
-      label: tNav('links.transactions'),
+      label: tSidebar('items.transactions'),
       icon: ArrowDownUp,
       isActive: pathname.startsWith(`/${locale}/transactions`) || pathname.startsWith('/transactions')
     },
     {
       href: `/${locale}/movements`,
-      label: tNav('links.movements'),
+      label: tSidebar('items.history'),
       icon: ArrowLeftRight,
       isActive: pathname.startsWith(`/${locale}/movements`) || pathname.startsWith('/movements')
     },
     {
       href: `/${locale}/reports`,
-      label: tNav('links.reports'),
+      label: tSidebar('items.reports'),
       icon: BarChart3,
-      isActive: pathname.startsWith(`/${locale}/reports`) || pathname.startsWith('/reports')
+      isActive: (pathname.startsWith(`/${locale}/reports`) || pathname.startsWith('/reports')) && !pathname.includes('/reports/products')
+    },
+    {
+      href: `/${locale}/reports/products`,
+      label: tSidebar('items.productAnalysis'),
+      icon: BarChart3,
+      isActive: pathname.includes('/reports/products')
     },
     {
       href: `/${locale}/assistant`,
-      label: tNav('links.assistant'),
+      label: tSidebar('items.assistant'),
       icon: Sparkles,
       isActive: pathname.startsWith(`/${locale}/assistant`) || pathname.startsWith('/assistant')
+    },
+    {
+      href: `/${locale}/settings`,
+      label: tSidebar('items.settings'),
+      icon: Tag,
+      isActive: pathname.startsWith(`/${locale}/settings`) || pathname.startsWith('/settings')
     }
   ]
 
   return (
     <header className="border-border bg-background/95 sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b px-4 backdrop-blur-xs sm:px-6 lg:px-8">
-      {/* Left Area: Mobile Trigger & Breadcrumbs */}
+      {/* Left Area: Desktop Toggle, Mobile Trigger & Breadcrumbs */}
       <div className="flex items-center gap-3">
-        {/* Mobile Drawer Sheet Trigger */}
+        {/* Desktop Hamburger Toggle (Three horizontal lines) */}
+        {onToggleSidebar && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onToggleSidebar}
+            className="border-border bg-background/80 hover:bg-secondary/60 hidden h-9 w-9 shadow-2xs lg:flex"
+            aria-label={isCollapsed ? tSidebar('expand') : tSidebar('collapse')}
+            title={isCollapsed ? tSidebar('expand') : tSidebar('collapse')}
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
+        )}
+
+        {/* Mobile Drawer Sheet Trigger (Three horizontal lines) */}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="h-9 w-9 lg:hidden" aria-label={tSidebar('openMenu')}>
-              <Menu className="h-5 w-5" />
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-border bg-background/80 hover:bg-secondary/60 flex h-9 w-9 shadow-2xs lg:hidden"
+              aria-label={tSidebar('openMenu')}
+            >
+              <Menu className="h-4 w-4" />
             </Button>
           </SheetTrigger>
 
@@ -186,10 +223,10 @@ export function AppHeader({ locale, profile }: AppHeaderProps) {
         </nav>
       </div>
 
-      {/* Right Area: Identity Badge & Quick Controls */}
+      {/* Right Area: Identity Badge & Clean User Profile (No duplicate theme/locale/logout controls) */}
       <div className="flex items-center gap-3">
-        {/* Role Badge (Desktop) */}
-        <div className="hidden items-center sm:flex">
+        {/* Role Badge */}
+        <div className="flex items-center">
           <span
             className={cn(
               'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold shadow-2xs',
@@ -204,21 +241,18 @@ export function AppHeader({ locale, profile }: AppHeaderProps) {
             ) : (
               <UserCheck className="text-primary h-3.5 w-3.5" aria-hidden="true" />
             )}
-            <span>{isAdmin ? tAuth('roles.admin_gudang') : tAuth('roles.owner')}</span>
+            <span className="hidden sm:inline">{isAdmin ? tAuth('roles.admin_gudang') : tAuth('roles.owner')}</span>
           </span>
         </div>
 
-        {/* Identity details (hidden on very small screens) */}
-        <div className="hidden flex-col items-end text-right md:flex">
-          <span className="text-foreground text-xs font-semibold">{profile.fullName}</span>
-          <span className="text-muted-foreground font-mono text-[10px]">{profile.email}</span>
-        </div>
-
-        <div className="flex items-center gap-1.5">
-          <LocaleSwitcher />
-          <ThemeToggle />
-          <div className="hidden sm:block">
-            <LogoutButton locale={locale} />
+        {/* User Identity Details (Compact, prevents stacking on tablet viewports) */}
+        <div className="flex items-center gap-2">
+          <div className="bg-primary/10 text-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold">
+            {profile.fullName.slice(0, 2).toUpperCase()}
+          </div>
+          <div className="hidden flex-col items-start md:flex">
+            <span className="text-foreground max-w-32 truncate text-xs font-semibold">{profile.fullName}</span>
+            <span className="text-muted-foreground max-w-32 truncate font-mono text-[10px]">{profile.email}</span>
           </div>
         </div>
       </div>

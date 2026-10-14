@@ -16,6 +16,8 @@
     "transactions": "Stock Transactions",
     "movements": "Stock Movements",
     "reports": "Reports & Analytics",
-    "assistant": "AI Assistant"
+    "productAnalysis": "Product Analysis",
+    "assistant": "AI Assistant",
+    "settings": "Settings"
   }
 }
