@@ -1,6 +1,6 @@
+import Link from 'next/link'
 import { AlertTriangle, ArrowRight, CheckCircle2 } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
-import Link from 'next/link'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

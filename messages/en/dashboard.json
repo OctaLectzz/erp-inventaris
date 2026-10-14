@@ -355,5 +355,63 @@
     "validationNoteMin": "Transaction reference note must be at least 3 characters.",
     "validationStockExceeded": "Requested OUT quantity exceeds available stock for this product.",
     "alreadyInCart": "Product is already in the transaction cart."
+  },
+  "analytics": {
+    "title": "Stock Flow Analytics",
+    "subtitle": "Real-time trends of incoming vs outgoing inventory movements",
+    "periodLabel": "Period",
+    "applyFilter": "Apply",
+    "periods": {
+      "today": "Today",
+      "week": "7 Days",
+      "month": "30 Days",
+      "year": "This Year",
+      "all": "All Time",
+      "custom": "Custom"
+    },
+    "flowTitle": "Stock Movement Flow (IN vs OUT)",
+    "flowSubtitle": "Comparison of incoming and outgoing quantities per time interval",
+    "inLabel": "Stock IN",
+    "outLabel": "Stock OUT",
+    "emptyMessage": "No inventory movements recorded in the selected period.",
+    "periodSummary": "Selected Period Movement Summary",
+    "inUnits": "{count} Units IN",
+    "outUnits": "{count} Units OUT",
+    "netFlow": "Net Flow",
+    "transactions": "{count} Transactions"
+  },
+  "reports": {
+    "title": "Inventory Reports & Analytics",
+    "subtitle": "Summary of stock movements, turnover velocity, and per-SKU analysis",
+    "productsTitle": "Product Stock Movement Directory",
+    "productsSubtitle": "Monitor incoming and outgoing stock flow for every catalog item",
+    "productDetailTitle": "Stock Movement Details",
+    "productDetailSubtitle": "Complete mutation ledger and velocity analysis for the selected SKU",
+    "viewDetail": "View Details",
+    "backToProducts": "Back to Product Reports",
+    "backToReports": "Back to Reports Hub",
+    "currentStock": "Current Stock",
+    "periodIn": "Total IN (Period)",
+    "periodOut": "Total OUT (Period)",
+    "periodNet": "Net Change",
+    "unitPrice": "Reference Price",
+    "productSummary": "Product Performance Summary",
+    "movementHistory": "Product Mutation Ledger History",
+    "emptyProductMovements": "No mutations recorded for this product in the selected period.",
+    "velocityFast": "Fast Moving",
+    "velocityNormal": "Normal",
+    "velocitySlow": "Slow Moving",
+    "stockStatusNormal": "Safe Stock",
+    "stockStatusLow": "Needs Restock",
+    "columns": {
+      "product": "Product",
+      "category": "Category",
+      "stock": "Current Stock",
+      "status": "Stock Status",
+      "periodIn": "IN Units",
+      "periodOut": "OUT Units",
+      "net": "Net Flow",
+      "actions": "Action"
+    }
   }
 }

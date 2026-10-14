@@ -67,8 +67,8 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
       </header>
 
       {/* Main Form Container */}
-      <main className="flex flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md space-y-4">
+      <main className="flex flex-1 flex-col items-center justify-center px-4 py-8 sm:px-6 sm:py-12">
+        <div className="my-auto w-full max-w-lg space-y-4">
           <LoginForm locale={locale} returnUrl={returnUrl} />
 
           <div className="text-center">

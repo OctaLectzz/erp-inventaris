@@ -89,8 +89,10 @@ Inventra is a **modular monolith** built on **Next.js App Router** with **Supaba
 - **No client-side trust:** Stock values, role checks, and authorization are always computed server-side.
 - **Atomic mutations:** Stock updates and movement history insertion happen in a single database transaction.
 - **Shared schemas:** Zod schemas live in `src/schemas/` and are imported by both application and presentation layers. No duplicated validation logic.
+- **Code modularization (< 250 lines):** Maintain clean separation of concerns. Target file length is < 250 lines; any file exceeding 250 lines must be reviewed for modular decomposition into dedicated presentation, column, filter, domain, or service files. Avoid files exceeding 300 lines unless an architectural exemption is documented.
 
 ---
+
 
 ## 3. Directory Structure
 

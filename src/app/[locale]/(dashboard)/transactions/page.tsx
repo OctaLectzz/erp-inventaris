@@ -1,5 +1,5 @@
-import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { connection } from 'next/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { TransactionCartView } from '@/features/transactions/transaction-cart-view'
 import { createClient } from '@/lib/supabase/server'

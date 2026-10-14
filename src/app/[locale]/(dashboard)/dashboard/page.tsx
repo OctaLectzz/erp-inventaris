@@ -2,22 +2,27 @@ import { AlertTriangle, Banknote, Boxes, CheckCircle2, Package, ShieldAlert, Shi
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { connection } from 'next/server'
 
+import { MovementFlowChart } from '@/components/shared/charts/movement-flow-chart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { PeriodFilter } from '@/features/analytics/period-filter'
 import { KpiStatCard } from '@/features/dashboard/kpi-stat-card'
 import { LowStockWatchlist } from '@/features/dashboard/low-stock-watchlist'
 import { RecentMovementsCard } from '@/features/dashboard/recent-movements-card'
 import { formatCurrencyIDR, formatNumber } from '@/lib/formatters'
 import { createClient } from '@/lib/supabase/server'
+import { getPeriodStockAnalytics } from '@/services/analytics-service'
 import { requireAuth } from '@/services/auth-service'
 import { getInventoryDashboardData } from '@/services/product-service'
 import { getStockMovements } from '@/services/stock-movement-service'
 
+import type { PeriodKey } from '@/lib/date-boundaries'
 import type { Metadata } from 'next'
 
 export const instant = false
 
 interface DashboardPageProps {
   params: Promise<{ locale: string }>
+  searchParams?: Promise<{ period?: string; startDate?: string; endDate?: string }>
 }
 
 export async function generateMetadata({ params }: DashboardPageProps): Promise<Metadata> {
@@ -30,7 +35,7 @@ export async function generateMetadata({ params }: DashboardPageProps): Promise<
   }
 }
 
-export default async function DashboardPage({ params }: DashboardPageProps) {
+export default async function DashboardPage({ params, searchParams }: DashboardPageProps) {
   await connection()
   const { locale } = await params
   setRequestLocale(locale)
@@ -39,11 +44,17 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const tDashboard = await getTranslations({ locale, namespace: 'dashboard' })
   const tAuth = await getTranslations({ locale, namespace: 'auth' })
 
-  // Query live metrics and recent movements in parallel
+  const resolvedSearchParams = searchParams ? await searchParams : {}
+  const rawPeriod = resolvedSearchParams.period as PeriodKey | undefined
+  const validPeriods: PeriodKey[] = ['today', 'week', 'month', 'year', 'all', 'custom']
+  const period: PeriodKey = rawPeriod && validPeriods.includes(rawPeriod) ? rawPeriod : 'month'
+
+  // Query live metrics, recent movements, and period analytics in parallel
   const supabase = await createClient()
-  const [{ summary, lowStockProducts }, { movements: recentMovements }] = await Promise.all([
+  const [{ summary, lowStockProducts }, { movements: recentMovements }, analyticsData] = await Promise.all([
     getInventoryDashboardData(supabase),
-    getStockMovements(supabase, { page: 1, pageSize: 5 })
+    getStockMovements(supabase, { page: 1, pageSize: 5 }),
+    getPeriodStockAnalytics(supabase, period, resolvedSearchParams.startDate, resolvedSearchParams.endDate)
   ])
 
   const isAdministrator = profile.role === 'administrator' || profile.role === 'admin_gudang'
@@ -62,14 +73,14 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       {/* Welcome Banner */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-primary text-2xl font-extrabold tracking-tight sm:text-3xl">
+          <h1 className="text-2xl font-extrabold tracking-tight text-primary sm:text-3xl">
             {tDashboard('welcome')}, {profile.fullName}
           </h1>
-          <p className="text-muted-foreground text-sm">{tDashboard('subtitle')}</p>
+          <p className="text-sm text-muted-foreground">{tDashboard('subtitle')}</p>
         </div>
 
-        <div className="border-accent/30 bg-accent/10 text-accent-foreground dark:text-accent inline-flex items-center gap-2 self-start rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-2xs sm:self-auto">
-          <Sparkles className="text-accent h-3.5 w-3.5" aria-hidden="true" />
+        <div className="inline-flex items-center gap-2 self-start rounded-full border border-accent/30 bg-accent/10 px-3.5 py-1.5 text-xs font-semibold text-accent-foreground shadow-2xs sm:self-auto dark:text-accent">
+          <Sparkles className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
           <span>{tDashboard('welcomeTag')}</span>
         </div>
       </div>
@@ -98,15 +109,15 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               )}
             </div>
             <div className="space-y-0.5">
-              <h2 className="text-foreground text-sm font-bold">
-                {tDashboard('roleCardTitle')}: <span className="text-primary font-semibold">{roleTitle}</span>
+              <h2 className="text-sm font-bold text-foreground">
+                {tDashboard('roleCardTitle')}: <span className="font-semibold text-primary">{roleTitle}</span>
               </h2>
-              <p className="text-muted-foreground text-xs leading-relaxed">{roleDesc}</p>
+              <p className="text-xs leading-relaxed text-muted-foreground">{roleDesc}</p>
             </div>
           </div>
 
           <div className="shrink-0 text-xs">
-            <span className="border-border bg-card text-foreground inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-mono font-medium">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1 font-mono font-medium text-foreground">
               <span className={`h-2 w-2 rounded-full ${isAdministrator ? 'bg-accent' : isStaff ? 'bg-primary' : 'bg-muted-foreground'}`} />
               Role: {profile.role}
             </span>
@@ -114,7 +125,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         </CardContent>
       </Card>
 
-      {/* KPI Stat Cards Grid */}
+      {/* Analytics Period Filter Toolbar */}
+      <PeriodFilter currentPeriod={period} startDate={resolvedSearchParams.startDate} endDate={resolvedSearchParams.endDate} />
+
+      {/* KPI Stat Cards Grid with Left Accent Borders */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {/* Total Catalog SKUs */}
         <KpiStatCard
@@ -156,6 +170,16 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         />
       </div>
 
+      {/* Real-time Movement Flow Chart */}
+      <MovementFlowChart
+        data={analyticsData.summary.buckets}
+        title={tDashboard('analytics.flowTitle')}
+        subtitle={tDashboard('analytics.flowSubtitle')}
+        inLabel={tDashboard('analytics.inLabel')}
+        outLabel={tDashboard('analytics.outLabel')}
+        emptyMessage={tDashboard('analytics.emptyMessage')}
+      />
+
       {/* Dual Section: Low Stock Watchlist & Recent Activity */}
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
         {/* Low Stock Watchlist */}
@@ -168,32 +192,32 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       {/* Security & Verification Status Card */}
       <Card className="border-border shadow-2xs">
         <CardHeader className="pb-3">
-          <CardTitle className="text-primary text-sm font-bold">{tDashboard('securitySummary.title')}</CardTitle>
+          <CardTitle className="text-sm font-bold text-primary">{tDashboard('securitySummary.title')}</CardTitle>
           <CardDescription className="text-xs">{tDashboard('securitySummary.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <div className="border-border bg-card flex items-start gap-2.5 rounded-lg border p-3 text-xs">
-              <CheckCircle2 className="text-accent mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <div className="flex items-start gap-2.5 rounded-lg border border-border bg-card p-3 text-xs">
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
               <div>
-                <p className="text-foreground font-semibold">{tDashboard('securitySummary.stockGuardTitle')}</p>
-                <p className="text-muted-foreground text-[11px]">{tDashboard('securitySummary.stockGuardDesc')}</p>
+                <p className="font-semibold text-foreground">{tDashboard('securitySummary.stockGuardTitle')}</p>
+                <p className="text-[11px] text-muted-foreground">{tDashboard('securitySummary.stockGuardDesc')}</p>
               </div>
             </div>
 
-            <div className="border-border bg-card flex items-start gap-2.5 rounded-lg border p-3 text-xs">
-              <CheckCircle2 className="text-accent mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <div className="flex items-start gap-2.5 rounded-lg border border-border bg-card p-3 text-xs">
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
               <div>
-                <p className="text-foreground font-semibold">{tDashboard('securitySummary.authoritativeTitle')}</p>
-                <p className="text-muted-foreground text-[11px]">{tDashboard('securitySummary.authoritativeDesc')}</p>
+                <p className="font-semibold text-foreground">{tDashboard('securitySummary.authoritativeTitle')}</p>
+                <p className="text-[11px] text-muted-foreground">{tDashboard('securitySummary.authoritativeDesc')}</p>
               </div>
             </div>
 
-            <div className="border-border bg-card flex items-start gap-2.5 rounded-lg border p-3 text-xs">
-              <CheckCircle2 className="text-accent mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <div className="flex items-start gap-2.5 rounded-lg border border-border bg-card p-3 text-xs">
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
               <div>
-                <p className="text-foreground font-semibold">{tDashboard('securitySummary.ownerBoundaryTitle')}</p>
-                <p className="text-muted-foreground text-[11px]">{tDashboard('securitySummary.ownerBoundaryDesc')}</p>
+                <p className="font-semibold text-foreground">{tDashboard('securitySummary.ownerBoundaryTitle')}</p>
+                <p className="text-[11px] text-muted-foreground">{tDashboard('securitySummary.ownerBoundaryDesc')}</p>
               </div>
             </div>
           </div>

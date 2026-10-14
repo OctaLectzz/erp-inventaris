@@ -355,5 +355,63 @@
     "validationNoteMin": "Catatan referensi transaksi minimal 3 karakter.",
     "validationStockExceeded": "Kuantitas keluar melebihi stok yang tersedia untuk produk ini.",
     "alreadyInCart": "Produk sudah ada di dalam keranjang transaksi."
+  },
+  "analytics": {
+    "title": "Analitik Arus Mutasi",
+    "subtitle": "Tren dan pergerakan stok masuk vs keluar secara real-time",
+    "periodLabel": "Periode",
+    "applyFilter": "Terapkan",
+    "periods": {
+      "today": "Hari Ini",
+      "week": "7 Hari",
+      "month": "30 Hari",
+      "year": "Tahun Ini",
+      "all": "Semua",
+      "custom": "Khusus"
+    },
+    "flowTitle": "Arus Mutasi Stok (IN vs OUT)",
+    "flowSubtitle": "Perbandingan kuantitas barang masuk dan keluar per interval",
+    "inLabel": "Stok Masuk (IN)",
+    "outLabel": "Stok Keluar (OUT)",
+    "emptyMessage": "Belum ada transaksi mutasi pada periode yang dipilih.",
+    "periodSummary": "Ringkasan Mutasi Periode Terpilih",
+    "inUnits": "{count} Unit Masuk",
+    "outUnits": "{count} Unit Keluar",
+    "netFlow": "Arus Bersih (Net)",
+    "transactions": "{count} Transaksi"
+  },
+  "reports": {
+    "title": "Laporan & Analisis Inventaris",
+    "subtitle": "Ringkasan pergerakan stok, kecepatan mutasi, dan analisis per-SKU",
+    "productsTitle": "Direktori Pergerakan Stok per Produk",
+    "productsSubtitle": "Pantau perputaran stok masuk dan keluar untuk setiap produk katalog",
+    "productDetailTitle": "Detail Pergerakan Stok",
+    "productDetailSubtitle": "Riwayat mutasi lengkap dan analisis perputaran untuk SKU terpilih",
+    "viewDetail": "Lihat Detail",
+    "backToProducts": "Kembali ke Laporan Produk",
+    "backToReports": "Kembali ke Hub Laporan",
+    "currentStock": "Stok Saat Ini",
+    "periodIn": "Total Masuk (Periode)",
+    "periodOut": "Total Keluar (Periode)",
+    "periodNet": "Perubahan Bersih",
+    "unitPrice": "Harga Referensi",
+    "productSummary": "Ringkasan Performa Produk",
+    "movementHistory": "Buku Besar Riwayat Mutasi Produk",
+    "emptyProductMovements": "Belum ada mutasi tercatat untuk produk ini pada periode terpilih.",
+    "velocityFast": "Fast Moving",
+    "velocityNormal": "Normal",
+    "velocitySlow": "Slow Moving",
+    "stockStatusNormal": "Stok Aman",
+    "stockStatusLow": "Perlu Restock",
+    "columns": {
+      "product": "Produk",
+      "category": "Kategori",
+      "stock": "Stok Saat Ini",
+      "status": "Status Stok",
+      "periodIn": "Masuk (IN)",
+      "periodOut": "Keluar (OUT)",
+      "net": "Net Flow",
+      "actions": "Aksi"
+    }
   }
 }

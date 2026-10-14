@@ -94,3 +94,11 @@ export function isAuditorRole(role?: string | null): boolean {
 export function canManageUsers(role?: string | null): boolean {
   return role === 'administrator'
 }
+
+/**
+ * Checks if a user has read access to analytics and movement reports.
+ * Allowed: All valid authenticated roles ('administrator', 'staff_gudang', 'auditor', 'admin_gudang', 'owner')
+ */
+export function canViewReports(role?: string | null): boolean {
+  return isValidRole(role)
+}
