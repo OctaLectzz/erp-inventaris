@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
 
 import { UserTable } from '@/features/users/user-table'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { requireAuth } from '@/services/auth-service'
 import { getUsersList } from '@/services/user-service'
 import { canManageUsers } from '@/types/auth'
@@ -38,8 +38,8 @@ export default async function UsersPage({ params }: UsersPageProps) {
     redirect(`/${locale}/dashboard`)
   }
 
-  const supabase = await createClient()
-  const users = await getUsersList(supabase)
+  const adminClient = createAdminClient()
+  const users = await getUsersList(adminClient)
 
   return (
     <div className="space-y-6">

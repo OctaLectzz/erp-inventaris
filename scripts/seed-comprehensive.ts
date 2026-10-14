@@ -46,29 +46,70 @@ async function main(): Promise<void> {
   // 1. Seed / Verify Demo Users
   console.log('\n[1/5] Provisioning Demo Accounts & Profiles...')
   const demoAccounts = [
+    // 1. Administrator Sistem
     {
       email: process.env.DEMO_ADMIN_EMAIL || 'admin@inventra.demo',
       password: process.env.DEMO_ADMIN_PASSWORD || 'Admin123!Secure',
-      fullName: 'Administrator Demo',
+      fullName: 'Budi Wicaksono (Administrator Sistem)',
       role: 'administrator'
     },
     {
-      email: process.env.DEMO_STAFF_EMAIL || 'staff@inventra.demo',
-      password: process.env.DEMO_STAFF_PASSWORD || 'Staff123!Secure',
-      fullName: 'Staf Gudang Demo',
-      role: 'staff_gudang'
+      email: 'dewi.admin@inventra.demo',
+      password: process.env.DEMO_ADMIN_PASSWORD || 'Admin123!Secure',
+      fullName: 'Dewi Suryani (IT Operations Administrator)',
+      role: 'administrator'
     },
+    // 2. Pemilik Usaha (Owner)
     {
       email: process.env.DEMO_OWNER_EMAIL || 'owner@inventra.demo',
       password: process.env.DEMO_OWNER_PASSWORD || 'Owner123!Secure',
-      fullName: 'Pemilik Usaha (Owner)',
+      fullName: 'Hendro Syailendra (Direktur Utama / Owner)',
       role: 'owner'
     },
     {
+      email: 'maya.owner@inventra.demo',
+      password: process.env.DEMO_OWNER_PASSWORD || 'Owner123!Secure',
+      fullName: 'Maya Putri (Dewan Komisaris / Co-Owner)',
+      role: 'owner'
+    },
+    // 3. Staf Gudang (Operational)
+    {
+      email: process.env.DEMO_STAFF_EMAIL || 'staff@inventra.demo',
+      password: process.env.DEMO_STAFF_PASSWORD || 'Staff123!Secure',
+      fullName: 'Agus Setiawan (Koordinator Staf Gudang)',
+      role: 'staff_gudang'
+    },
+    {
+      email: 'rian.staff@inventra.demo',
+      password: process.env.DEMO_STAFF_PASSWORD || 'Staff123!Secure',
+      fullName: 'Rian Hidayat (Staf Penerimaan & Inbound)',
+      role: 'staff_gudang'
+    },
+    {
+      email: 'siti.staff@inventra.demo',
+      password: process.env.DEMO_STAFF_PASSWORD || 'Staff123!Secure',
+      fullName: 'Siti Aminah (Staf Distribusi & Outbound)',
+      role: 'staff_gudang'
+    },
+    // 4. Auditor & Pengawas
+    {
       email: 'auditor@inventra.demo',
       password: process.env.DEMO_OWNER_PASSWORD || 'Owner123!Secure',
-      fullName: 'Auditor Eksternal Demo',
+      fullName: 'Bambang Susanto (Internal Auditor Inventaris)',
       role: 'auditor'
+    },
+    {
+      email: 'linda.auditor@inventra.demo',
+      password: process.env.DEMO_OWNER_PASSWORD || 'Owner123!Secure',
+      fullName: 'Linda Permata (Auditor Eksternal Keuangan)',
+      role: 'auditor'
+    },
+    // 5. Admin Gudang (Legacy / Floor Supervisor)
+    {
+      email: 'admingudang@inventra.demo',
+      password: process.env.DEMO_ADMIN_PASSWORD || 'Admin123!Secure',
+      fullName: 'Rudy Pratama (Supervisor Admin Gudang)',
+      role: 'admin_gudang'
     }
   ]
 

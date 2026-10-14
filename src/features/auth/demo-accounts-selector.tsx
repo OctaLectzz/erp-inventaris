@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, Check, Loader2, Package, Shield, UserCheck } from 'lucide-react'
+import { ArrowRight, Boxes, Check, Loader2, Package, Shield, ShieldCheck, UserCheck } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 import { cn } from '@/lib/utils'
@@ -16,10 +16,10 @@ interface DemoAccountsSelectorProps {
 
 interface DemoAccountItem {
   role: UserRole
-  icon: typeof Shield
-  titleKey: 'roles.administrator' | 'roles.staff_gudang' | 'roles.auditor'
-  badgeKey: 'login.demoBadgeFull' | 'login.demoBadgeOps' | 'login.demoBadgeAudit'
-  descKey: 'roles.adminDesc' | 'roles.staffDesc' | 'roles.auditorDesc'
+  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>
+  titleKey: 'roles.administrator' | 'roles.owner' | 'roles.staff_gudang' | 'roles.auditor' | 'roles.admin_gudang'
+  badgeKey: 'login.demoBadgeFull' | 'login.demoBadgeOwner' | 'login.demoBadgeOps' | 'login.demoBadgeAudit' | 'login.demoBadgeAdminGudang'
+  descKey: 'roles.adminDesc' | 'roles.ownerDesc' | 'roles.staffDesc' | 'roles.auditorDesc' | 'roles.adminGudangDesc'
   email: string
   color: {
     bg: string
@@ -41,6 +41,18 @@ const DEMO_ITEMS: DemoAccountItem[] = [
     }
   },
   {
+    role: 'owner',
+    icon: UserCheck,
+    titleKey: 'roles.owner',
+    badgeKey: 'login.demoBadgeOwner',
+    descKey: 'roles.ownerDesc',
+    email: 'owner@inventra.demo',
+    color: {
+      bg: 'bg-emerald-500/15 dark:bg-emerald-500/20',
+      text: 'text-emerald-600 dark:text-emerald-400'
+    }
+  },
+  {
     role: 'staff_gudang',
     icon: Package,
     titleKey: 'roles.staff_gudang',
@@ -48,20 +60,32 @@ const DEMO_ITEMS: DemoAccountItem[] = [
     descKey: 'roles.staffDesc',
     email: 'staff@inventra.demo',
     color: {
+      bg: 'bg-amber-500/15 dark:bg-amber-500/20',
+      text: 'text-amber-600 dark:text-amber-400'
+    }
+  },
+  {
+    role: 'auditor',
+    icon: ShieldCheck,
+    titleKey: 'roles.auditor',
+    badgeKey: 'login.demoBadgeAudit',
+    descKey: 'roles.auditorDesc',
+    email: 'auditor@inventra.demo',
+    color: {
       bg: 'bg-blue-500/15 dark:bg-blue-500/20',
       text: 'text-blue-600 dark:text-blue-400'
     }
   },
   {
-    role: 'auditor',
-    icon: UserCheck,
-    titleKey: 'roles.auditor',
-    badgeKey: 'login.demoBadgeAudit',
-    descKey: 'roles.auditorDesc',
-    email: 'owner@inventra.demo',
+    role: 'admin_gudang',
+    icon: Boxes,
+    titleKey: 'roles.admin_gudang',
+    badgeKey: 'login.demoBadgeAdminGudang',
+    descKey: 'roles.adminGudangDesc',
+    email: 'admingudang@inventra.demo',
     color: {
-      bg: 'bg-amber-500/15 dark:bg-amber-500/20',
-      text: 'text-amber-600 dark:text-amber-400'
+      bg: 'bg-purple-500/15 dark:bg-purple-500/20',
+      text: 'text-purple-600 dark:text-purple-400'
     }
   }
 ]
@@ -72,10 +96,7 @@ export function DemoAccountsSelector({ onSelectAccount, disabled = false, isLoad
   return (
     <div className="flex flex-col gap-2">
       {DEMO_ITEMS.map((item) => {
-        const isCurrentRole =
-          activeRole === item.role ||
-          (item.role === 'administrator' && activeRole === 'admin_gudang') ||
-          (item.role === 'auditor' && activeRole === 'owner')
+        const isCurrentRole = activeRole === item.role
 
         return (
           <button

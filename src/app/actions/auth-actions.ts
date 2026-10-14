@@ -127,15 +127,21 @@ export async function getDemoCredentialsAction(role: UserRole): Promise<DemoCred
   let email: string | undefined
   let password: string | undefined
 
-  if (role === 'administrator' || role === 'admin_gudang') {
-    email = process.env.DEMO_ADMIN_EMAIL
+  if (role === 'administrator') {
+    email = process.env.DEMO_ADMIN_EMAIL || 'admin@inventra.demo'
     password = process.env.DEMO_ADMIN_PASSWORD
+  } else if (role === 'admin_gudang') {
+    email = process.env.DEMO_ADMIN_GUDANG_EMAIL || 'admingudang@inventra.demo'
+    password = process.env.DEMO_ADMIN_GUDANG_PASSWORD || process.env.DEMO_ADMIN_PASSWORD
   } else if (role === 'staff_gudang') {
-    email = process.env.DEMO_STAFF_EMAIL
+    email = process.env.DEMO_STAFF_EMAIL || 'staff@inventra.demo'
     password = process.env.DEMO_STAFF_PASSWORD
-  } else if (role === 'auditor' || role === 'owner') {
-    email = process.env.DEMO_OWNER_EMAIL
+  } else if (role === 'owner') {
+    email = process.env.DEMO_OWNER_EMAIL || 'owner@inventra.demo'
     password = process.env.DEMO_OWNER_PASSWORD
+  } else if (role === 'auditor') {
+    email = process.env.DEMO_AUDITOR_EMAIL || 'auditor@inventra.demo'
+    password = process.env.DEMO_AUDITOR_PASSWORD || process.env.DEMO_OWNER_PASSWORD
   }
 
   if (!email || !password) {

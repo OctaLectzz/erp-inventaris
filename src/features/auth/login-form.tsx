@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, CheckCircle2, Eye, EyeOff, KeyRound, Loader2, Lock, Mail } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
+import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { getDemoCredentialsAction, signInAction } from '@/app/actions/auth-actions'
@@ -78,12 +78,7 @@ export function LoginForm({ locale, returnUrl }: LoginFormProps) {
       if (creds.success && creds.email && creds.password) {
         setValue('email', creds.email, { shouldValidate: true, shouldDirty: true })
         setValue('password', creds.password, { shouldValidate: true, shouldDirty: true })
-        const roleLabel =
-          role === 'administrator' || role === 'admin_gudang'
-            ? tAuth('roles.administrator')
-            : role === 'staff_gudang'
-              ? tAuth('roles.staff_gudang')
-              : tAuth('roles.auditor')
+        const roleLabel = tAuth(`roles.${role}`)
         setDemoFeedback(tAuth('login.demoFilledNotice', { role: roleLabel }))
       } else {
         setErrorMessage(tAuth('login.genericError'))
