@@ -16,19 +16,20 @@ import { getCatalogColumns } from '@/features/catalog/catalog-columns'
 import { ProductFormDialog } from '@/features/catalog/product-form-dialog'
 import { LOW_STOCK_THRESHOLD } from '@/services/inventory-domain'
 
+import type { UserRole } from '@/types/auth'
 import type { Product } from '@/types/inventory'
 import type { ColumnFiltersState, PaginationState, SortingState, VisibilityState } from '@tanstack/react-table'
 
 interface CatalogTableProps {
   initialProducts: Product[]
   categories: string[]
-  userRole: 'admin_gudang' | 'owner'
+  userRole: UserRole | string
   locale: string
 }
 
 export function CatalogTable({ initialProducts, categories, userRole, locale }: CatalogTableProps) {
   const t = useTranslations('dashboard')
-  const isAdmin = userRole === 'admin_gudang'
+  const isAdmin = userRole === 'admin_gudang' || userRole === 'administrator'
 
   // Data state
   const [products, setProducts] = useState<Product[]>(initialProducts)
@@ -76,9 +77,10 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
       getCatalogColumns({
         locale,
         isAdmin,
-        onEditProduct: handleOpenEditDialog
+        onEditProduct: handleOpenEditDialog,
+        t: (key: string, values?: Record<string, unknown>) => t(`catalog.${key}`, values as never)
       }),
-    [locale, isAdmin]
+    [locale, isAdmin, t]
   )
 
   // Filter products by stock health condition prior to table passing
@@ -210,15 +212,17 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
               {/* Column Visibility Options */}
               <DataTableViewOptions
                 table={table}
+                triggerLabel={t('catalog.viewOptions')}
+                titleLabel={t('catalog.toggleColumns')}
                 columnLabels={{
-                  sku: 'SKU',
-                  name: 'Nama Produk',
-                  category: 'Kategori',
-                  unit: 'Satuan',
-                  price: 'Harga',
-                  stock: 'Stok',
-                  status: 'Status',
-                  actions: 'Aksi'
+                  sku: t('catalog.columns.sku'),
+                  name: t('catalog.columns.product'),
+                  category: t('catalog.columns.category'),
+                  unit: t('catalog.columns.unit'),
+                  price: t('catalog.columns.price'),
+                  stock: t('catalog.columns.stock'),
+                  status: t('catalog.columns.status'),
+                  actions: t('catalog.columns.actions')
                 }}
               />
 
@@ -258,9 +262,7 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
               <PackageX className="h-6 w-6" aria-hidden="true" />
             </div>
             <h3 className="text-foreground text-sm font-semibold">{t('catalog.emptySearch')}</h3>
-            <p className="text-muted-foreground mt-1 max-w-sm text-xs">
-              Cobalah sesuaikan kata kunci pencarian atau ubah filter kategori dan status stok.
-            </p>
+            <p className="text-muted-foreground mt-1 max-w-sm text-xs">{t('catalog.emptySearchSubtitle')}</p>
             <Button variant="outline" size="sm" onClick={handleResetFilters} className="mt-4 gap-1.5 text-xs">
               <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{t('catalog.resetFilter')}</span>
@@ -334,11 +336,11 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
 
                     <div className="border-border grid grid-cols-2 gap-2 border-t pt-2 text-[11px]">
                       <div>
-                        <span className="text-muted-foreground">Kategori: </span>
+                        <span className="text-muted-foreground">{t('catalog.columns.category')}: </span>
                         <span className="text-foreground font-medium uppercase">{p.category}</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-muted-foreground">Harga: </span>
+                        <span className="text-muted-foreground">{t('catalog.columns.price')}: </span>
                         <span className="text-foreground font-bold">{formatCurrency(p.price)}</span>
                       </div>
                     </div>
@@ -347,7 +349,7 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
                       <div className="border-border flex justify-end border-t pt-2">
                         <Button variant="outline" size="xs" onClick={() => handleOpenEditDialog(p)} className="h-7 gap-1 text-xs">
                           <Pencil className="h-3 w-3" aria-hidden="true" />
-                          <span>Edit Produk</span>
+                          <span>{t('catalog.editProduct')}</span>
                         </Button>
                       </div>
                     )}

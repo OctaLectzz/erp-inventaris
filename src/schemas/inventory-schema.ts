@@ -53,6 +53,7 @@ export const productCatalogInputSchema = z.object({
     .regex(/^[A-Z0-9-]+$/, { message: 'skuInvalidFormat' }),
   name: z.string().trim().min(1, { message: 'nameRequired' }),
   category: z.string().trim().min(1, { message: 'categoryRequired' }),
+  categoryId: z.string().uuid({ message: 'invalidCategoryId' }).nullable().optional(),
   unit: z.string().trim().min(1, { message: 'unitRequired' }),
   price: z.number().int({ message: 'priceMustBeInteger' }).nonnegative({ message: 'priceMustBeNonNegative' }),
   description: z.string().nullable().optional(),
@@ -73,3 +74,28 @@ export const productCatalogUpdateSchema = productCatalogInputSchema.extend({
 })
 
 export type ProductCatalogUpdate = z.infer<typeof productCatalogUpdateSchema>
+
+/**
+ * Validation schema for product category creation (Batch 1).
+ */
+export const categoryInputSchema = z.object({
+  name: z.string().trim().min(2, { message: 'categoryNameTooShort' }).max(100, { message: 'categoryNameTooLong' }),
+  slug: z
+    .string()
+    .trim()
+    .min(2, { message: 'categorySlugTooShort' })
+    .max(100, { message: 'categorySlugTooLong' })
+    .regex(/^[a-z0-9-]+$/, { message: 'categorySlugInvalidFormat' }),
+  description: z.string().trim().max(500, { message: 'categoryDescTooLong' }).nullable().optional()
+})
+
+export type CategoryInput = z.infer<typeof categoryInputSchema>
+
+/**
+ * Validation schema for product category updates (Batch 1).
+ */
+export const categoryUpdateSchema = categoryInputSchema.extend({
+  id: z.string().uuid({ message: 'invalidCategoryId' })
+})
+
+export type CategoryUpdate = z.infer<typeof categoryUpdateSchema>

@@ -14,9 +14,10 @@ interface ColumnOptions {
   locale: string
   isAdmin: boolean
   onEditProduct: (product: Product) => void
+  t?: (key: string, values?: Record<string, unknown>) => string
 }
 
-export function getCatalogColumns({ locale, isAdmin, onEditProduct }: ColumnOptions): ColumnDef<Product>[] {
+export function getCatalogColumns({ locale, isAdmin, onEditProduct, t }: ColumnOptions): ColumnDef<Product>[] {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat(locale === 'id' ? 'id-ID' : 'en-US', {
       style: 'currency',
@@ -29,7 +30,7 @@ export function getCatalogColumns({ locale, isAdmin, onEditProduct }: ColumnOpti
     // SKU Column
     {
       accessorKey: 'sku',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="SKU" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t ? t('columns.sku') : 'SKU'} />,
       cell: ({ row }) => <span className="text-primary font-mono text-xs font-bold whitespace-nowrap">{row.getValue('sku')}</span>,
       enableSorting: true,
       enableHiding: false
@@ -38,7 +39,9 @@ export function getCatalogColumns({ locale, isAdmin, onEditProduct }: ColumnOpti
     // Product Name & Image
     {
       accessorKey: 'name',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Nama Produk" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t ? t('columns.product') : locale === 'en' ? 'Product Name' : 'Nama Produk'} />
+      ),
       cell: ({ row }) => {
         const product = row.original
         return (
@@ -69,7 +72,7 @@ export function getCatalogColumns({ locale, isAdmin, onEditProduct }: ColumnOpti
     // Category
     {
       accessorKey: 'category',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Kategori" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title={t ? t('columns.category') : locale === 'en' ? 'Category' : 'Kategori'} />,
       cell: ({ row }) => (
         <Badge variant="outline" className="text-[11px] tracking-wider whitespace-nowrap uppercase">
           {row.getValue('category')}
@@ -81,7 +84,7 @@ export function getCatalogColumns({ locale, isAdmin, onEditProduct }: ColumnOpti
     // Unit
     {
       accessorKey: 'unit',
-      header: 'Satuan',
+      header: t ? t('columns.unit') : locale === 'en' ? 'Unit' : 'Satuan',
       cell: ({ row }) => <span className="text-muted-foreground text-xs whitespace-nowrap">{row.getValue('unit')}</span>
     },
 
@@ -90,7 +93,7 @@ export function getCatalogColumns({ locale, isAdmin, onEditProduct }: ColumnOpti
       accessorKey: 'price',
       header: ({ column }) => (
         <div className="text-right">
-          <DataTableColumnHeader column={column} title="Harga" />
+          <DataTableColumnHeader column={column} title={t ? t('columns.price') : locale === 'en' ? 'Reference Price' : 'Harga'} />
         </div>
       ),
       cell: ({ row }) => <div className="text-foreground text-right font-medium whitespace-nowrap">{formatCurrency(row.getValue('price'))}</div>,
@@ -102,7 +105,7 @@ export function getCatalogColumns({ locale, isAdmin, onEditProduct }: ColumnOpti
       accessorKey: 'stock',
       header: ({ column }) => (
         <div className="text-right">
-          <DataTableColumnHeader column={column} title="Stok" />
+          <DataTableColumnHeader column={column} title={t ? t('columns.stock') : locale === 'en' ? 'Stock' : 'Stok'} />
         </div>
       ),
       cell: ({ row }) => {
@@ -122,7 +125,7 @@ export function getCatalogColumns({ locale, isAdmin, onEditProduct }: ColumnOpti
     // Health Status
     {
       id: 'status',
-      header: 'Status',
+      header: t ? t('columns.status') : locale === 'en' ? 'Status' : 'Status',
       cell: ({ row }) => {
         const isLow = row.original.stock < LOW_STOCK_THRESHOLD
         return (
@@ -130,12 +133,12 @@ export function getCatalogColumns({ locale, isAdmin, onEditProduct }: ColumnOpti
             {isLow ? (
               <Badge variant="destructive" className="gap-1 px-2 py-0.5 text-[11px]">
                 <AlertTriangle className="h-3 w-3" aria-hidden="true" />
-                <span>Stok Menipis ({row.original.stock})</span>
+                <span>{t ? t('statusLowStockBadge', { count: row.original.stock }) : `Stok Menipis (${row.original.stock})`}</span>
               </Badge>
             ) : (
               <Badge variant="success" className="gap-1 px-2 py-0.5 text-[11px]">
                 <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
-                <span>Stok Normal</span>
+                <span>{t ? t('statusNormalBadge') : 'Stok Normal'}</span>
               </Badge>
             )}
           </div>
@@ -148,12 +151,12 @@ export function getCatalogColumns({ locale, isAdmin, onEditProduct }: ColumnOpti
   if (isAdmin) {
     columns.push({
       id: 'actions',
-      header: () => <div className="text-right">Aksi</div>,
+      header: () => <div className="text-right">{t ? t('columns.actions') : locale === 'en' ? 'Actions' : 'Aksi'}</div>,
       cell: ({ row }) => (
         <div className="text-right whitespace-nowrap">
-          <Button variant="ghost" size="xs" onClick={() => onEditProduct(row.original)} className="gap-1 text-xs" title="Edit Produk">
+          <Button variant="ghost" size="xs" onClick={() => onEditProduct(row.original)} className="gap-1 text-xs" title={t ? t('edit') : 'Edit'}>
             <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>Edit</span>
+            <span>{t ? t('edit') : 'Edit'}</span>
           </Button>
         </div>
       )

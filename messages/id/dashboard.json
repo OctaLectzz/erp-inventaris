@@ -2,6 +2,7 @@
   "title": "Dashboard Inventaris",
   "subtitle": "Ringkasan metrik inventaris dan aktivitas gudang",
   "welcome": "Selamat datang kembali",
+  "welcomeTag": "Dashboard & Katalog Terpadu",
   "valuation": "Total Valuasi Stok",
   "roleCardTitle": "Status Otorisasi Peran (RBAC)",
   "adminCapabilitiesTitle": "Hak Akses Operasional Penuh",
@@ -15,6 +16,12 @@
     "lowStockAlerts": "Peringatan Stok Menipis",
     "recentMovements": "Mutasi Terkini"
   },
+  "kpiDescriptions": {
+    "skus": "SKU unik terdaftar di sistem",
+    "units": "Unit fisik tersedia di gudang",
+    "valuation": "Σ (stok × harga) seluruh item",
+    "lowStock": "Item dengan stok < 5 unit"
+  },
   "tables": {
     "recentActivity": "Aktivitas Mutasi Terbaru",
     "emptyState": "Belum ada catatan mutasi inventaris."
@@ -26,6 +33,16 @@
     "viewCatalog": "Lihat di Katalog",
     "badgeWarning": "Perlu Restock",
     "unitsLeft": "{count} unit tersisa"
+  },
+  "securitySummary": {
+    "title": "Ringkasan Keamanan & Otorisasi Sesi",
+    "subtitle": "Validasi kontrol akses berbasis peran (RBAC) dan imutabilitas stok katalog",
+    "stockGuardTitle": "Stock Immutability Guard",
+    "stockGuardDesc": "Perubahan stok hanya melalui RPC mutasi atomik dengan kunci pesimistis.",
+    "authoritativeTitle": "Authoritative Profile",
+    "authoritativeDesc": "Peran diverifikasi langsung dari public.profiles pada server boundary.",
+    "ownerBoundaryTitle": "Executive Owner Boundary",
+    "ownerBoundaryDesc": "Peran Owner dibatasi secara mutlak untuk hanya-baca pada katalog dan mutasi."
   },
   "catalog": {
     "title": "Katalog Inventaris Produk",
@@ -39,8 +56,13 @@
     "statusNormal": "Stok Aman (≥ 5)",
     "showingResults": "Menampilkan {count} dari {total} produk",
     "emptySearch": "Tidak ada produk yang cocok dengan kriteria pencarian.",
+    "emptySearchSubtitle": "Cobalah sesuaikan kata kunci pencarian atau ubah filter kategori dan status stok.",
     "resetFilter": "Reset Pencarian",
     "readOnlyNotice": "Mode Audit (Hanya-Baca): Anda memiliki akses melihat data tanpa hak modifikasi katalog.",
+    "registeredCount": "{count} SKU Terdaftar",
+    "statusLowStockBadge": "Stok Menipis ({count})",
+    "statusNormalBadge": "Stok Normal",
+    "edit": "Edit",
     "columns": {
       "sku": "SKU",
       "product": "Nama Produk",
@@ -52,6 +74,7 @@
       "actions": "Aksi"
     },
     "viewOptions": "Tampilan Kolom",
+    "toggleColumns": "Atur Kolom",
     "rowsPerPage": "Baris per halaman",
     "quickRestock": "Restock",
     "viewAllMovements": "Lihat Semua Riwayat",
@@ -143,5 +166,62 @@
     "submitting": "Memproses Mutasi...",
     "success": "Mutasi stok berhasil direkam ke dalam sistem.",
     "overdraftWarning": "Kuantitas melebihi stok yang tersedia saat ini."
+  },
+  "categories": {
+    "title": "Kategori Produk",
+    "subtitle": "Kelola master kategori untuk klasifikasi dan pengorganisasian katalog inventaris",
+    "addCategory": "Tambah Kategori",
+    "editCategory": "Edit Kategori",
+    "deleteCategory": "Hapus Kategori",
+    "searchPlaceholder": "Cari berdasarkan nama atau slug...",
+    "registeredCount": "{count} Kategori Terdaftar",
+    "productCount": "{count} Produk",
+    "columns": {
+      "name": "Nama Kategori",
+      "slug": "Slug",
+      "description": "Deskripsi",
+      "productCount": "Jumlah Produk",
+      "createdAt": "Dibuat Pada",
+      "actions": "Aksi"
+    },
+    "dialog": {
+      "createTitle": "Tambah Kategori Baru",
+      "createSubtitle": "Tambahkan kategori baru untuk mengelompokkan produk di gudang",
+      "editTitle": "Edit Kategori",
+      "editSubtitle": "Perbarui informasi nama, slug, atau deskripsi kategori",
+      "nameLabel": "Nama Kategori",
+      "namePlaceholder": "contoh: Elektronik",
+      "slugLabel": "Slug URL",
+      "slugPlaceholder": "contoh: elektronik",
+      "descriptionLabel": "Deskripsi (Opsional)",
+      "descriptionPlaceholder": "Deskripsi singkat kategori...",
+      "cancel": "Batal",
+      "create": "Simpan Kategori",
+      "save": "Simpan Perubahan",
+      "saving": "Menyimpan...",
+      "deleteConfirmTitle": "Hapus Kategori?",
+      "deleteConfirmDesc": "Kategori ini akan dihapus dari sistem. Aksi ini tidak dapat dibatalkan.",
+      "deleteButton": "Ya, Hapus Kategori",
+      "deleting": "Menghapus...",
+      "successCreated": "Kategori berhasil ditambahkan.",
+      "successUpdated": "Kategori berhasil diperbarui.",
+      "successDeleted": "Kategori berhasil dihapus."
+    },
+    "emptySearch": "Tidak ada kategori yang cocok dengan pencarian.",
+    "emptyState": "Belum ada master kategori terdaftar. Silakan tambahkan kategori pertama Anda."
+  },
+  "imageDropzone": {
+    "dropzoneTitle": "Tarik & lepas gambar produk ke sini",
+    "dropzoneSubtitle": "atau klik untuk memilih file dari komputer",
+    "acceptedFormats": "PNG, JPG, WEBP hingga 2MB (disarankan rasio 1:1)",
+    "replaceImage": "Ganti Gambar",
+    "removeImage": "Hapus",
+    "uploading": "Mengunggah gambar...",
+    "orManualUrl": "atau gunakan tautan URL gambar",
+    "manualUrlPlaceholder": "https://contoh.com/gambar.jpg",
+    "errors": {
+      "tooLarge": "Ukuran file melebihi batas 2MB",
+      "invalidType": "Format file tidak didukung. Harap gunakan PNG, JPG, atau WEBP"
+    }
   }
 }

@@ -1,6 +1,19 @@
 'use client'
 
-import { ArrowLeftRight, Boxes, ChevronLeft, ChevronRight, LayoutDashboard, Package, Shield, UserCheck } from 'lucide-react'
+import {
+  ArrowDownUp,
+  ArrowLeftRight,
+  BarChart3,
+  Boxes,
+  ChevronLeft,
+  ChevronRight,
+  LayoutDashboard,
+  Package,
+  Shield,
+  Sparkles,
+  Tag,
+  UserCheck
+} from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -28,7 +41,7 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
   const tSidebar = useTranslations('sidebar')
   const tAuth = useTranslations('auth')
 
-  const isAdmin = profile.role === 'admin_gudang'
+  const isAdmin = profile.role === 'admin_gudang' || profile.role === 'administrator'
 
   const navItems = [
     {
@@ -44,10 +57,34 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
       isActive: pathname.startsWith(`/${locale}/inventory`) || pathname.startsWith('/inventory')
     },
     {
+      href: `/${locale}/categories`,
+      label: tNav('links.categories'),
+      icon: Tag,
+      isActive: pathname.startsWith(`/${locale}/categories`) || pathname.startsWith('/categories')
+    },
+    {
+      href: `/${locale}/transactions`,
+      label: tNav('links.transactions'),
+      icon: ArrowDownUp,
+      isActive: pathname.startsWith(`/${locale}/transactions`) || pathname.startsWith('/transactions')
+    },
+    {
       href: `/${locale}/movements`,
       label: tNav('links.movements'),
       icon: ArrowLeftRight,
       isActive: pathname.startsWith(`/${locale}/movements`) || pathname.startsWith('/movements')
+    },
+    {
+      href: `/${locale}/reports`,
+      label: tNav('links.reports'),
+      icon: BarChart3,
+      isActive: pathname.startsWith(`/${locale}/reports`) || pathname.startsWith('/reports')
+    },
+    {
+      href: `/${locale}/assistant`,
+      label: tNav('links.assistant'),
+      icon: Sparkles,
+      isActive: pathname.startsWith(`/${locale}/assistant`) || pathname.startsWith('/assistant')
     }
   ]
 
@@ -56,21 +93,21 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
       <aside
         data-slot="app-sidebar"
         className={cn(
-          'bg-sidebar text-sidebar-foreground flex h-full flex-col border-r border-border transition-[width] duration-300 ease-in-out',
+          'bg-sidebar text-sidebar-foreground border-border flex h-full flex-col border-r transition-[width] duration-300 ease-in-out',
           isCollapsed ? 'w-18' : 'w-64',
           className
         )}
       >
         {/* Brand Header */}
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4">
+        <div className="border-border flex h-16 shrink-0 items-center justify-between border-b px-4">
           <Link href={`/${locale}/dashboard`} className="flex items-center gap-3 overflow-hidden transition-opacity hover:opacity-85">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
+            <div className="bg-primary text-primary-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-lg shadow-xs">
               <Boxes className="h-5 w-5" aria-hidden="true" />
             </div>
             {!isCollapsed && (
               <div className="min-w-0">
-                <span className="truncate text-base font-bold tracking-tight text-primary">Inventra</span>
-                <span className="block truncate text-[11px] font-medium text-muted-foreground">ERP Inventory</span>
+                <span className="text-primary truncate text-base font-bold tracking-tight">Inventra</span>
+                <span className="text-muted-foreground block truncate text-[11px] font-medium">ERP Inventory</span>
               </div>
             )}
           </Link>
@@ -80,7 +117,7 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
               variant="ghost"
               size="icon"
               onClick={onToggleCollapse}
-              className="hidden h-8 w-8 text-muted-foreground hover:text-foreground lg:flex"
+              className="text-muted-foreground hover:text-foreground hidden h-8 w-8 lg:flex"
               aria-label={isCollapsed ? tSidebar('expand') : tSidebar('collapse')}
               title={isCollapsed ? tSidebar('expand') : tSidebar('collapse')}
             >
@@ -90,7 +127,7 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
         </div>
 
         {/* Role Badge Section */}
-        <div className="border-b border-border px-3 py-2.5">
+        <div className="border-border border-b px-3 py-2.5">
           {isCollapsed ? (
             <Tooltip>
               <TooltipTrigger asChild>
@@ -105,7 +142,7 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
               </TooltipTrigger>
               <TooltipContent side="right">
                 <p className="font-semibold">{isAdmin ? tAuth('roles.admin_gudang') : tAuth('roles.owner')}</p>
-                <p className="text-[10px] text-muted-foreground">{profile.role}</p>
+                <p className="text-muted-foreground text-[10px]">{profile.role}</p>
               </TooltipContent>
             </Tooltip>
           ) : (
@@ -116,13 +153,13 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
               )}
             >
               {isAdmin ? (
-                <Shield className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+                <Shield className="text-accent h-4 w-4 shrink-0" aria-hidden="true" />
               ) : (
-                <UserCheck className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                <UserCheck className="text-primary h-4 w-4 shrink-0" aria-hidden="true" />
               )}
               <div className="min-w-0 flex-1">
                 <p className="truncate font-bold">{isAdmin ? tAuth('roles.admin_gudang') : tAuth('roles.owner')}</p>
-                <p className="font-mono text-[10px] text-muted-foreground lowercase">role: {profile.role}</p>
+                <p className="text-muted-foreground font-mono text-[10px] lowercase">role: {profile.role}</p>
               </div>
             </div>
           )}
@@ -131,7 +168,7 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
         {/* Navigation Menu Links */}
         <nav className="flex-1 space-y-1.5 overflow-y-auto px-2.5 py-4" aria-label={tSidebar('title')}>
           {!isCollapsed && (
-            <p className="px-2.5 pb-1 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">{tSidebar('title')}</p>
+            <p className="text-muted-foreground px-2.5 pb-1 text-[11px] font-semibold tracking-wider uppercase">{tSidebar('title')}</p>
           )}
 
           {navItems.map((item) => {
@@ -168,15 +205,15 @@ export function AppSidebar({ locale, profile, isCollapsed = false, onToggleColla
         </nav>
 
         {/* User Identity & Utility Footer */}
-        <div className="mt-auto space-y-3 border-t border-border p-3">
+        <div className="border-border mt-auto space-y-3 border-t p-3">
           {!isCollapsed && (
             <div className="flex items-center gap-2.5 px-1">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+              <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold">
                 {profile.fullName.slice(0, 2).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-semibold text-foreground">{profile.fullName}</p>
-                <p className="truncate font-mono text-[10px] text-muted-foreground">{profile.email}</p>
+                <p className="text-foreground truncate text-xs font-semibold">{profile.fullName}</p>
+                <p className="text-muted-foreground truncate font-mono text-[10px]">{profile.email}</p>
               </div>
             </div>
           )}

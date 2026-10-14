@@ -12,6 +12,10 @@
     "preview": "Pratinjau",
     "dashboard": "Dashboard",
     "catalog": "Katalog Produk",
-    "movements": "Mutasi Stok"
+    "categories": "Kategori Produk",
+    "transactions": "Transaksi Stok",
+    "movements": "Mutasi Stok",
+    "reports": "Laporan & Analisis",
+    "assistant": "AI Assistant"
   }
 }

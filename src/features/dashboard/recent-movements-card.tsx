@@ -1,6 +1,6 @@
+import Link from 'next/link'
 import { ArrowDownRight, ArrowRight, ArrowUpRight, History } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
-import Link from 'next/link'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

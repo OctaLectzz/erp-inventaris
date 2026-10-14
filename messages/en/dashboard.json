@@ -2,6 +2,7 @@
   "title": "Inventory Dashboard",
   "subtitle": "Overview of warehouse metrics, stock levels, and activity",
   "welcome": "Welcome back",
+  "welcomeTag": "Unified Dashboard & Catalog",
   "valuation": "Total Inventory Valuation",
   "roleCardTitle": "Role Authorization Status (RBAC)",
   "adminCapabilitiesTitle": "Full Operational Permissions",
@@ -15,6 +16,12 @@
     "lowStockAlerts": "Low Stock Alerts",
     "recentMovements": "Recent Movements"
   },
+  "kpiDescriptions": {
+    "skus": "Unique SKUs registered in system",
+    "units": "Physical units in warehouse",
+    "valuation": "Σ (stock × price) of all items",
+    "lowStock": "Items with stock < 5 units"
+  },
   "tables": {
     "recentActivity": "Recent Stock Movement Activity",
     "emptyState": "No inventory movement records recorded yet."
@@ -26,6 +33,16 @@
     "viewCatalog": "View in Catalog",
     "badgeWarning": "Needs Restock",
     "unitsLeft": "{count} units left"
+  },
+  "securitySummary": {
+    "title": "Security & Session Authorization Summary",
+    "subtitle": "Role-based access control (RBAC) validation and catalog stock immutability",
+    "stockGuardTitle": "Stock Immutability Guard",
+    "stockGuardDesc": "Stock changes only via atomic RPC mutations with pessimistic row locking.",
+    "authoritativeTitle": "Authoritative Profile",
+    "authoritativeDesc": "Role verified directly from public.profiles on the server boundary.",
+    "ownerBoundaryTitle": "Executive Owner Boundary",
+    "ownerBoundaryDesc": "Business Owner role strictly restricted to read-only access for catalog and movements."
   },
   "catalog": {
     "title": "Product Inventory Catalog",
@@ -39,8 +56,13 @@
     "statusNormal": "Normal Stock (≥ 5)",
     "showingResults": "Showing {count} of {total} products",
     "emptySearch": "No products match the search criteria.",
+    "emptySearchSubtitle": "Try adjusting your search keyword or changing category and stock filters.",
     "resetFilter": "Reset Filter",
     "readOnlyNotice": "Audit Mode (Read-Only): You have viewing access without catalog modification permissions.",
+    "registeredCount": "{count} Registered SKUs",
+    "statusLowStockBadge": "Low Stock ({count})",
+    "statusNormalBadge": "Normal Stock",
+    "edit": "Edit",
     "columns": {
       "sku": "SKU",
       "product": "Product Name",
@@ -52,6 +74,7 @@
       "actions": "Actions"
     },
     "viewOptions": "View Columns",
+    "toggleColumns": "Toggle Columns",
     "rowsPerPage": "Rows per page",
     "quickRestock": "Restock",
     "viewAllMovements": "View All Movements",
@@ -143,5 +166,62 @@
     "submitting": "Processing Movement...",
     "success": "Stock movement successfully recorded in the system.",
     "overdraftWarning": "Quantity exceeds currently available stock."
+  },
+  "categories": {
+    "title": "Product Categories",
+    "subtitle": "Manage master categories for classifying and organizing inventory items",
+    "addCategory": "Add Category",
+    "editCategory": "Edit Category",
+    "deleteCategory": "Delete Category",
+    "searchPlaceholder": "Search by name or slug...",
+    "registeredCount": "{count} Registered Categories",
+    "productCount": "{count} Products",
+    "columns": {
+      "name": "Category Name",
+      "slug": "Slug",
+      "description": "Description",
+      "productCount": "Products Count",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    },
+    "dialog": {
+      "createTitle": "Add New Category",
+      "createSubtitle": "Add a new category to group warehouse items",
+      "editTitle": "Edit Category",
+      "editSubtitle": "Update category name, slug, or description",
+      "nameLabel": "Category Name",
+      "namePlaceholder": "e.g. Electronics",
+      "slugLabel": "URL Slug",
+      "slugPlaceholder": "e.g. electronics",
+      "descriptionLabel": "Description (Optional)",
+      "descriptionPlaceholder": "Brief category description...",
+      "cancel": "Cancel",
+      "create": "Save Category",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "deleteConfirmTitle": "Delete Category?",
+      "deleteConfirmDesc": "This category will be permanently deleted from the system. This action cannot be undone.",
+      "deleteButton": "Yes, Delete Category",
+      "deleting": "Deleting...",
+      "successCreated": "Category successfully added.",
+      "successUpdated": "Category successfully updated.",
+      "successDeleted": "Category successfully deleted."
+    },
+    "emptySearch": "No categories found matching your search.",
+    "emptyState": "No master categories registered yet. Please add your first category."
+  },
+  "imageDropzone": {
+    "dropzoneTitle": "Drag & drop product image here",
+    "dropzoneSubtitle": "or click to browse files from your computer",
+    "acceptedFormats": "PNG, JPG, WEBP up to 2MB (1:1 ratio recommended)",
+    "replaceImage": "Replace Image",
+    "removeImage": "Remove",
+    "uploading": "Uploading image...",
+    "orManualUrl": "or use direct image URL",
+    "manualUrlPlaceholder": "https://example.com/image.jpg",
+    "errors": {
+      "tooLarge": "File size exceeds 2MB limit",
+      "invalidType": "File format not supported. Please use PNG, JPG, or WEBP"
+    }
   }
 }

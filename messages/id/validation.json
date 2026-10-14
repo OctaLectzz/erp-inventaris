@@ -27,5 +27,12 @@
   "quantityMustBeInteger": "Kuantitas mutasi harus berupa bilangan bulat.",
   "quantityMustBePositive": "Kuantitas mutasi harus lebih besar dari 0.",
   "noteMinLength": "Catatan mutasi minimal 3 karakter.",
-  "noteMaxLength": "Catatan mutasi maksimal 500 karakter."
+  "noteMaxLength": "Catatan mutasi maksimal 500 karakter.",
+  "categoryNameTooShort": "Nama kategori minimal 2 karakter.",
+  "categoryNameTooLong": "Nama kategori maksimal 100 karakter.",
+  "categorySlugTooShort": "Slug kategori minimal 2 karakter.",
+  "categorySlugTooLong": "Slug kategori maksimal 100 karakter.",
+  "categorySlugInvalidFormat": "Slug hanya boleh berisi huruf kecil, angka, dan tanda hubung (-).",
+  "categoryDescTooLong": "Deskripsi kategori maksimal 500 karakter.",
+  "invalidCategoryId": "ID kategori tidak valid."
 }

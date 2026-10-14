@@ -17,19 +17,26 @@ import type { Table } from '@tanstack/react-table'
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>
   columnLabels?: Record<string, string>
+  triggerLabel?: string
+  titleLabel?: string
 }
 
-export function DataTableViewOptions<TData>({ table, columnLabels = {} }: DataTableViewOptionsProps<TData>) {
+export function DataTableViewOptions<TData>({
+  table,
+  columnLabels = {},
+  triggerLabel = 'Tampilan Kolom',
+  titleLabel = 'Atur Kolom'
+}: DataTableViewOptionsProps<TData>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="h-9 gap-1.5 text-xs shadow-2xs">
           <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>Tampilan Kolom</span>
+          <span>{triggerLabel}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-44">
-        <DropdownMenuLabel className="text-xs">Atur Kolom</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-xs">{titleLabel}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()

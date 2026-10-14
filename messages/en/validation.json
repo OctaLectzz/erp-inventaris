@@ -27,5 +27,12 @@
   "quantityMustBeInteger": "Movement quantity must be a whole integer.",
   "quantityMustBePositive": "Movement quantity must be greater than zero.",
   "noteMinLength": "Movement note must be at least 3 characters.",
-  "noteMaxLength": "Movement note cannot exceed 500 characters."
+  "noteMaxLength": "Movement note cannot exceed 500 characters.",
+  "categoryNameTooShort": "Category name must be at least 2 characters.",
+  "categoryNameTooLong": "Category name cannot exceed 100 characters.",
+  "categorySlugTooShort": "Category slug must be at least 2 characters.",
+  "categorySlugTooLong": "Category slug cannot exceed 100 characters.",
+  "categorySlugInvalidFormat": "Category slug can only contain lowercase letters, numbers, and hyphens (-).",
+  "categoryDescTooLong": "Category description cannot exceed 500 characters.",
+  "invalidCategoryId": "Invalid category ID."
 }

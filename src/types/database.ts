@@ -6,9 +6,37 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          description: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          slug?: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string
+          category_id: string | null
           created_at: string
           description: string | null
           id: string
@@ -22,6 +50,7 @@ export type Database = {
         }
         Insert: {
           category: string
+          category_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -35,6 +64,7 @@ export type Database = {
         }
         Update: {
           category?: string
+          category_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -46,7 +76,15 @@ export type Database = {
           unit?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: 'products_category_id_fkey'
+            columns: ['category_id']
+            isOneToOne: false
+            referencedRelation: 'categories'
+            referencedColumns: ['id']
+          }
+        ]
       }
       profiles: {
         Row: {
@@ -154,6 +192,10 @@ export type Tables<TableName extends keyof PublicSchema['Tables']> = PublicSchem
 export type TablesInsert<TableName extends keyof PublicSchema['Tables']> = PublicSchema['Tables'][TableName]['Insert']
 
 export type TablesUpdate<TableName extends keyof PublicSchema['Tables']> = PublicSchema['Tables'][TableName]['Update']
+
+export type CategoryRow = Database['public']['Tables']['categories']['Row']
+export type CategoryInsert = Database['public']['Tables']['categories']['Insert']
+export type CategoryUpdate = Database['public']['Tables']['categories']['Update']
 
 export type ProductRow = Database['public']['Tables']['products']['Row']
 export type ProductInsert = Database['public']['Tables']['products']['Insert']

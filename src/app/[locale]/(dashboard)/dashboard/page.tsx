@@ -57,7 +57,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     return new Intl.NumberFormat(locale === 'id' ? 'id-ID' : 'en-US').format(num)
   }
 
-  const isAdmin = profile.role === 'admin_gudang'
+  const isAdmin = profile.role === 'admin_gudang' || profile.role === 'administrator'
 
   return (
     <div className="space-y-6">
@@ -72,7 +72,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
 
         <div className="border-accent/30 bg-accent/10 text-accent-foreground dark:text-accent inline-flex items-center gap-2 self-start rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-2xs sm:self-auto">
           <Sparkles className="text-accent h-3.5 w-3.5" aria-hidden="true" />
-          <span>Dashboard &amp; Katalog Terpadu</span>
+          <span>{tDashboard('welcomeTag')}</span>
         </div>
       </div>
 
@@ -111,7 +111,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         <KpiStatCard
           title={tDashboard('kpi.totalProducts')}
           value={formatNumber(summary.totalSkus)}
-          description="SKU unik terdaftar di sistem"
+          description={tDashboard('kpiDescriptions.skus')}
           icon={Package}
           variant="secondary"
         />
@@ -120,7 +120,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         <KpiStatCard
           title={tDashboard('kpi.totalStock')}
           value={formatNumber(summary.totalUnits)}
-          description="Unit fisik tersedia di gudang"
+          description={tDashboard('kpiDescriptions.units')}
           icon={Boxes}
           variant="accent"
         />
@@ -129,7 +129,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         <KpiStatCard
           title={tDashboard('valuation')}
           value={formatCurrency(summary.totalInventoryValue)}
-          description="Σ (stok × harga) seluruh item"
+          description={tDashboard('kpiDescriptions.valuation')}
           icon={Banknote}
           variant="secondary"
         />
@@ -138,7 +138,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         <KpiStatCard
           title={tDashboard('kpi.lowStockAlerts')}
           value={formatNumber(summary.lowStockCount)}
-          description="Item dengan stok < 5 unit"
+          description={tDashboard('kpiDescriptions.lowStock')}
           icon={AlertTriangle}
           variant="destructive"
         />
@@ -156,34 +156,32 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       {/* Security & Verification Status Card */}
       <Card className="border-border shadow-2xs">
         <CardHeader className="pb-3">
-          <CardTitle className="text-primary text-sm font-bold">Ringkasan Keamanan &amp; Otorisasi Sesi</CardTitle>
-          <CardDescription className="text-xs">Validasi kontrol akses berbasis peran (RBAC) dan imutabilitas stok katalog</CardDescription>
+          <CardTitle className="text-primary text-sm font-bold">{tDashboard('securitySummary.title')}</CardTitle>
+          <CardDescription className="text-xs">{tDashboard('securitySummary.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="border-border bg-card flex items-start gap-2.5 rounded-lg border p-3 text-xs">
               <CheckCircle2 className="text-accent mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <div>
-                <p className="text-foreground font-semibold">Stock Immutability Guard</p>
-                <p className="text-muted-foreground text-[11px]">Perubahan stok hanya melalui RPC mutasi atomik dengan kunci pesimistis.</p>
+                <p className="text-foreground font-semibold">{tDashboard('securitySummary.stockGuardTitle')}</p>
+                <p className="text-muted-foreground text-[11px]">{tDashboard('securitySummary.stockGuardDesc')}</p>
               </div>
             </div>
 
             <div className="border-border bg-card flex items-start gap-2.5 rounded-lg border p-3 text-xs">
               <CheckCircle2 className="text-accent mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <div>
-                <p className="text-foreground font-semibold">Authoritative Profile</p>
-                <p className="text-muted-foreground text-[11px]">
-                  Peran diverifikasi langsung dari <code>public.profiles</code> pada server boundary.
-                </p>
+                <p className="text-foreground font-semibold">{tDashboard('securitySummary.authoritativeTitle')}</p>
+                <p className="text-muted-foreground text-[11px]">{tDashboard('securitySummary.authoritativeDesc')}</p>
               </div>
             </div>
 
             <div className="border-border bg-card flex items-start gap-2.5 rounded-lg border p-3 text-xs">
               <CheckCircle2 className="text-accent mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <div>
-                <p className="text-foreground font-semibold">Executive Owner Boundary</p>
-                <p className="text-muted-foreground text-[11px]">Peran Owner dibatasi secara mutlak untuk hanya-baca pada katalog dan mutasi.</p>
+                <p className="text-foreground font-semibold">{tDashboard('securitySummary.ownerBoundaryTitle')}</p>
+                <p className="text-muted-foreground text-[11px]">{tDashboard('securitySummary.ownerBoundaryDesc')}</p>
               </div>
             </div>
           </div>

@@ -11,14 +11,21 @@ import type { UserProfile } from '@/types/auth'
 interface DashboardShellProps {
   locale: string
   profile: UserProfile
+  initialCollapsed?: boolean
   children: React.ReactNode
 }
 
-export function DashboardShell({ locale, profile, children }: DashboardShellProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+export function DashboardShell({ locale, profile, initialCollapsed = false, children }: DashboardShellProps) {
+  const [isCollapsed, setIsCollapsed] = useState(initialCollapsed)
 
   const handleToggleCollapse = () => {
-    setIsCollapsed((prev) => !prev)
+    setIsCollapsed((prev) => {
+      const next = !prev
+      if (typeof document !== 'undefined') {
+        document.cookie = `sidebar_collapsed=${next}; path=/; max-age=31536000; SameSite=Lax`
+      }
+      return next
+    })
   }
 
   return (

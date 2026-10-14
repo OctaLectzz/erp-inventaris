@@ -12,6 +12,10 @@
     "preview": "Preview",
     "dashboard": "Dashboard",
     "catalog": "Product Catalog",
-    "movements": "Stock Movements"
+    "categories": "Product Categories",
+    "transactions": "Stock Transactions",
+    "movements": "Stock Movements",
+    "reports": "Reports & Analytics",
+    "assistant": "AI Assistant"
   }
 }

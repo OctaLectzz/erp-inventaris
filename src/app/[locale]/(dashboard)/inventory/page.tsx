@@ -54,7 +54,7 @@ export default async function InventoryPage({ params }: InventoryPageProps) {
 
         <div className="border-accent/30 bg-accent/10 text-accent-foreground dark:text-accent inline-flex items-center gap-2 self-start rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-2xs sm:self-auto">
           <Sparkles className="text-accent h-3.5 w-3.5" aria-hidden="true" />
-          <span>{products.length} SKU Terdaftar</span>
+          <span>{t('catalog.registeredCount', { count: products.length })}</span>
         </div>
       </div>
 

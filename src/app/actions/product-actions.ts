@@ -62,7 +62,7 @@ export async function createProductAction(input: ProductCatalogInput, locale = '
     }
   }
 
-  const { sku, name, category, unit, price, description, imageUrl } = parsed.data
+  const { sku, name, category, categoryId, unit, price, description, imageUrl } = parsed.data
   const sanitizedSku = sku.toUpperCase()
 
   try {
@@ -80,6 +80,15 @@ export async function createProductAction(input: ProductCatalogInput, locale = '
       }
     }
 
+    // Resolve category_id if not directly passed
+    let resolvedCategoryId = categoryId || null
+    if (!resolvedCategoryId && category) {
+      const { data: matchedCat } = await supabase.from('categories').select('id').ilike('name', category.trim()).maybeSingle()
+      if (matchedCat) {
+        resolvedCategoryId = matchedCat.id
+      }
+    }
+
     // 4. Insert catalog metadata strictly without passing stock
     const { data: insertedRow, error: insertError } = await supabase
       .from('products')
@@ -87,6 +96,7 @@ export async function createProductAction(input: ProductCatalogInput, locale = '
         sku: sanitizedSku,
         name,
         category,
+        category_id: resolvedCategoryId,
         unit,
         price,
         description: description || null,
@@ -169,7 +179,7 @@ export async function updateProductAction(input: ProductCatalogUpdate, locale = 
     }
   }
 
-  const { id, sku, name, category, unit, price, description, imageUrl } = parsed.data
+  const { id, sku, name, category, categoryId, unit, price, description, imageUrl } = parsed.data
   const sanitizedSku = sku.toUpperCase()
 
   try {
@@ -187,6 +197,15 @@ export async function updateProductAction(input: ProductCatalogUpdate, locale = 
       }
     }
 
+    // Resolve category_id if not directly passed
+    let resolvedCategoryId = categoryId || null
+    if (!resolvedCategoryId && category) {
+      const { data: matchedCat } = await supabase.from('categories').select('id').ilike('name', category.trim()).maybeSingle()
+      if (matchedCat) {
+        resolvedCategoryId = matchedCat.id
+      }
+    }
+
     // 4. Update metadata strictly — stock is NEVER updated
     const { data: updatedRow, error: updateError } = await supabase
       .from('products')
@@ -194,6 +213,7 @@ export async function updateProductAction(input: ProductCatalogUpdate, locale = 
         sku: sanitizedSku,
         name,
         category,
+        category_id: resolvedCategoryId,
         unit,
         price,
         description: description || null,

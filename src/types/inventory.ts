@@ -14,6 +14,19 @@ export function isValidMovementType(type: unknown): type is MovementType {
 }
 
 /**
+ * Clean domain representation of a product category.
+ */
+export interface Category {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  productCount: number
+  createdAt: string
+  updatedAt: string
+}
+
+/**
  * Clean domain representation of a product catalog item.
  */
 export interface Product {
@@ -21,6 +34,7 @@ export interface Product {
   sku: string
   name: string
   category: string
+  categoryId?: string | null
   unit: string
   price: number // IDR (bigint in DB mapped to number in JS/TS)
   stock: number
@@ -162,6 +176,7 @@ export function toProduct(row: ProductRow): Product {
     sku: row.sku,
     name: row.name,
     category: row.category,
+    categoryId: row.category_id,
     unit: row.unit,
     price: Number(row.price),
     stock: row.stock,

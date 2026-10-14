@@ -76,14 +76,18 @@ export async function getInventoryCatalogData(supabase: SupabaseClient<Database>
  * Retrieves distinct product categories available in the inventory catalog.
  */
 export async function getCatalogCategories(supabase: SupabaseClient<Database>): Promise<string[]> {
-  const { data: rows, error } = await supabase.from('products').select('category')
-
-  if (error) {
-    throw new Error(`Failed to load product categories: ${error.message}`)
-  }
+  const [{ data: catRows }, { data: prodRows }] = await Promise.all([
+    supabase.from('categories').select('name'),
+    supabase.from('products').select('category')
+  ])
 
   const categorySet = new Set<string>()
-  for (const row of rows || []) {
+  for (const row of catRows || []) {
+    if (row.name && typeof row.name === 'string') {
+      categorySet.add(row.name.trim())
+    }
+  }
+  for (const row of prodRows || []) {
     if (row.category && typeof row.category === 'string') {
       categorySet.add(row.category.trim())
     }

@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, CheckCircle2, Info, Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { createProductAction, updateProductAction } from '@/app/actions/product-actions'
+import { ImageDropzone } from '@/components/shared/image-dropzone'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
@@ -39,6 +40,8 @@ export function ProductFormDialog({ open, onOpenChange, product, categories = []
     handleSubmit,
     reset,
     setError,
+    setValue,
+    watch,
     formState: { errors, isSubmitting }
   } = useForm<ProductCatalogInput>({
     resolver: zodResolver(productCatalogInputSchema),
@@ -52,6 +55,9 @@ export function ProductFormDialog({ open, onOpenChange, product, categories = []
       imageUrl: ''
     }
   })
+
+  const currentImageUrl = watch('imageUrl')
+  const currentSku = watch('sku')
 
   const handleDialogChange = (nextOpen: boolean) => {
     if (!nextOpen) {
@@ -166,14 +172,14 @@ export function ProductFormDialog({ open, onOpenChange, product, categories = []
         </DialogHeader>
 
         {/* Stock Immutability Banner */}
-        <div className="border-accent/40 bg-accent/10 text-accent-foreground dark:text-accent flex items-start gap-2.5 rounded-lg border p-3 text-xs leading-relaxed">
-          <Info className="text-accent mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+        <div className="flex items-start gap-2.5 rounded-lg border border-accent/40 bg-accent/10 p-3 text-xs leading-relaxed text-accent-foreground dark:text-accent">
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
           <p>{isEditing ? t('dialog.stockNoticeEdit') : t('dialog.stockNoticeCreate')}</p>
         </div>
 
         {/* Server Feedback Alerts */}
         {serverError && (
-          <div className="border-destructive/30 bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg border p-3 text-xs">
+          <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <p className="font-medium">{serverError}</p>
           </div>
@@ -201,7 +207,7 @@ export function ProductFormDialog({ open, onOpenChange, product, categories = []
                 disabled={isSubmitting}
                 aria-invalid={Boolean(errors.sku)}
               />
-              {errors.sku && <p className="text-destructive text-[11px]">{getTranslatedError(errors.sku.message)}</p>}
+              {errors.sku && <p className="text-[11px] text-destructive">{getTranslatedError(errors.sku.message)}</p>}
             </div>
 
             {/* Satuan Unit */}
@@ -217,7 +223,7 @@ export function ProductFormDialog({ open, onOpenChange, product, categories = []
                 disabled={isSubmitting}
                 aria-invalid={Boolean(errors.unit)}
               />
-              {errors.unit && <p className="text-destructive text-[11px]">{getTranslatedError(errors.unit.message)}</p>}
+              {errors.unit && <p className="text-[11px] text-destructive">{getTranslatedError(errors.unit.message)}</p>}
             </div>
           </div>
 
@@ -234,7 +240,7 @@ export function ProductFormDialog({ open, onOpenChange, product, categories = []
               disabled={isSubmitting}
               aria-invalid={Boolean(errors.name)}
             />
-            {errors.name && <p className="text-destructive text-[11px]">{getTranslatedError(errors.name.message)}</p>}
+            {errors.name && <p className="text-[11px] text-destructive">{getTranslatedError(errors.name.message)}</p>}
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -257,7 +263,7 @@ export function ProductFormDialog({ open, onOpenChange, product, categories = []
                   <option key={c} value={c} />
                 ))}
               </datalist>
-              {errors.category && <p className="text-destructive text-[11px]">{getTranslatedError(errors.category.message)}</p>}
+              {errors.category && <p className="text-[11px] text-destructive">{getTranslatedError(errors.category.message)}</p>}
             </div>
 
             {/* Reference Price (IDR) */}
@@ -276,25 +282,20 @@ export function ProductFormDialog({ open, onOpenChange, product, categories = []
                 disabled={isSubmitting}
                 aria-invalid={Boolean(errors.price)}
               />
-              {errors.price && <p className="text-destructive text-[11px]">{getTranslatedError(errors.price.message)}</p>}
+              {errors.price && <p className="text-[11px] text-destructive">{getTranslatedError(errors.price.message)}</p>}
             </div>
           </div>
 
-          {/* Image URL */}
+          {/* Product Image Dropzone */}
           <div className="space-y-1.5">
-            <Label htmlFor="imageUrl" className="text-xs font-semibold">
-              {t('dialog.fields.imageUrl')}
-            </Label>
-            <Input
-              id="imageUrl"
-              type="url"
-              placeholder={t('dialog.fields.imageUrlPlaceholder')}
-              {...register('imageUrl')}
-              className="text-xs"
+            <Label className="text-xs font-semibold">{t('dialog.fields.imageUrl')}</Label>
+            <ImageDropzone
+              value={currentImageUrl}
+              onChange={(url) => setValue('imageUrl', url || '', { shouldValidate: true })}
               disabled={isSubmitting}
-              aria-invalid={Boolean(errors.imageUrl)}
+              skuHint={currentSku}
             />
-            {errors.imageUrl && <p className="text-destructive text-[11px]">{getTranslatedError(errors.imageUrl.message)}</p>}
+            {errors.imageUrl && <p className="text-[11px] text-destructive">{getTranslatedError(errors.imageUrl.message)}</p>}
           </div>
 
           {/* Description */}

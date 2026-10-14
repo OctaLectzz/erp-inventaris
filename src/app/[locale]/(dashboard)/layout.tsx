@@ -1,4 +1,5 @@
 import { setRequestLocale } from 'next-intl/server'
+import { cookies } from 'next/headers'
 import { connection } from 'next/server'
 
 import { DashboardShell } from '@/components/shared/dashboard-shell'
@@ -18,11 +19,14 @@ export default async function DashboardLayout({ children, params }: DashboardLay
   const { locale } = await params
   setRequestLocale(locale)
 
+  const cookieStore = await cookies()
+  const initialCollapsed = cookieStore.get('sidebar_collapsed')?.value === 'true'
+
   // Enforce server boundary authentication and retrieve authoritative profile
   const { profile } = await requireAuth(locale)
 
   return (
-    <DashboardShell locale={locale} profile={profile}>
+    <DashboardShell locale={locale} profile={profile} initialCollapsed={initialCollapsed}>
       {children}
     </DashboardShell>
   )

@@ -1,6 +1,6 @@
+import { connection } from 'next/server'
 import { ArrowLeftRight, History } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { connection } from 'next/server'
 
 import { MovementTable } from '@/features/movements/movement-table'
 import { createClient } from '@/lib/supabase/server'
@@ -57,16 +57,16 @@ export default async function MovementsPage({ params }: MovementsPageProps) {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary shadow-2xs">
+            <div className="bg-primary/10 text-primary flex h-9 w-9 items-center justify-center rounded-lg shadow-2xs">
               <ArrowLeftRight className="h-5 w-5" aria-hidden="true" />
             </div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-primary sm:text-3xl">{t('movements.title')}</h1>
+            <h1 className="text-primary text-2xl font-extrabold tracking-tight sm:text-3xl">{t('movements.title')}</h1>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">{t('movements.subtitle')}</p>
+          <p className="text-muted-foreground mt-1 text-sm">{t('movements.subtitle')}</p>
         </div>
 
-        <div className="inline-flex items-center gap-2 self-start rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-semibold text-primary shadow-2xs sm:self-auto">
-          <History className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+        <div className="border-primary/20 bg-primary/10 text-primary inline-flex items-center gap-2 self-start rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-2xs sm:self-auto">
+          <History className="text-primary h-3.5 w-3.5" aria-hidden="true" />
           <span>{movementsResult.total} Transaksi Tercatat</span>
         </div>
       </div>
