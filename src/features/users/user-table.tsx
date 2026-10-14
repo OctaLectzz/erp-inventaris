@@ -1,8 +1,8 @@
 'use client'
 
+import { useMemo, useState } from 'react'
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table'
 import { Plus, Search, Users as UsersIcon } from 'lucide-react'
-import { useMemo, useState } from 'react'
 
 import { DataTablePagination } from '@/components/shared/data-table/data-table-pagination'
 import { Button } from '@/components/ui/button'

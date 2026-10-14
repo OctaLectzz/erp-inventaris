@@ -1,6 +1,8 @@
-import { getSidebarMenuGroups } from '@/components/shared/sidebar-nav-items'
-import type { UserRole } from '@/types/auth'
 import { describe, expect, it } from 'vitest'
+
+import { getSidebarMenuGroups } from '@/components/shared/sidebar-nav-items'
+
+import type { UserRole } from '@/types/auth'
 
 describe('RBAC Menu Filtering in getSidebarMenuGroups', () => {
   const mockTranslations = (key: string) => key

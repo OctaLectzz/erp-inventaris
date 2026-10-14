@@ -77,10 +77,9 @@ export async function signInAction(input: LoginInput, currentLocale = 'id'): Pro
  * on the server without ever leaking passwords to client-side code or HTML bundles.
  */
 export async function signInDemoAction(role: UserRole, currentLocale = 'id'): Promise<AuthActionResult> {
-  const email = role === 'admin_gudang' ? process.env.DEMO_ADMIN_EMAIL : process.env.DEMO_OWNER_EMAIL
-  const password = role === 'admin_gudang' ? process.env.DEMO_ADMIN_PASSWORD : process.env.DEMO_OWNER_PASSWORD
+  const creds = await getDemoCredentialsAction(role)
 
-  if (!email || !password) {
+  if (!creds.success || !creds.email || !creds.password) {
     return {
       success: false,
       error: 'DEMO_NOT_CONFIGURED',
@@ -90,8 +89,8 @@ export async function signInDemoAction(role: UserRole, currentLocale = 'id'): Pr
 
   return signInAction(
     {
-      email,
-      password,
+      email: creds.email,
+      password: creds.password,
       redirectTo: `/${currentLocale}/dashboard`
     },
     currentLocale

@@ -1,8 +1,8 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
 import { AlertCircle, Image as ImageIcon, Link as LinkIcon, Loader2, Trash2, UploadCloud } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useCallback, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,6 +20,50 @@ interface ImageDropzoneProps {
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2 MB
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MIME_TO_EXT: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp'
+}
+
+/**
+ * Validates the file header magic bytes to prevent file extension spoofing or malicious payloads.
+ */
+export async function validateImageMagicBytes(file: File): Promise<boolean> {
+  try {
+    const slice = file.slice(0, 12)
+    const buffer = await slice.arrayBuffer()
+    const bytes = new Uint8Array(buffer)
+
+    // JPEG signature: FF D8 FF
+    if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+      return file.type === 'image/jpeg'
+    }
+
+    // PNG signature: 89 50 4E 47 (\x89PNG)
+    if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) {
+      return file.type === 'image/png'
+    }
+
+    // WebP signature: RIFF (52 49 46 46) ... WEBP (57 45 42 50)
+    if (
+      bytes[0] === 0x52 &&
+      bytes[1] === 0x49 &&
+      bytes[2] === 0x46 &&
+      bytes[3] === 0x46 &&
+      bytes[8] === 0x57 &&
+      bytes[9] === 0x45 &&
+      bytes[10] === 0x42 &&
+      bytes[11] === 0x50
+    ) {
+      return file.type === 'image/webp'
+    }
+
+    return false
+  } catch {
+    return false
+  }
+}
 
 export function ImageDropzone({ value, onChange, disabled = false, bucketName = 'product-images', skuHint, className }: ImageDropzoneProps) {
   const t = useTranslations('dashboard')
@@ -45,11 +89,17 @@ export function ImageDropzone({ value, onChange, disabled = false, bucketName = 
         return
       }
 
+      const isValidMagic = await validateImageMagicBytes(file)
+      if (!isValidMagic) {
+        setErrorMessage(t('imageDropzone.errors.corruptOrInvalid'))
+        return
+      }
+
       setIsUploading(true)
 
       try {
         const supabase = createClient()
-        const ext = file.name.split('.').pop() || 'jpg'
+        const ext = MIME_TO_EXT[file.type] || 'jpg'
         const cleanSku = (skuHint || 'product').toLowerCase().replace(/[^a-z0-9_-]/g, '_')
         const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`
         const filePath = `${cleanSku}-${uniqueId}.${ext}`
@@ -126,7 +176,19 @@ export function ImageDropzone({ value, onChange, disabled = false, bucketName = 
 
   const handleManualUrlApply = () => {
     const trimmed = manualUrlInput.trim()
-    onChange(trimmed.length > 0 ? trimmed : null)
+    if (!trimmed) {
+      onChange(null)
+      setErrorMessage(null)
+      return
+    }
+
+    if (!trimmed.startsWith('https://') && !trimmed.startsWith('http://')) {
+      setErrorMessage(t('imageDropzone.errors.invalidUrlScheme'))
+      return
+    }
+
+    onChange(trimmed)
+    setErrorMessage(null)
   }
 
   return (

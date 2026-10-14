@@ -240,7 +240,9 @@
     "manualUrlPlaceholder": "https://contoh.com/gambar.jpg",
     "errors": {
       "tooLarge": "Ukuran file melebihi batas 2MB",
-      "invalidType": "Format file tidak didukung. Harap gunakan PNG, JPG, atau WEBP"
+      "invalidType": "Format file tidak didukung. Harap gunakan PNG, JPG, atau WEBP",
+      "corruptOrInvalid": "Konten file tidak cocok dengan format gambar yang valid (PNG, JPG, WEBP)",
+      "invalidUrlScheme": "Tautan gambar harus menggunakan protokol http:// atau https://"
     }
   },
   "settings": {

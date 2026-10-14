@@ -113,11 +113,11 @@ export async function createCategoryAction(input: CategoryInput, locale = 'id'):
       data: toCategory(insertedRow)
     }
   } catch (err) {
-    const errMsg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat menyimpan kategori'
+    console.error('Error in createCategoryAction:', err)
     return {
       success: false,
       error: 'INTERNAL_ERROR',
-      message: errMsg
+      message: 'Terjadi kesalahan sistem saat menyimpan kategori. Silakan coba kembali.'
     }
   }
 }
@@ -224,11 +224,11 @@ export async function updateCategoryAction(input: CategoryUpdate, locale = 'id')
       data: toCategory(updatedRow)
     }
   } catch (err) {
-    const errMsg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat memperbarui kategori'
+    console.error('Error in updateCategoryAction:', err)
     return {
       success: false,
       error: 'INTERNAL_ERROR',
-      message: errMsg
+      message: 'Terjadi kesalahan sistem saat memperbarui kategori. Silakan coba kembali.'
     }
   }
 }
@@ -299,11 +299,11 @@ export async function deleteCategoryAction(id: string, locale = 'id'): Promise<C
       data: null
     }
   } catch (err) {
-    const errMsg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat menghapus kategori'
+    console.error('Error in deleteCategoryAction:', err)
     return {
       success: false,
       error: 'INTERNAL_ERROR',
-      message: errMsg
+      message: 'Terjadi kesalahan sistem saat menghapus kategori. Silakan coba kembali.'
     }
   }
 }

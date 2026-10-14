@@ -1,317 +1,373 @@
 # Inventra — Mini ERP Inventaris
 
-**Mini ERP Inventory Management System**  
+**Mini ERP Inventory Management System with Multi-Item Atomic Transactions & 9Router AI Copilot**  
 Take-Home Assessment untuk Posisi **Full Stack Engineer** di **PT. Syailendra Bumi Investama (DDistillers)**.
 
-Inventra adalah sistem simulasi manajemen persediaan gudang modern berbasis web yang mencakup pengelolaan katalog produk terstandarisasi, pemantauan status stok dan barang menipis (*low stock*), pencatatan transaksi barang masuk (*Stock IN*) dan keluar (*Stock OUT*) secara atomik ACID, serta penelusuran riwayat mutasi (*traceability*) buku besar persediaan.
+Inventra adalah sistem simulasi manajemen persediaan gudang modern berbasis web yang mencakup pengelolaan katalog produk terstandarisasi, master kategori produk, pemantauan status stok dan barang menipis (*low stock*), pencatatan mutasi stok fisik masuk (*Stock IN*) dan keluar (*Stock OUT*) baik tunggal maupun transaksi keranjang multi-item (*batch*) bergaransi ACID, buku besar mutasi persediaan (*traceability audit ledger*), analitik arus pergerakan barang interaktif, serta asisten cerdas berbasis AI (**9Router**) untuk penyusunan draf katalog, penyempurnaan spesifikasi teknis, dan tanya-jawab operasional gudang.
 
-> **Status Proyek**: Selesai & Terverifikasi Penuh (**Phase 9: Final QA & Assessment Submission Passed**).  
+> **Status Proyek**: Selesai & Terverifikasi Penuh (**Batch 5: Final QA, Security Hardening & Submission Readiness Passed**).  
 > **Kandidat / Pengembang**: Octaviano (OctaLectzz)  
-> **Waktu Pengerjaan**: 13–14 Oktober 2026 (~12–14 jam kerja efektif terstruktur)
+> **Repository GitHub**: [https://github.com/OctaLectzz/erp-inventaris](https://github.com/OctaLectzz/erp-inventaris)  
+> **Kondisi Pengujian**: 42 File Pengujian, 355 Tes Otomatis (100% PASS), 0 TypeScript Error, 0 ESLint Error, Turbopack Build 54 Halaman Bersih.
 
 ---
 
 ## Daftar Isi
 
-1. [Fitur Utama yang Telah Diimplementasikan](#fitur-utama-yang-telah-diimplementasikan)
-2. [Tech Stack](#tech-stack)
-3. [Prasyarat & Instalasi](#prasyarat--instalasi)
-4. [Konfigurasi Environment Variables](#konfigurasi-environment-variables)
-5. [Setup Basis Data Supabase & Migrasi](#setup-basis-data-supabase--migrasi)
-6. [Menjalankan Aplikasi Lokal](#menjalankan-aplikasi-lokal)
-7. [Akun Demo & Akses Evaluator](#akun-demo--akses-evaluator)
-8. [Menjalankan Pengujian (Quality Gates)](#menjalankan-pengujian-quality-gates)
-9. [Arsitektur & Integritas Bisnis](#arsitektur--integritas-bisnis)
-10. [Sumber Data Katalog & Konversi Harga](#sumber-data-katalog--konversi-harga)
-11. [Keamanan & Pembatasan Akses (RBAC & RLS)](#keamanan--pembatasan-akses-rbac--rls)
-12. [Batasan yang Diketahui](#batasan-yang-diketahui)
-13. [Transparansi Penggunaan AI (AI Usage Disclosure)](#transparansi-penggunaan-ai-ai-usage-disclosure)
-14. [Indeks Dokumentasi Proyek](#indeks-dokumentasi-proyek)
+1. [Fitur Utama yang Telah Diimplementasikan](#1-fitur-utama-yang-telah-diimplementasikan)
+2. [Tech Stack & Arsitektur](#2-tech-stack--arsitektur)
+3. [Persyaratan Lingkungan & Versi Runtime](#3-persyaratan-lingkungan--versi-runtime)
+4. [Cara Instalasi & Menjalankan Aplikasi](#4-cara-instalasi--menjalankan-aplikasi)
+5. [Konfigurasi Supabase & Environment Variables](#5-konfigurasi-supabase--environment-variables)
+6. [Setup Basis Data & Menjalankan Migrasi](#6-setup-basis-data--menjalankan-migrasi)
+7. [Akun Demo & Akses Evaluator](#7-akun-demo--akses-evaluator)
+8. [Matriks Hak Akses (Role-Based Access Control)](#8-matriks-hak-akses-role-based-access-control)
+9. [Menjalankan Pengujian (Quality Gates)](#9-menjalankan-pengujian-quality-gates)
+10. [AI Assistant 9Router & Batasan Keamanan](#10-ai-assistant-9router--batasan-keamanan)
+11. [Panduan Demonstrasi Lokal (Evaluator Walkthrough)](#11-panduan-demonstrasi-lokal-evaluator-walkthrough)
+12. [Batasan Fitur, Asumsi & Pekerjaan Lanjutan](#12-batasan-fitur-asumsi--pekerjaan-lanjutan)
+13. [Transparansi Penggunaan AI (AI Usage Disclosure)](#13-transparansi-penggunaan-ai-ai-usage-disclosure)
+14. [Indeks Dokumentasi Proyek](#14-indeks-dokumentasi-proyek)
 
 ---
 
-## Fitur Utama yang Telah Diimplementasikan
+## 1. Fitur Utama yang Telah Diimplementasikan
 
-Sesuai dengan *Brief Ringkas Take-Home Test Mini ERP Inventaris*:
+Sesuai dengan *Brief Ringkas Take-Home Test Mini ERP Inventaris* beserta roadmap Batch 1–5:
 
-### 1. Modul A — Autentikasi & Role-Based Access Control (RBAC)
-- **Multi-Role Separation**: Membedakan wewenang secara otoritatif antara peran **Admin Gudang** (`admin_gudang`) dan **Business Owner** (`owner`).
-- **Direct URL & Action Guarding**: Proteksi rute berlapis pada tingkat Edge Middleware (`src/proxy.ts`) dan Server Components (`requireAuth`). Akses tidak sah dialihkan otomatis ke halaman login.
-- **Session Persistence**: Sesi login berbasis cookie HTTP-only yang sinkron dengan `@supabase/ssr`, bertahan utuh saat muat ulang (*reload*) halaman.
-- **Evaluator Quick-Access Chips**: Tombol akses cepat demo satu-klik pada halaman login untuk evaluator tanpa perlu mengetik kredensial manual.
+### Modul A — Autentikasi & Role-Based Access Control (RBAC)
+- **Otorisasi 3-Peran Utama Konsolidasi**:
+  - `administrator`: Akses penuh mencakup katalog, kategori, mutasi stok fisik, AI commit, manajemen pengguna (`/users`), dan pengaturan sistem (`/settings/website`).
+  - `staff_gudang`: Akses operasional untuk mutasi stok fisik tunggal (`/movements`) dan multi-item (`/transactions`), pembuatan draf AI; dibatasi dari perubahan master katalog/kategori/laporan.
+  - `auditor`: Akses pemantauan hanya-baca (*read-only*) untuk katalog, dashboard, laporan analitik, riwayat mutasi, dan AI Q&A; dibatasi dari mutasi fisik atau modifikasi data.
+  - Kompatibilitas penuh terhadap peran legacy (`admin_gudang` dan `owner`).
+- **Proteksi Berlapis**: Penegakan otorisasi di Edge Middleware (`src/proxy.ts`), Server Components (`requireAuth` & `requireRole`), Server Actions, dan Row-Level Security (RLS) PostgreSQL.
+- **Session Persistence**: Autentikasi cookie HTTP-only sinkron via `@supabase/ssr` tanpa kebocoran token ke client bundle.
+- **Evaluator Quick-Access Chips**: Tombol akses cepat demo satu-klik pada formulir login untuk pengujian cepat evaluator tanpa input manual.
 
-### 2. Modul B — Katalog Produk & Standarisasi SKU
-- **Sumber Data DummyJSON**: 30 produk awal disinkronkan langsung dari `dummyjson.com/products`.
-- **SKU Unik & Terstandarisasi**: Format SKU tersusun rapi (`CAT-NAM-001`), divalidasi unik (*case-insensitive*) dan dilindungi constraint basis data.
-- **Kelengkapan Atribut**: Setiap item memuat SKU, Nama Produk, Kategori, Satuan (`pcs`/`box`), Harga Referensi (Rupiah), dan Stok Terkini.
-- **Imutabilitas Stok Katalog**: Form tambah dan ubah produk secara ketat **hanya memodifikasi metadata katalog**. Modifikasi kolom stok dicegah oleh database trigger `trg_protect_product_stock`.
+### Modul B — Katalog Produk & Master Kategori
+- **Standardisasi SKU Unik**: SKU terstruktur rapi (misal: `CAT-NAM-001`), divalidasi unik secara *case-insensitive* dan dijaga oleh constraint basis data.
+- **Master Kategori Terintegrasi**: Tabel master `categories` dengan slug unik dan relasi `ON DELETE RESTRICT` pada produk. Kategori yang masih digunakan tidak dapat dihapus sembarangan.
+- **Imutabilitas Stok Katalog**: Formulir tambah dan ubah produk secara ketat **hanya mengelola metadata katalog**. Kolom `stock` tidak diekspos pada skema form dan dijaga oleh database trigger `trg_protect_product_stock` (stok produk baru wajib bernilai 0).
+- **Upload Gambar Aman**: Dukungan Supabase Storage (`product-images`) dengan validasi ukuran (< 2MB), MIME type (`image/jpeg`, `image/png`, `image/webp`), verifikasi magic bytes konten file, serta sanitasi protokol URL manual (`http://` atau `https://`).
 
-### 3. Modul C — Mutasi Masuk/Keluar (Stock IN / Stock OUT)
-- **Validasi Kuantitas Ketat**: Kuantitas wajib berupa bilangan bulat positif (`> 0`). Angka 0, negatif, maupun desimal ditolak seketika oleh Zod dan PostgreSQL.
-- **Pencegahan Overdraft (Anti-Stockout)**: Transaksi mutasi keluar (*Stock OUT*) yang melebihi sisa stok tersedia ditolak seketika dengan kode `INSUFFICIENT_STOCK`.
-- **Atomisitas ACID Ganda**: Mutasi dieksekusi melalui prosedur PostgreSQL RPC `public.record_stock_movement` dengan kunci baris pesimistik (`FOR UPDATE`). Perubahan stok dan penambahan log mutasi terjadi dalam satu transaksi atomik. Jika salah satu gagal, data tidak berubah sama sekali.
-- **Konsistensi Rumus Stok**: Dijamin matematis oleh constraint basis data:  
-  $$\text{Stok Akhir} = \text{Stok Awal} + \text{Total IN} - \text{Total OUT}$$
+### Modul C — Mutasi Stok Tunggal & Transaksi Keranjang Multi-Item
+- **Validasi Kuantitas Ketat**: Kuantitas wajib bilangan bulat positif (`> 0`). Angka 0, negatif, atau desimal ditolak seketika oleh Zod dan database constraint.
+- **Pencegahan Overdraft (Anti-Stockout)**: Mutasi keluar (*Stock OUT*) yang melebihi stok tersedia ditolak seketika (`INSUFFICIENT_STOCK`).
+- **Transaksi Keranjang Multi-Item Atomik (`/transactions`)**:
+  - Pengguna dapat menyusun daftar mutasi multi-produk (1–100 item) dalam satu keranjang.
+  - Dieksekusi melalui PostgreSQL RPC `record_batch_stock_movements` dengan *ordered pessimistic row locking* (`FOR UPDATE`).
+  - **Garansi All-or-Nothing ACID**: Jika salah satu produk dalam batch mengalami overdraft atau error, seluruh transaksi di-rollback secara otomatis tanpa mutasi parsial.
+- **Mutasi Tunggal Cepat (`/movements`)**: Dialog mutasi langsung pada tabel inventaris untuk operasional harian.
 
-### 4. Modul D — Riwayat & Penelusuran (Traceability)
-- **Tabel Riwayat Komprehensif**: Menampilkan Timestamp (terformat lokal), SKU & Nama Produk, Tipe Mutasi (`IN` hijau / `OUT` merah), Kuantitas, Transisi Stok (`Stok Sebelum → Stok Sesudah`), Pengguna Eksekutor, dan Catatan/Referensi Operasional.
-- **Filter Interaktif**: Pencarian dinamis multi-atribut (SKU/Nama/Catatan), filter tipe pergerakan (Semua, Masuk, Keluar), dan filter rentang tanggal ISO.
-- **Responsive Table & Card Layout**: Tampilan tabel komprehensif pada desktop dan kartu modular pada layar seluler.
+### Modul D — Riwayat Buku Besar Persediaan (Traceability Ledger)
+- **Buku Besar Lengkap**: Menampilkan waktu terformat lokal, SKU, Nama Produk, Tipe Mutasi (`IN` hijau / `OUT` merah), Kuantitas, Transisi Stok (`Stok Sebelum → Stok Sesudah`), Pengguna Eksekutor, dan Catatan Dokumen Referensi / Nomor Batch.
+- **Pencarian & Pemfilteran Komprehensif**: Filter SKU/Nama/Catatan, filter tipe pergerakan, dan filter rentang tanggal ISO.
+- **Tampilan Responsif**: Mode tabel desktop dan mode kartu modular pada layar seluler (390px).
 
-### 5. Modul E — Ringkasan Inventaris (Dashboard KPIs)
-- **Total SKU Unik**: Jumlah item aktif dalam katalog (30 SKU).
-- **Total Unit Stok**: Akumulasi stok fisik aktual di gudang (1.648 unit).
-- **Barang Low Stock**: Penandaan otomatis item dengan stok di bawah ambang batas kritis ($< 5$ unit) beserta kartu pantau *Low Stock Watchlist*.
-- **Estimasi Nilai Persediaan**: Valuasi aktual persediaan berbasis akumulasi $\sum (\text{stok} \times \text{harga})$ dalam mata uang Rupiah.
+### Modul E — Dashboard KPI, Analitik Arus & Laporan Produk
+- **Ringkasan Eksekutif KPI**: Total SKU terdaftar, Total Unit Stok Fisik, Total Valuasi Persediaan ($\sum \text{stok} \times \text{harga}$) dalam format kompak Rupiah dengan tooltip nilai presisi, serta Kartu Pantau Stok Kritis (*Low Stock Watchlist* $< 5$ unit).
+- **Visualisasi Arus Mutasi Interaktif (`/reports`)**:
+  - Grafik grouped bar chart SVG murni tanpa dependensi eksternal (`MovementFlowChart`).
+  - Pemfilteran rentang waktu dinamis: Hari Ini, 7 Hari, 30 Hari, Tahun Ini, Kustom, dan Semua Periode.
+  - Metrik periodik: Total IN, Total OUT, Net Flow, dan Total Transaksi.
+- **Analisis Pergerakan Per Produk (`/reports/products` & `/reports/products/[id]`)**:
+  - Tabel direktori produk dengan mini sparkline tren mutasi.
+  - Halaman detail produk individual yang menampilkan riwayat buku besar mutasi khusus untuk produk tersebut.
 
-### 6. Fitur Rekayasa Tambahan (Enterprise Polish)
-- **Dwibahasa Penuh (i18n)**: Dukungan Bahasa Indonesia (default) dan Bahasa Inggris melalui `next-intl`.
-- **Multi-Tema**: Mode Terang (*Light*), Gelap (*Dark*), dan Sistem (*System*) via `next-themes` dengan palet warna kontras tinggi OKLCH.
-- **Mode Audit untuk Owner**: Saat login sebagai Business Owner, tombol tindakan tulis dinonaktifkan dengan penanda visual *Mode Audit (Read-Only)*.
+### Modul F — AI Assistant Terintegrasi 9Router (`/assistant`)
+- **Draf Katalog Produk**: Mengubah nama produk atau catatan mentah menjadi draf katalog lengkap (SKU, nama, kategori, unit, estimasi harga, deskripsi, spesifikasi) dengan stok awal terkunci `0`.
+- **Refiner Deskripsi & Spesifikasi**: Menyempurnakan ringkasan teknis, mengekstraksi atribut spesifikasi, dan memformat catatan gudang.
+- **Tanya Jawab Inventaris Gudang (Q&A)**: Asisten tanya jawab interaktif yang menjawab pertanyaan operasional hanya berdasarkan data faktual gudang terkini (< 1KB payload aman).
 
 ---
 
-## Tech Stack
+## 2. Tech Stack & Arsitektur
 
-| Lapisan | Teknologi | Alasan Pemilihan & Catatan |
+| Lapisan / Komponen | Teknologi | Keterangan & Rationale |
 | :--- | :--- | :--- |
-| **Framework** | Next.js 16 (App Router) | Server Components, Server Actions, Partial Prerendering, Turbopack. |
-| **Bahasa** | TypeScript (Strict Mode) | Type-safety mutlak, zero `any` pada domain logic. |
-| **Styling** | Tailwind CSS v4 | Engine CSS v4 berbasis token tema modern `@theme inline`. |
-| **UI Components** | shadcn/ui & Radix UI | Komponen aksesibel, responsif, dialog modal, dan primitives. |
-| **Database** | PostgreSQL (Supabase Cloud) | Transaksi ACID, Row-Level Security, RPC Functions, Triggers. |
-| **Auth** | Supabase Auth (`@supabase/ssr`) | SSR cookie-based authentication yang stateless dan aman. |
-| **Internationalization** | `next-intl` | Arsitektur dictionary bilingual (ID & EN) tersinkronisasi. |
-| **Theming** | `next-themes` | Manajemen tema tanpa kedipan flash dengan persistensi local storage. |
-| **Validation** | Zod + React Hook Form | Skema validasi tunggal yang dibagikan antara form client dan server action. |
-| **Testing** | Vitest 3 | 197 tes otomatis (unit & live integration test suite). |
-| **Package Manager** | npm | Manajer paket tunggal yang divalidasi. |
+| **Framework** | Next.js 16.4.0 (App Router) | Server Components, Server Actions, Partial Prerendering, Turbopack Engine. |
+| **Bahasa** | TypeScript 5 (Strict Mode) | Strict type-safety, zero `any` pada domain logic, interface lengkap. |
+| **Styling** | Tailwind CSS v4 | Engine CSS v4 modern berbasis `@theme inline` dan CSS variables. |
+| **UI Components** | shadcn/ui & Radix UI | Komponen aksesibel, WCAG compliant, fokus trap, dan responsive sheet/dialog. |
+| **Database** | PostgreSQL 15+ (Supabase) | Transaksi ACID, RLS Policies, Database Triggers, Atomic RPC Stored Procedures. |
+| **Auth** | Supabase Auth (`@supabase/ssr`) | SSR cookie-based stateless authentication, aman dari XSS/CSRF. |
+| **Storage** | Supabase Storage (`product-images`) | Bucket publik untuk aset gambar produk dengan RLS upload khusus admin. |
+| **Internationalization** | `next-intl` | Arsitektur bilingual dictionary (ID default, EN) tersinkronisasi 1:1. |
+| **Theming** | `next-themes` | Mode Terang, Gelap, dan Sistem tanpa efek flash dengan token OKLCH. |
+| **Validation** | Zod + React Hook Form | Single source of truth skema validasi antara input form dan Server Action. |
+| **AI Gateway** | 9Router OpenAI-Compatible | Gateway AI privat di `https://router.octalectzz.my.id/v1` (Model: `inventra`). |
+| **Testing** | Vitest 3.2.7 | 42 file tes otomatis (355 unit & live integration tests). |
+| **Package Manager** | npm | Manajer paket tunggal resmi (dilarang menggunakan yarn, pnpm, atau bun). |
+
+### Arsitektur Berlapis (Layered Architecture)
+
+```
+┌────────────────────────────────────────────────────────┐
+│                   PRESENTATION LAYER                   │
+│   Server/Client Components, Layouts, shadcn/ui,        │
+│   React Hook Form, next-intl, next-themes              │
+├────────────────────────────────────────────────────────┤
+│                   APPLICATION LAYER                    │
+│   Server Actions (src/app/actions/*), Middleware,      │
+│   Zod Schemas (src/schemas/*), Auth Guards             │
+├────────────────────────────────────────────────────────┤
+│                     SERVICE LAYER                      │
+│   Business Domain Logic, Analytics Calculations,       │
+│   9Router AI Client, Data Orchestrators                │
+├────────────────────────────────────────────────────────┤
+│                   DATA ACCESS LAYER                    │
+│   Supabase Server Client, Row-Level Security (RLS),    │
+│   PostgreSQL RPC (record_batch_stock_movements)        │
+└────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## Prasyarat & Instalasi
+## 3. Persyaratan Lingkungan & Versi Runtime
 
-### Prasyarat Sistem
-- **Node.js**: Versi 20+ LTS (diuji pada v24.21.0 dan v20.x).
+- **Node.js**: Versi 20+ LTS (diuji pada v20.x dan v24.x LTS).
 - **npm**: Versi 9+ atau 10+.
 - **Git**: Versi 2.30+.
-- Koneksi internet untuk sinkronisasi ke Supabase Cloud.
+- **Koneksi Internet**: Diperlukan untuk komunikasi dengan Supabase Cloud dan 9Router AI Gateway.
+- **Sistem Operasi**: Windows, macOS, atau Linux.
 
-### Langkah Instalasi
+---
+
+## 4. Cara Instalasi & Menjalankan Aplikasi
 
 ```bash
-# 1. Clone repository inventra
+# 1. Clone repository
 git clone https://github.com/OctaLectzz/erp-inventaris.git
 cd erp-inventaris
 
-# 2. Pasang seluruh dependensi resmi via npm
+# 2. Pasang dependensi menggunakan npm
 npm install
+
+# 3. Siapkan environment file
+cp .env.example .env.local
+# Edit .env.local dan isi kredensial Supabase serta 9Router Anda
+
+# 4. Jalankan server pengembangan lokal (Turbopack)
+npm run dev
+
+# 5. Akses aplikasi di browser
+# Buka http://localhost:3000
 ```
 
-> **Peringatan Penting**: Proyek ini dikonfigurasi secara eksklusif menggunakan `npm`. Dilarang menggunakan `yarn`, `pnpm`, atau `bun`.
+### Script `package.json` yang Tersedia
+
+```bash
+npm run dev           # Memulai development server lokal (Turbopack)
+npm run build         # Mengompilasi build produksi Next.js
+npm run start         # Menjalankan build produksi secara lokal
+npm run lint          # Menjalankan ESLint
+npm test              # Menjalankan seluruh test suite Vitest (unit & live)
+npm run test:unit     # Menjalankan unit test saja (tanpa live database)
+npm run test:live     # Menjalankan pengujian live integrasi database
+```
 
 ---
 
-## Konfigurasi Environment Variables
+## 5. Konfigurasi Supabase & Environment Variables
 
-Salin berkas template lingkungan `.env.example` menjadi `.env.local`:
+Salin `.env.example` menjadi `.env.local` pada root direktori:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Isi konfigurasi berikut pada `.env.local`:
+### Penjelasan Variabel Lingkungan
 
-```env
-# Application Metadata
-NEXT_PUBLIC_APP_NAME="Inventra"
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
+| Variabel | Keterangan & Lingkup | Contoh / Nilai Standar |
+| :--- | :--- | :--- |
+| `NEXT_PUBLIC_APP_NAME` | Nama aplikasi untuk display UI | `Inventra` |
+| `NEXT_PUBLIC_APP_URL` | URL basis aplikasi lokal/produksi | `http://localhost:3000` |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL endpoint proyek Supabase (Publik) | `https://your-ref.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Publishable anon key Supabase (Publik) | `eyJhbGciOi...` |
+| `SUPABASE_SERVICE_ROLE_KEY` | **SERVER-ONLY** Secret key untuk bypass RLS (seeding & admin) | `eyJhbGciOi...` |
+| `DEMO_ADMIN_EMAIL` | Email akun demo Administrator | `admin@inventra.demo` |
+| `DEMO_ADMIN_PASSWORD` | Kata sandi akun demo Administrator | `*kata-sandi-demo-anda*` |
+| `DEMO_STAFF_EMAIL` | Email akun demo Staf Gudang | `staff@inventra.demo` |
+| `DEMO_STAFF_PASSWORD` | Kata sandi akun demo Staf Gudang | `*kata-sandi-demo-anda*` |
+| `DEMO_OWNER_EMAIL` | Email akun demo Auditor / Owner | `owner@inventra.demo` |
+| `DEMO_OWNER_PASSWORD` | Kata sandi akun demo Auditor / Owner | `*kata-sandi-demo-anda*` |
+| `NINE_ROUTER_BASE_URL` | **SERVER-ONLY** Endpoint gateway 9Router | `https://router.octalectzz.my.id/v1` |
+| `NINE_ROUTER_API_KEY` | **SERVER-ONLY** Kunci otorisasi Bearer 9Router | `sk-9r-...` |
+| `NINE_ROUTER_MODEL` | **SERVER-ONLY** Model AI yang digunakan | `inventra` |
 
-# Supabase Public Configuration (Aman diekspos ke browser client)
-NEXT_PUBLIC_SUPABASE_URL="https://vwzlvsggpuvmkubkzfzp.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="<your-supabase-anon-key>"
+> **PERINGATAN KEAMANAN**: Variabel berlabel **SERVER-ONLY** tidak boleh diberi prefix `NEXT_PUBLIC_`. File `.env.local` telah terdaftar pada `.gitignore` dan tidak boleh di-commit ke dalam repositori publik.
 
-# Supabase Privileged Configuration (SERVER-ONLY — DILARANG ADA DI BROWSER)
-SUPABASE_SERVICE_ROLE_KEY="<your-supabase-service-role-key>"
+---
 
-# Demo Accounts Configuration (Digunakan untuk seed script dan test)
-DEMO_ADMIN_EMAIL="admin@inventra.demo"
-DEMO_ADMIN_PASSWORD="<your-demo-admin-password>"
-DEMO_OWNER_EMAIL="owner@inventra.demo"
-DEMO_OWNER_PASSWORD="<your-demo-owner-password>"
+## 6. Setup Basis Data & Menjalankan Migrasi
+
+Aplikasi menggunakan 6 file migrasi SQL berurutan di bawah direktori `supabase/migrations/`:
+
+```
+supabase/migrations/
+├── 20261013000001_initial_schema.sql             # Tabel profiles, products, stock_movements, constraint
+├── 20261013000002_rls_policies.sql               # RLS policies, stock immutability triggers, get_user_role
+├── 20261013000003_stock_mutation_rpc.sql         # RPC mutasi tunggal atomik (record_stock_movement)
+├── 20261014000001_categories_and_storage.sql     # Master categories, FK RESTRICT, Storage product-images
+├── 20261014000002_rbac_and_batch_transactions.sql# Konsolidasi RBAC 3-peran, RPC batch (record_batch_stock_movements)
+└── 20261015000001_website_settings_and_rbac.sql # Tabel website_settings, kebijakan RBAC sistem
 ```
 
-> **Kebijakan Keamanan**: Kunci `SUPABASE_SERVICE_ROLE_KEY` dan kata sandi asli **tidak pernah dicatat** ke dalam riwayat commit Git.
+### Cara Menjalankan Migrasi
 
----
+#### Opsi A: Menggunakan Supabase Dashboard (Direkomendasikan untuk Evaluator)
+1. Buka dashboard proyek Supabase Anda.
+2. Navigasikan ke menu **SQL Editor**.
+3. Buka dan jalankan file migrasi di atas satu per satu sesuai urutan timestamp.
 
-## Setup Basis Data Supabase & Migrasi
-
-Seluruh skema basis data tersimpan secara deklaratif dan berurutan pada direktori `supabase/migrations/`:
-
-1. `20261013000001_initial_schema.sql`: Definisi tabel `profiles`, `products`, `stock_movements`, enum peran, indeks performa, dan constraint delta matematis.
-2. `20261013000002_rls_policies.sql`: Kebijakan *Row-Level Security* (RLS) pada seluruh tabel dan fungsi trigger pelindung imutabilitas stok (`prevent_direct_stock_modification`).
-3. `20261013000003_stock_mutation_rpc.sql`: Prosedur transaksi atomik `record_stock_movement` dengan kunci baris pesimistik `FOR UPDATE`.
-
-### Cara Menjalankan Sinkronisasi Katalog (Opsional / Reset)
-Jika ingin melakukan sinkronisasi ulang 30 produk dari DummyJSON:
-
+#### Opsi B: Menggunakan Supabase CLI
 ```bash
-npx tsx scripts/sync-catalog.ts
+npx supabase login
+npx supabase link --project-ref your-project-ref
+npx supabase db push
 ```
 
 ---
 
-## Menjalankan Aplikasi Lokal
+## 7. Akun Demo & Akses Evaluator
 
-```bash
-# Jalankan development server Next.js (Turbopack)
-npm run dev
+Untuk mempermudah peninjauan assessment, sistem menyediakan **Quick-Access Demo Chips** pada formulir login (`/login`). Evaluator cukup mengklik salah satu chip untuk mengisi formulir secara otomatis dari server tanpa perlu mengetik kredensial manual:
 
-# ATAU kompilasi dan jalankan bundle produksi:
-npm run build
-npm run start
-```
-
-Akses aplikasi pada peramban Anda di: **`http://localhost:3000`**
-
----
-
-## Akun Demo & Akses Evaluator
-
-Untuk memudahkan proses evaluasi tanpa memerlukan input manual, halaman login (`/id/login`) telah dilengkapi dengan **Evaluator Quick-Login Chips**:
-
-| Tombol Evaluator | Akun / Email | Peran (*Role*) | Wewenang & Batasan Akses |
-| :--- | :--- | :--- | :--- |
-| **"Admin Gudang"** | `admin@inventra.demo` | `admin_gudang` | **Akses Penuh**: Melihat dashboard, menambah produk baru, mencatat mutasi stok (IN/OUT), melihat seluruh riwayat pergerakan. |
-| **"Business Owner"** | `owner@inventra.demo` | `owner` | **Mode Audit (Read-Only)**: Melihat dashboard metriks, melihat katalog produk, melihat riwayat mutasi. Aksi tambah produk dan mutasi stok dinonaktifkan/ditolak. |
+| Peran Sistem | Email Akun Demo | Kewenangan Utama |
+| :--- | :--- | :--- |
+| **Administrator** | `admin@inventra.demo` | **Akses Penuh**: Kelola katalog, master kategori, mutasi stok fisik, AI commit katalog, manajemen user, dan pengaturan sistem. |
+| **Staf Gudang** | `staff@inventra.demo` | **Akses Operasional**: Pencatatan mutasi stok tunggal & batch IN/OUT, draf AI (salin draf); dibatasi dari kelola katalog/kategori/laporan. |
+| **Auditor** | `auditor@inventra.demo` | **Akses Audit (Read-Only)**: Pemantauan katalog, dashboard KPI, laporan arus mutasi, riwayat ledger, dan AI Q&A; dibatasi dari mutasi fisik. |
+| *Owner (Legacy)* | `owner@inventra.demo` | Kompatibilitas mundur dengan izin setara auditor / pengawas eksekutif. |
+| *Admin Gudang (Legacy)* | `admingudang@inventra.demo` | Kompatibilitas mundur dengan izin setara administrator gudang. |
 
 ---
 
-## Menjalankan Pengujian (Quality Gates)
+## 8. Matriks Hak Akses (Role-Based Access Control)
 
-Proyek ini dilengkapi dengan rangkaian pengujian komprehensif (197 tes otomatis) yang memvalidasi integritas logika bisnis:
+| Modul / Fitur | Administrator (`administrator`) | Staf Gudang (`staff_gudang`) | Auditor (`auditor`) |
+| :--- | :---: | :---: | :---: |
+| **Dashboard & KPI Persediaan** | ✅ Baca | ✅ Baca | ✅ Baca |
+| **Katalog Produk** | ✅ Tambah / Edit / Baca | 👁️ Hanya-Baca | 👁️ Hanya-Baca |
+| **Master Kategori Produk** | ✅ Tambah / Edit / Hapus | 👁️ Hanya-Baca | 👁️ Hanya-Baca |
+| **Mutasi Stok Tunggal (`/movements`)** | ✅ Eksekusi IN / OUT | ✅ Eksekusi IN / OUT | ❌ Akses Ditolak |
+| **Transaksi Keranjang Batch (`/transactions`)** | ✅ Eksekusi Batch | ✅ Eksekusi Batch | 👁️ Simulasi (Submit Dinonaktifkan) |
+| **Buku Besar Riwayat Mutasi** | ✅ Baca Lengkap | ✅ Baca Lengkap | ✅ Baca Lengkap |
+| **Laporan & Analitik Arus (`/reports`)** | ✅ Baca & Filter | ❌ Akses Ditolak | ✅ Baca & Filter |
+| **Detail Laporan Produk (`/reports/products`)** | ✅ Baca & Filter | ❌ Akses Ditolak | ✅ Baca & Filter |
+| **AI Generator Draf Produk** | ✅ Buat & Simpan ke Katalog | ✅ Buat (Salin Clipboard) | ❌ Akses Ditolak |
+| **AI Refiner Spesifikasi** | ✅ Gunakan | ✅ Gunakan | ❌ Akses Ditolak |
+| **AI Tanya Jawab Inventaris (Q&A)** | ✅ Gunakan | ❌ Akses Ditolak | ✅ Gunakan |
+| **Manajemen Pengguna (`/users`)** | ✅ Tambah / Edit / Hapus | ❌ Akses Ditolak | ❌ Akses Ditolak |
+| **Pengaturan Sistem & Branding** | ✅ Ubah Pengaturan | ❌ Akses Ditolak | ❌ Akses Ditolak |
+
+---
+
+## 9. Menjalankan Pengujian (Quality Gates)
+
+Inventra memiliki rangkaian pengujian otomatis komprehensif menggunakan **Vitest** dengan tingkat keberhasilan **100% PASS**:
 
 ```bash
-# 1. Jalankan Unit Tests (Domain, Schema, Zod, State, Service logic)
-npm run test:unit
-# Hasil: 14 test files, 171 tests passed
+# Menjalankan seluruh test suite (unit + live integration)
+npm test
 
-# 2. Jalankan Live Integration Tests (terhadap PostgreSQL Supabase aktif)
-npm run test:live
-# Hasil: 2 test files, 26 tests passed (termasuk verifikasi RLS dan uji konkurensi)
-
-# 3. Jalankan Seluruh Test Suite (197 tests)
-npm run test
-
-# 4. Jalankan Pemeriksaan Type TypeScript Strict
+# Menjalankan pengujian TypeScript secara ketat
 npx tsc --noEmit
 
-# 5. Jalankan Linter ESLint
+# Menjalankan analisis linting kode
 npm run lint
 
-# 6. Jalankan Verifikasi Formatting Prettier
-npx prettier --check "src/**/*.{ts,tsx,css}" "tests/**/*.ts"
+# Memeriksa kepatuhan pemformatan kode Prettier
+npx prettier --check .
 
-# 7. Jalankan Kompilasi Build Produksi
+# Memverifikasi build produksi Next.js
 npm run build
 ```
 
----
+### Hasil Verifikasi Quality Gates (Batch 5)
 
-## Arsitektur & Integritas Bisnis
-
-Inventra mengadopsi **Layered Clean Architecture**:
-
-```
-Presentation Layer (Next.js App Router, shadcn/ui, Radix, Tailwind v4)
-         │
-         ▼
-Application Boundary (Server Actions: stock-actions, product-actions, auth-actions)
-         │  ├─ Validasi Skema Zod
-         │  ├─ Validasi Hak Akses (requireAuth + RBAC)
-         │  └─ Pre-flight Availability Check
-         ▼
-Service Layer (Domain Calculation, Date Parsing, Business Rules)
-         │
-         ▼
-Data Access & Security Layer (PostgreSQL Supabase, RLS, Functions, Triggers)
-   ├─ public.record_stock_movement (ACID Atomic RPC + FOR UPDATE Row Lock)
-   ├─ public.prevent_direct_stock_modification (Database Trigger)
-   └─ public.stock_movements (Append-Only Ledger)
-```
-
-### Jaminan Konkurensi & Atomisitas Mutasi
-1. Ketika mutasi masuk atau keluar dieksekusi, prosedur RPC menjalankan `SELECT stock FROM public.products WHERE id = p_product_id FOR UPDATE`.
-2. Permintaan paralel pada baris produk yang sama akan diantrekan secara berurutan (*serialized*).
-3. Pengujian live konkurensi membuktikan bahwa 3 permintaan `OUT 5` paralel pada stok `12` secara akurat menghasilkan **2 mutasi sukses** dan **1 mutasi gagal**, menyisakan stok tepat **2 unit** tanpa kebocoran data.
+- **Total Test Files**: 42 file passed (42/42).
+- **Total Tests**: 355 tests passed (355/355, 0 failed).
+- **TypeScript Static Check**: Clean (0 error).
+- **ESLint Analysis**: Clean (0 error).
+- **Prettier Code Style**: Clean (100% formatted).
+- **Turbopack Production Build**: Clean (54/54 static pages compiled successfully).
 
 ---
 
-## Sumber Data Katalog & Konversi Harga
+## 10. AI Assistant 9Router & Batasan Keamanan
 
-- **Sumber Data**: 30 produk diambil dari endpoint publik `https://dummyjson.com/products`.
-- **Konversi Kurs Mata Uang**: Mengingat harga produk pada DummyJSON dinyatakan dalam USD, sistem mengonversinya ke mata uang Rupiah (IDR) menggunakan rumus standar pasar:
-  $$\text{Harga IDR} = \text{round}(\text{DummyJSON Price USD} \times 16.000)$$
-- **Total Nilai Valuasi Awal**: Rp 6.251.910.720 (~Rp 6,25 Miliar) dari 1.648 unit persediaan.
+Fitur kecerdasan buatan terintegrasi dengan gateway **9Router** (`https://router.octalectzz.my.id/v1`) menggunakan model `inventra`. Fitur ini dirancang dengan prinsip *Defense in Depth*:
 
----
-
-## Keamanan & Pembatasan Akses (RBAC & RLS)
-
-1. **Zero Client Trust**: Hak akses tidak pernah ditentukan semata-mata oleh atribut browser. Server Actions dan PostgreSQL RPC mengekstrak identitas pengguna dari JWT session yang sah via `auth.uid()`.
-2. **Keterisolasian Service Role**: Kunci `SUPABASE_SERVICE_ROLE_KEY` memiliki penanda `import 'server-only'` di `src/lib/supabase/admin.ts` dan tidak pernah disertakan ke dalam bundel JavaScript client.
-3. **Imutabilitas Buku Besar**: Hak `INSERT/UPDATE/DELETE` langsung pada tabel `stock_movements` dicabut dari semua peran operasional. Riwayat mutasi bersifat *append-only* murni.
+1. **Server-Only Execution**: Klien HTTP 9Router (`src/lib/ai/nine-router-client.ts`) dilindungi oleh direktif `import 'server-only'`. Kunci API tidak pernah bocor ke bundel browser.
+2. **Stock Immutability Guard**: Draf produk yang dihasilkan AI memiliki stok default `0`. Penyimpanan produk baru mendelegasikan ke `createProductAction` yang mengabaikan atribut stok.
+3. **No Direct Database Writes**: Asisten AI tidak memiliki wewenang atau jalur langsung untuk mengubah tabel atau mengeksekusi mutasi stok.
+4. **Sliding-Window Rate Limiting**: Mekanisme pembatas laju panggilan membatasi maksimal 10 permintaan per menit per sesi pengguna (`checkAiRateLimit`).
+5. **Prompt Injection Neutralization**: Input pengguna disanitasi dari karakter kontrol dan dibungkus dalam delimiter khusus `<<<USER_DATA>>>` dan `<<<INVENTORY_CONTEXT>>>`.
+6. **Output Schema Validation**: Respons JSON dari AI diparsing dan divalidasi ketat menggunakan skema Zod sebelum ditampilkan ke antarmuka pengguna.
+7. **Pembersihan Error**: Seluruh pesan kesalahan sistem internal disanitasi (`sanitizeAiErrorMessage`) sehingga tidak membocorkan stack trace atau URL gateway ke pengguna.
 
 ---
 
-## Batasan yang Diketahui
+## 11. Panduan Demonstrasi Lokal (Evaluator Walkthrough)
 
-1. **Traceability Bukan Legal Audit Log**: Sesuai brief uji ("Traceability di tes ini adalah riwayat untuk penelusuran, bukan audit trail yang aman dari perubahan forensik"), riwayat mutasi difokuskan pada penelusuran operasional gudang.
-2. **Gambar Produk**: Menggunakan URL thumbnail publik langsung dari DummyJSON CDN tanpa penyimpanan lokal bucket S3/Supabase Storage.
-3. **Integrasi AI (Modul F)**: Modul F dialokasikan sebagai fitur penyempurnaan opsional (Phase 10). Berdasarkan ketentuan resmi brief: *"Tidak mengerjakan tidak mengurangi nilai."*
+Evaluator dapat menguji fungsionalitas utama aplikasi dalam 5–10 menit:
 
----
-
-## Transparansi Penggunaan AI (AI Usage Disclosure)
-
-Sesuai instruksi Bagian 5 pada berkas acuan `Take_Home_Test_FSE.pdf`:
-
-### 1. Bagaimana AI Digunakan
-AI Coding Assistant (Antigravity) digunakan sebagai mitra *pair-programming* untuk:
-- Merancang dokumentasi arsitektur bertahap (PRD, Arsitektur, Skema DB, API, Standar Keamanan).
-- Melakukan scaffolding komponen UI berbasis shadcn/ui dan Tailwind CSS v4.
-- Menyusun skrip uji komprehensif Vitest dan pengujian konkurensi database live.
-- Menjalankan audit kepatuhan regresi dan verifikasi otomatis via browser subagent.
-
-### 2. Apa yang Diperiksa oleh Insinyur / Developer
-- Memeriksa kebenaran formula matematika mutasi stok dan ambang batas *low stock* ($< 5$).
-- Memvalidasi skrip migrasi SQL dan memastikan isolasi RLS tidak memiliki kebocoran akses.
-- Memverifikasi bahwa tidak ada kunci rahasia (*secret keys*) yang bocor ke bundle client browser.
-- Meninjau diff Git secara teliti sebelum melakukan finalisasi pekerjaan.
-
-### 3. Contoh Nyata Kekeliruan AI dan Penanganannya
-- **Kekeliruan AI**: Saat menghubungkan tabel `stock_movements` dengan profil pengguna untuk menampilkan nama pembuat mutasi di tabel riwayat, AI mencoba menulis kueri Supabase relasional `.select('*, profiles(*)')`. PostgREST langsung menolak kueri tersebut dengan error schema cache, karena relasi foreign key `user_id` di database mengarah ke tabel `auth.users(id)` (bukan langsung `public.profiles(id)`).
-- **Penanganan Mandiri**: Developer mendeteksi penolakan ini, menolak opsi merusak skema migrasi database yang sudah berjalan, dan merevisi logika data access di `src/services/stock-movement-service.ts` agar mengambil data riwayat dan memetakan atribut nama serta peran pengguna secara aman di lapisan service application. Solusi ini diverifikasi melalui unit test `tests/unit/stock-movement-service.test.ts` yang lulus 100%.
+1. **Jalankan Aplikasi**: Pastikan server berjalan via `npm run dev` dan buka `http://localhost:3000`.
+2. **Skenario 1 — Login sebagai Administrator**:
+   - Di halaman `/login`, klik chip **Administrator** dan tekan **Masuk ke Sistem**.
+   - Buka menu **Katalog Produk** (`/inventory`): coba tambah produk baru (perhatikan bahwa input stok awal tidak tersedia; produk baru selalu dimulai dari stok 0).
+   - Buka menu **Transaksi Mutasi** (`/transactions`): pilih beberapa produk, masukkan kuantitas IN, beri catatan referensi, dan klik **Eksekusi Transaksi Atomik**. Stok produk akan bertambah secara instan.
+   - Buka menu **AI Asisten** (`/assistant/draft`): masukkan prompt nama produk (misal: "Minyak Kayu Putih 100ml"), klik buat draf, lalu simpan ke katalog.
+3. **Skenario 2 — Uji Pencegahan Overdraft & All-or-Nothing**:
+   - Di menu `/transactions`, pilih tipe **Stock OUT**.
+   - Masukkan kuantitas yang sengaja melebihi stok tersedia untuk salah satu item.
+   - Sistem akan memblokir submit pada antarmuka, dan PostgreSQL RPC akan menolak transaksi secara all-or-nothing jika dipaksakan.
+4. **Skenario 3 — Login sebagai Auditor**:
+   - Lakukan logout, lalu pada `/login` klik chip **Auditor** dan tekan masuk.
+   - Buka `/inventory`: perhatikan tombol tambah produk dan tombol aksi edit dinonaktifkan dengan banner *Mode Pantau (Read-Only)*.
+   - Buka `/transactions`: perhatikan tombol submit mutasi dinonaktifkan dengan peringatan hak akses.
+   - Buka `/reports`: amati grafik arus pergerakan mutasi SVG dan filter periode interaktif.
+   - Buka `/assistant/qa`: tanyakan status stok barang gudang (misal: "Produk apa saja yang stoknya di bawah 5 unit?").
 
 ---
 
-## Indeks Dokumentasi Proyek
+## 12. Batasan Fitur, Asumsi & Pekerjaan Lanjutan
 
-Dokumentasi teknis lengkap tersedia di direktori `docs/`:
+### Batasan Eksplisit (Out of Scope)
+Sesuai arahan spesifikasi teknis, fitur-fitur berikut **eksplisit berada di luar cakupan**:
+- Modul Point of Sale (POS) dan mesin kasir.
+- Checkout belanja publik dan pesanan pelanggan (*customer orders*).
+- Pembayaran, pencatatan kas, dan jurnal akuntansi finansial umum.
 
-| Dokumen | Deskripsi & Isi Dokumen |
+### Asumsi & Catatan Teknis
+- **AI Rate Limiter**: Rate limiter saat ini berjalan secara in-memory. Pada penyebaran serverless terdistribusi multi-instans (misal: banyak lambda Vercel), sinkronisasi global membutuhkan Redis/Upstash terpusat.
+- **Penyimpanan Gambar**: Membutuhkan bucket Supabase Storage bernama `product-images` dengan batas ukuran 2MB.
+
+---
+
+## 13. Transparansi Penggunaan AI (AI Usage Disclosure)
+
+Sesuai instruksi transparansi take-home test:
+- **Pengembangan Proyek**: Pengembang menggunakan agentic AI coding assistants (Google DeepMind Antigravity) sebagai partner pair-programming untuk arsitektur berlapis, pembuatan test case, dan penulisan dokumentasi teknis.
+- **Fitur Aplikasi**: Fitur AI Assistant di dalam aplikasi diintegrasikan secara langsung dengan gateway **9Router** privat kandidat (`https://router.octalectzz.my.id/v1`) menggunakan model `inventra`.
+- Seluruh kode, skema basis data, constraint SQL, dan logika bisnis telah diaudit, divalidasi, dan diuji secara empiris dengan 355 pengujian otomatis.
+
+---
+
+## 14. Indeks Dokumentasi Proyek
+
+Dokumentasi teknis mendalam tersusun terstruktur di dalam direktori `docs/`:
+
+| Dokumen | Deskripsi & Isi |
 | :--- | :--- |
-| [AGENTS.md](../AGENTS.md) | Pedoman utama agen coding, arsitektur, dan ringkasan status implementasi. |
-| [docs/PRD.md](./PRD.md) | Product Requirements Document, persona pengguna, dan batasan cakupan sistem. |
-| [docs/ARCHITECTURE.md](./ARCHITECTURE.md) | Detail arsitektur berlapis, Server Components, dan diagram alur mutasi stok. |
-| [docs/DESIGN.md](./DESIGN.md) | Desain visual, palet warna brand (Deep Navy, Electric Teal), dan tipografi. |
-| [docs/SECURITY.md](./SECURITY.md) | Kebijakan keamanan data, audit RLS, dan matriks hak akses RBAC. |
-| [docs/DATABASE.md](./DATABASE.md) | Skema tabel relasional PostgreSQL, indeks, trigger, dan RPC atomik. |
-| [docs/API.md](./API.md) | Kontrak antarmuka Server Actions dan envelope respons `{ success, data, error }`. |
-| [docs/TESTING.md](./TESTING.md) | Strategi pengujian unit, live integration, dan matriks skenario batas. |
-| [docs/DEPLOYMENT.md](./DEPLOYMENT.md) | Panduan deployment ke Vercel dan Supabase Cloud. |
-| [docs/reports/Phase 9 - Final QA and Submission/requirements_traceability_matrix.md](./reports/Phase%209%20-%20Final%20QA%20and%20Submission/requirements_traceability_matrix.md) | Matriks penelusuran seluruh persyaratan take-home test (100% PASS). |
-| [docs/reports/Phase 9 - Final QA and Submission/security_review.md](./reports/Phase%209%20-%20Final%20QA%20and%20Submission/security_review.md) | Laporan audit keamanan 10 kontrol. |
-| [docs/reports/Phase 9 - Final QA and Submission/submission_checklist.md](./reports/Phase%209%20-%20Final%20QA%20and%20Submission/submission_checklist.md) | Lembar periksa deliverable dan skenario uji submission. |
-| [docs/reports/Phase 9 - Final QA and Submission/phase9_final_qa_report.md](./reports/Phase%209%20-%20Final%20QA%20and%20Submission/phase9_final_qa_report.md) | Laporan akhir komprehensif penjaminan kualitas Phase 9. |
+| [docs/PRD.md](docs/PRD.md) | Product Requirements Document, persona, dan JTBD. |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Arsitektur sistem monolit modular, Server Actions, dan alur data. |
+| [docs/DATABASE.md](docs/DATABASE.md) | Skema PostgreSQL, indeks, trigger, RLS, dan RPC procedures. |
+| [docs/SECURITY.md](docs/SECURITY.md) | Kebijakan keamanan, otorisasi sesi, proteksi stok, dan RLS matrix. |
+| [docs/DESIGN.md](docs/DESIGN.md) | Desain antarmuka, token warna HSL/OKLCH, tipografi, dan tema. |
+| [docs/TESTING.md](docs/TESTING.md) | Strategi pengujian otomatis, matriks edge-case, dan evaluasi Vitest. |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Prosedur build produksi dan panduan deployment Vercel. |
+| [docs/API.md](docs/API.md) | Kontrak antarmuka Server Actions dan amplop respons. |
+| [docs/reports/](docs/reports/) | Laporan audit lengkap tiap batch (Batch 0–5). |

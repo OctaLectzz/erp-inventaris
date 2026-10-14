@@ -1,7 +1,7 @@
 'use client'
 
-import { AlertCircle, AlertTriangle, Loader2, Trash2 } from 'lucide-react'
 import { useState, useTransition } from 'react'
+import { AlertCircle, AlertTriangle, Loader2, Trash2 } from 'lucide-react'
 
 import { deleteUserAction } from '@/app/actions/user-actions'
 import { Button } from '@/components/ui/button'

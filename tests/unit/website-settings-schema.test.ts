@@ -1,5 +1,6 @@
-import { websiteSettingsSchema } from '@/schemas/website-settings-schema'
 import { describe, expect, it } from 'vitest'
+
+import { websiteSettingsSchema } from '@/schemas/website-settings-schema'
 
 describe('Website Settings Schema Validation', () => {
   it('validates a complete, valid website settings payload', () => {

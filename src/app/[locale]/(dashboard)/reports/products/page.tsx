@@ -1,8 +1,8 @@
-import { ArrowLeft, LineChart, Package } from 'lucide-react'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
+import { ArrowLeft, LineChart, Package } from 'lucide-react'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { Button } from '@/components/ui/button'
 import { ProductReportTable } from '@/features/reports/product-report-table'

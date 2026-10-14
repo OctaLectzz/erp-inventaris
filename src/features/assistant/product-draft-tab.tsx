@@ -1,8 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { AlertCircle, Loader2, Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
 
 import { generateProductDraftAction } from '@/app/actions/ai-actions'
 import { Button } from '@/components/ui/button'

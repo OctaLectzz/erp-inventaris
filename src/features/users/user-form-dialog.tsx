@@ -1,11 +1,9 @@
 'use client'
 
+import { useEffect, useState, useTransition } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, Loader2, Lock, Mail, User } from 'lucide-react'
-import { useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
-
-import type { Resolver } from 'react-hook-form'
 
 import { createUserAction, updateUserAction } from '@/app/actions/user-actions'
 import { Button } from '@/components/ui/button'
@@ -15,6 +13,7 @@ import { Label } from '@/components/ui/label'
 import { userInputSchema, userUpdateSchema } from '@/schemas/user-schema'
 
 import type { UserProfile } from '@/types/auth'
+import type { Resolver } from 'react-hook-form'
 
 interface UserFormValues {
   id?: string

@@ -1,7 +1,7 @@
-import { Users } from 'lucide-react'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
+import { Users } from 'lucide-react'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { UserTable } from '@/features/users/user-table'
 import { createAdminClient } from '@/lib/supabase/admin'

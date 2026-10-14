@@ -19,6 +19,7 @@
   "priceMustBeInteger": "Harga harus berupa bilangan bulat.",
   "priceMustBeNonNegative": "Harga tidak boleh bernilai negatif.",
   "imageUrlInvalid": "URL gambar harus berupa URL web yang valid.",
+  "imageUrlInvalidScheme": "URL gambar harus menggunakan protokol http:// atau https://.",
   "invalidProductId": "ID produk tidak valid.",
   "skuDuplicate": "SKU ini sudah terdaftar dalam sistem. Gunakan kode SKU yang berbeda.",
   "forbiddenOwner": "Operasi ini hanya diizinkan untuk peran Admin Gudang.",

@@ -47,7 +47,7 @@ export function MovementFilters({
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           {/* Search Input */}
           <div className="relative flex-1">
-            <Search className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Search className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" aria-hidden="true" />
             <Input
               placeholder={t('movements.searchPlaceholder')}
               value={searchQuery}
@@ -60,11 +60,11 @@ export function MovementFilters({
           <div className="flex flex-wrap items-center gap-2.5">
             {/* Type Filter */}
             <div className="flex items-center gap-1.5">
-              <Filter className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+              <Filter className="text-muted-foreground h-3.5 w-3.5" aria-hidden="true" />
               <select
                 value={selectedType}
                 onChange={(e) => onTypeChange(e.target.value as 'ALL' | 'IN' | 'OUT')}
-                className="h-9 rounded-md border border-input bg-background px-2.5 text-xs text-foreground shadow-xs focus:ring-1 focus:outline-hidden"
+                className="border-input bg-background text-foreground h-9 rounded-md border px-2.5 text-xs shadow-xs focus:ring-1 focus:outline-hidden"
                 aria-label="Filter tipe mutasi"
               >
                 <option value="ALL">{t('movements.allTypes')}</option>
@@ -75,7 +75,7 @@ export function MovementFilters({
 
             {/* Start Date */}
             <div className="flex items-center gap-1.5">
-              <Calendar className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+              <Calendar className="text-muted-foreground h-3.5 w-3.5" aria-hidden="true" />
               <Input
                 type="date"
                 value={startDate}
@@ -87,7 +87,7 @@ export function MovementFilters({
 
             {/* End Date */}
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground">-</span>
+              <span className="text-muted-foreground text-xs">-</span>
               <Input
                 type="date"
                 value={endDate}
@@ -102,7 +102,7 @@ export function MovementFilters({
               <Button
                 size="sm"
                 onClick={onOpenMutationDialog}
-                className="h-9 gap-1.5 bg-primary text-xs text-primary-foreground shadow-xs hover:bg-primary/90"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 gap-1.5 text-xs shadow-xs"
               >
                 <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>{t('movements.recordMutation')}</span>
@@ -112,7 +112,7 @@ export function MovementFilters({
         </div>
 
         {/* Results Summary & Active Filters */}
-        <div className="mt-3 flex items-center justify-between border-t pt-2.5 text-xs text-muted-foreground">
+        <div className="text-muted-foreground mt-3 flex items-center justify-between border-t pt-2.5 text-xs">
           <span>
             {t('movements.showingResults', {
               count: showingCount,
@@ -120,7 +120,7 @@ export function MovementFilters({
             })}
           </span>
           {hasActiveFilters && (
-            <Button variant="ghost" size="xs" onClick={onReset} className="h-6 gap-1 text-[11px] text-primary hover:underline">
+            <Button variant="ghost" size="xs" onClick={onReset} className="text-primary h-6 gap-1 text-[11px] hover:underline">
               <RotateCcw className="h-3 w-3" aria-hidden="true" />
               <span>{t('movements.resetFilter')}</span>
             </Button>

@@ -19,6 +19,7 @@
   "priceMustBeInteger": "Price must be a whole integer.",
   "priceMustBeNonNegative": "Price cannot be negative.",
   "imageUrlInvalid": "Image URL must be a valid web URL.",
+  "imageUrlInvalidScheme": "Image URL must use http:// or https:// protocol.",
   "invalidProductId": "Invalid product ID.",
   "skuDuplicate": "This SKU is already registered in the system. Please use a unique SKU code.",
   "forbiddenOwner": "This operation is only allowed for the Warehouse Admin role.",

@@ -1,10 +1,10 @@
 'use client'
 
-import { Boxes, ChevronRight, Menu, Package, Shield, UserCheck } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { Boxes, ChevronRight, Menu, Package, Shield, UserCheck } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
 import { getSidebarMenuGroups } from '@/components/shared/sidebar-nav-items'

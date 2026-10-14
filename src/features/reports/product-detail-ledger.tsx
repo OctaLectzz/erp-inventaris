@@ -1,8 +1,8 @@
 'use client'
 
+import * as React from 'react'
 import { ArrowDownRight, ArrowUpRight, Filter, PackageX } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import * as React from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -57,18 +57,18 @@ export function ProductDetailLedger({ movements, locale }: ProductDetailLedgerPr
   return (
     <Card className="border-border">
       <CardHeader className="flex flex-row items-center justify-between p-4 pb-3">
-        <CardTitle className="text-sm font-bold text-foreground">{t('reports.movementHistory')}</CardTitle>
+        <CardTitle className="text-foreground text-sm font-bold">{t('reports.movementHistory')}</CardTitle>
 
         {/* Type Filter */}
         <div className="flex items-center gap-1.5">
-          <Filter className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+          <Filter className="text-muted-foreground h-3.5 w-3.5" aria-hidden="true" />
           <select
             value={typeFilter}
             onChange={(e) => {
               setTypeFilter(e.target.value as 'ALL' | 'IN' | 'OUT')
               setCurrentPage(1)
             }}
-            className="h-8 rounded-md border border-input bg-background px-2.5 text-xs text-foreground shadow-xs focus:ring-1 focus:outline-hidden"
+            className="border-input bg-background text-foreground h-8 rounded-md border px-2.5 text-xs shadow-xs focus:ring-1 focus:outline-hidden"
             aria-label="Filter jenis mutasi"
           >
             <option value="ALL">Semua Jenis</option>
@@ -81,15 +81,15 @@ export function ProductDetailLedger({ movements, locale }: ProductDetailLedgerPr
       <CardContent className="p-0">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-8 text-center">
-            <PackageX className="mb-2 h-8 w-8 text-muted-foreground" aria-hidden="true" />
-            <p className="text-xs font-semibold text-foreground">{t('reports.emptyProductMovements')}</p>
+            <PackageX className="text-muted-foreground mb-2 h-8 w-8" aria-hidden="true" />
+            <p className="text-foreground text-xs font-semibold">{t('reports.emptyProductMovements')}</p>
           </div>
         ) : (
           <>
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-left text-xs">
                 <thead>
-                  <tr className="border-y border-border bg-muted/40 font-semibold text-muted-foreground">
+                  <tr className="border-border bg-muted/40 text-muted-foreground border-y font-semibold">
                     <th className="px-4 py-2.5">Waktu Transaksi</th>
                     <th className="px-4 py-2.5 text-center">Tipe</th>
                     <th className="px-4 py-2.5 text-right">Kuantitas</th>
@@ -97,12 +97,12 @@ export function ProductDetailLedger({ movements, locale }: ProductDetailLedgerPr
                     <th className="px-4 py-2.5">Catatan / Referensi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border">
+                <tbody className="divide-border divide-y">
                   {paginated.map((m) => {
                     const isIn = m.type === 'IN'
                     return (
-                      <tr key={m.id} className="transition-colors hover:bg-muted/30">
-                        <td className="px-4 py-3 font-mono text-[11px] whitespace-nowrap text-muted-foreground">{formatDateTime(m.created_at)}</td>
+                      <tr key={m.id} className="hover:bg-muted/30 transition-colors">
+                        <td className="text-muted-foreground px-4 py-3 font-mono text-[11px] whitespace-nowrap">{formatDateTime(m.created_at)}</td>
                         <td className="px-4 py-3 text-center whitespace-nowrap">
                           {isIn ? (
                             <Badge variant="default" className="gap-1 bg-emerald-600/90 text-[10px] text-white">
@@ -123,10 +123,10 @@ export function ProductDetailLedger({ movements, locale }: ProductDetailLedgerPr
                         </td>
                         <td className="px-4 py-3 text-center font-mono text-xs whitespace-nowrap">
                           <span className="text-muted-foreground">{m.stock_before}</span>
-                          <span className="mx-1 text-muted-foreground/60">→</span>
-                          <span className="font-bold text-foreground">{m.stock_after}</span>
+                          <span className="text-muted-foreground/60 mx-1">→</span>
+                          <span className="text-foreground font-bold">{m.stock_after}</span>
                         </td>
-                        <td className="max-w-sm px-4 py-3 text-xs text-muted-foreground">
+                        <td className="text-muted-foreground max-w-sm px-4 py-3 text-xs">
                           <p className="line-clamp-2">{m.note}</p>
                         </td>
                       </tr>

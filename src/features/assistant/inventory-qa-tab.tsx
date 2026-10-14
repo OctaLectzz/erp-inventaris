@@ -1,8 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { Bot, HelpCircle, Loader2, Send, Trash2, User } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
 
 import { askInventoryQuestionAction } from '@/app/actions/ai-actions'
 import { Button } from '@/components/ui/button'

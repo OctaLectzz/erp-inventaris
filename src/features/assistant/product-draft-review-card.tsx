@@ -1,8 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { AlertCircle, Check, Copy, Info, PlusCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
 
 import { createProductAction } from '@/app/actions/product-actions'
 import { Badge } from '@/components/ui/badge'

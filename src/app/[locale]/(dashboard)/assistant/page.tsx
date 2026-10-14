@@ -1,6 +1,6 @@
-import { setRequestLocale } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
+import { setRequestLocale } from 'next-intl/server'
 
 import { requireAuth } from '@/services/auth-service'
 import { canUseAiOps, canUseAiQa } from '@/types/auth'

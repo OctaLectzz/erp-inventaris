@@ -76,7 +76,14 @@ export const productInputSchema = z.object({
   price: z.number().int({ message: 'priceMustBeInteger' }).nonnegative({ message: 'priceMustBeNonNegative' }),
   stock: z.number().int({ message: 'stockMustBeInteger' }).nonnegative({ message: 'stockMustBeNonNegative' }),
   description: z.string().nullable().optional(),
-  imageUrl: z.string().url({ message: 'imageUrlInvalid' }).nullable().optional()
+  imageUrl: z
+    .string()
+    .url({ message: 'imageUrlInvalid' })
+    .refine((val) => !val || val.startsWith('https://') || val.startsWith('http://'), {
+      message: 'imageUrlInvalidScheme'
+    })
+    .nullable()
+    .optional()
 })
 
 export type ProductInput = z.infer<typeof productInputSchema>
@@ -104,6 +111,9 @@ export const productCatalogInputSchema = z.object({
     .union([z.string().trim().url({ message: 'imageUrlInvalid' }), z.literal('')])
     .nullable()
     .optional()
+    .refine((val) => !val || val.startsWith('https://') || val.startsWith('http://'), {
+      message: 'imageUrlInvalidScheme'
+    })
 })
 
 export type ProductCatalogInput = z.infer<typeof productCatalogInputSchema>

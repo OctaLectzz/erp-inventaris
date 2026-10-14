@@ -122,11 +122,11 @@ export async function createProductAction(input: ProductCatalogInput, locale = '
       data: toProduct(insertedRow)
     }
   } catch (err) {
-    const errMsg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat menyimpan produk'
+    console.error('Error in createProductAction:', err)
     return {
       success: false,
       error: 'INTERNAL_ERROR',
-      message: errMsg
+      message: 'Terjadi kesalahan sistem saat menyimpan produk. Silakan coba kembali.'
     }
   }
 }
@@ -241,11 +241,11 @@ export async function updateProductAction(input: ProductCatalogUpdate, locale = 
       data: toProduct(updatedRow)
     }
   } catch (err) {
-    const errMsg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat memperbarui produk'
+    console.error('Error in updateProductAction:', err)
     return {
       success: false,
       error: 'INTERNAL_ERROR',
-      message: errMsg
+      message: 'Terjadi kesalahan sistem saat memperbarui informasi produk. Silakan coba kembali.'
     }
   }
 }

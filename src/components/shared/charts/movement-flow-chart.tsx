@@ -45,7 +45,7 @@ export function MovementFlowChart({
     <Card className={cn('border-border shadow-2xs', className)}>
       <CardHeader className="flex flex-col gap-2 pb-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <CardTitle className="text-sm font-bold text-foreground">{title}</CardTitle>
+          <CardTitle className="text-foreground text-sm font-bold">{title}</CardTitle>
           <CardDescription className="text-xs">{subtitle}</CardDescription>
         </div>
 
@@ -66,19 +66,19 @@ export function MovementFlowChart({
         {/* Active Tooltip Banner */}
         <div className="min-h-[1.75rem] pb-2 text-xs">
           {activeBucket ? (
-            <div className="inline-flex items-center gap-3 rounded-md border border-border bg-muted/40 px-2.5 py-1">
-              <span className="font-semibold text-foreground">{activeBucket.label}:</span>
+            <div className="border-border bg-muted/40 inline-flex items-center gap-3 rounded-md border px-2.5 py-1">
+              <span className="text-foreground font-semibold">{activeBucket.label}:</span>
               <span className="font-medium text-teal-600 dark:text-teal-400">+{activeBucket.inQuantity} IN</span>
               <span className="font-medium text-rose-600 dark:text-rose-400">-{activeBucket.outQuantity} OUT</span>
               <span className="text-muted-foreground">(Net: {activeBucket.netFlow > 0 ? `+${activeBucket.netFlow}` : activeBucket.netFlow})</span>
             </div>
           ) : (
-            <p className="text-[11px] text-muted-foreground">Arahkan kursor pada batang grafik untuk rincian kuantitas.</p>
+            <p className="text-muted-foreground text-[11px]">Arahkan kursor pada batang grafik untuk rincian kuantitas.</p>
           )}
         </div>
 
         {!hasData ? (
-          <div className="flex h-[160px] flex-col items-center justify-center rounded-lg border border-dashed text-xs text-muted-foreground">
+          <div className="text-muted-foreground flex h-[160px] flex-col items-center justify-center rounded-lg border border-dashed text-xs">
             <p>{emptyMessage}</p>
           </div>
         ) : (

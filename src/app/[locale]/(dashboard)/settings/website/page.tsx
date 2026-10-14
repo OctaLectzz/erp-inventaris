@@ -1,7 +1,7 @@
-import { Globe } from 'lucide-react'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
+import { Globe } from 'lucide-react'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { WebsiteSettingsForm } from '@/features/settings/website-settings-form'
 import { createClient } from '@/lib/supabase/server'

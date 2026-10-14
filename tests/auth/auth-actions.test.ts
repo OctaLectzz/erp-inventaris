@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { signInAction } from '@/app/actions/auth-actions'
+import { signInAction, signInDemoAction } from '@/app/actions/auth-actions'
 import * as supabaseServer from '@/lib/supabase/server'
 
 type MockSupabaseClient = Awaited<ReturnType<typeof supabaseServer.createClient>>
@@ -175,5 +175,63 @@ describe('Server Actions — signInAction Logic', () => {
     if (resultMalicious.success) {
       expect(resultMalicious.redirectTo).toBe('/id/dashboard')
     }
+  })
+
+  describe('signInDemoAction Multi-Role Support', () => {
+    it('should return DEMO_NOT_CONFIGURED when role environment variables are unset', async () => {
+      const origAdminEmail = process.env.DEMO_ADMIN_EMAIL
+      delete process.env.DEMO_ADMIN_EMAIL
+
+      const result = await signInDemoAction('administrator', 'id')
+      expect(result.success).toBe(false)
+      if (!result.success) {
+        expect(result.error).toBe('DEMO_NOT_CONFIGURED')
+      }
+
+      process.env.DEMO_ADMIN_EMAIL = origAdminEmail
+    })
+
+    it('should delegate to signInAction with proper credentials for all 5 roles', async () => {
+      process.env.DEMO_ADMIN_EMAIL = 'admin@inventra.demo'
+      process.env.DEMO_ADMIN_PASSWORD = 'MockPassword123'
+      process.env.DEMO_STAFF_EMAIL = 'staff@inventra.demo'
+      process.env.DEMO_STAFF_PASSWORD = 'MockPassword123'
+      process.env.DEMO_OWNER_EMAIL = 'owner@inventra.demo'
+      process.env.DEMO_OWNER_PASSWORD = 'MockPassword123'
+
+      const mockSupabase = {
+        auth: {
+          signInWithPassword: vi.fn().mockResolvedValue({
+            data: { user: { id: 'mock-user-id' } },
+            error: null
+          })
+        },
+        from: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              single: vi.fn().mockResolvedValue({
+                data: { id: 'mock-user-id', role: 'administrator' },
+                error: null
+              })
+            })
+          })
+        })
+      }
+
+      vi.spyOn(supabaseServer, 'createClient').mockResolvedValue(mockSupabase as unknown as MockSupabaseClient)
+
+      const roles: Array<'administrator' | 'staff_gudang' | 'auditor' | 'admin_gudang' | 'owner'> = [
+        'administrator',
+        'staff_gudang',
+        'auditor',
+        'admin_gudang',
+        'owner'
+      ]
+
+      for (const role of roles) {
+        const result = await signInDemoAction(role, 'id')
+        expect(result.success).toBe(true)
+      }
+    })
   })
 })

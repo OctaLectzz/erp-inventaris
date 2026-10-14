@@ -1,7 +1,7 @@
-import { FileEdit } from 'lucide-react'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
+import { FileEdit } from 'lucide-react'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { getAiConfigStatusAction } from '@/app/actions/ai-actions'
 import { AssistantStatusBanner } from '@/features/assistant/assistant-status-banner'

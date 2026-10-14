@@ -240,7 +240,9 @@
     "manualUrlPlaceholder": "https://example.com/image.jpg",
     "errors": {
       "tooLarge": "File size exceeds 2MB limit",
-      "invalidType": "File format not supported. Please use PNG, JPG, or WEBP"
+      "invalidType": "File format not supported. Please use PNG, JPG, or WEBP",
+      "corruptOrInvalid": "File content does not match a valid image format (PNG, JPG, WEBP)",
+      "invalidUrlScheme": "Image link must use http:// or https:// protocol"
     }
   },
   "settings": {

@@ -1,9 +1,9 @@
 'use client'
 
+import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { PackageX, RotateCcw, ShieldAlert } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
-import { useMemo, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -113,9 +113,9 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
     <div className="space-y-4">
       {/* Read-Only Notice for Non-Admin */}
       {!isAdmin && (
-        <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-secondary/50 p-3.5 text-xs text-foreground">
+        <div className="border-primary/20 bg-secondary/50 text-foreground flex items-center justify-between rounded-lg border p-3.5 text-xs">
           <div className="flex items-center gap-2">
-            <ShieldAlert className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            <ShieldAlert className="text-primary h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{t('movements.readOnlyNotice')}</span>
           </div>
           <Badge variant="outline" className="text-[11px]">
@@ -157,11 +157,11 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
       {filteredMovements.length === 0 ? (
         <Card className="border-border">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+            <div className="bg-secondary text-muted-foreground mb-3 flex h-12 w-12 items-center justify-center rounded-full">
               <PackageX className="h-6 w-6" aria-hidden="true" />
             </div>
-            <h3 className="text-sm font-semibold text-foreground">{t('movements.emptySearch')}</h3>
-            <p className="mt-1 max-w-sm text-xs text-muted-foreground">{t('movements.emptySubtitle')}</p>
+            <h3 className="text-foreground text-sm font-semibold">{t('movements.emptySearch')}</h3>
+            <p className="text-muted-foreground mt-1 max-w-sm text-xs">{t('movements.emptySubtitle')}</p>
             <Button variant="outline" size="sm" onClick={handleResetFilters} className="mt-4 gap-1.5 text-xs">
               <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{t('movements.resetFilter')}</span>
@@ -171,10 +171,10 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
       ) : (
         <>
           {/* Desktop Table View */}
-          <div className="hidden overflow-x-auto rounded-lg border border-border bg-card shadow-xs md:block">
+          <div className="border-border bg-card hidden overflow-x-auto rounded-lg border shadow-xs md:block">
             <table className="w-full border-collapse text-left text-xs">
               <thead>
-                <tr className="border-b border-border bg-muted/50 font-semibold text-muted-foreground">
+                <tr className="border-border bg-muted/50 text-muted-foreground border-b font-semibold">
                   <th className="px-4 py-3">{t('movements.columns.timestamp')}</th>
                   <th className="px-4 py-3">{t('movements.columns.sku')}</th>
                   <th className="px-4 py-3">{t('movements.columns.product')}</th>
@@ -185,7 +185,7 @@ export function MovementTable({ initialMovements, products, userRole, locale }: 
                   <th className="px-4 py-3">{t('movements.columns.note')}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-border divide-y">
                 {paginatedMovements.map((m) => (
                   <MovementTableRow key={m.id} movement={m} formatDateTime={formatDateTime} />
                 ))}

@@ -1,8 +1,8 @@
 'use client'
 
+import * as React from 'react'
 import { Filter, RotateCcw, Search } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import * as React from 'react'
 
 import { DataTable } from '@/components/shared/data-table/data-table'
 import { Button } from '@/components/ui/button'
@@ -70,7 +70,7 @@ export function ProductReportTable({ products, categories, locale }: ProductRepo
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             {/* Search Input */}
             <div className="relative flex-1">
-              <Search className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              <Search className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" aria-hidden="true" />
               <Input
                 placeholder="Cari berdasarkan SKU atau nama produk..."
                 value={search}
@@ -83,11 +83,11 @@ export function ProductReportTable({ products, categories, locale }: ProductRepo
             <div className="flex flex-wrap items-center gap-2.5">
               {/* Category Filter */}
               <div className="flex items-center gap-1.5">
-                <Filter className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                <Filter className="text-muted-foreground h-3.5 w-3.5" aria-hidden="true" />
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="h-9 rounded-md border border-input bg-background px-2.5 text-xs text-foreground shadow-xs focus:ring-1 focus:outline-hidden"
+                  className="border-input bg-background text-foreground h-9 rounded-md border px-2.5 text-xs shadow-xs focus:ring-1 focus:outline-hidden"
                   aria-label="Filter kategori"
                 >
                   <option value="all">Semua Kategori</option>
@@ -103,7 +103,7 @@ export function ProductReportTable({ products, categories, locale }: ProductRepo
               <select
                 value={stockStatus}
                 onChange={(e) => setStockStatus(e.target.value as 'all' | 'low' | 'normal')}
-                className="h-9 rounded-md border border-input bg-background px-2.5 text-xs text-foreground shadow-xs focus:ring-1 focus:outline-hidden"
+                className="border-input bg-background text-foreground h-9 rounded-md border px-2.5 text-xs shadow-xs focus:ring-1 focus:outline-hidden"
                 aria-label="Filter status stok"
               >
                 <option value="all">Semua Status Stok</option>
@@ -112,7 +112,7 @@ export function ProductReportTable({ products, categories, locale }: ProductRepo
               </select>
 
               {hasFilters && (
-                <Button variant="ghost" size="xs" onClick={handleReset} className="h-9 gap-1 text-xs text-primary hover:underline">
+                <Button variant="ghost" size="xs" onClick={handleReset} className="text-primary h-9 gap-1 text-xs hover:underline">
                   <RotateCcw className="h-3 w-3" aria-hidden="true" />
                   <span>Reset</span>
                 </Button>
@@ -120,7 +120,7 @@ export function ProductReportTable({ products, categories, locale }: ProductRepo
             </div>
           </div>
 
-          <div className="mt-2 border-t pt-2 text-xs text-muted-foreground">
+          <div className="text-muted-foreground mt-2 border-t pt-2 text-xs">
             <span>
               Menampilkan {filteredProducts.length} dari {products.length} produk katalog
             </span>

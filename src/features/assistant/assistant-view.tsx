@@ -1,8 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { FileEdit, MessageSquare, Sparkles, Wand2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
 
 import { AssistantStatusBanner } from './assistant-status-banner'
 import { InventoryQaTab } from './inventory-qa-tab'

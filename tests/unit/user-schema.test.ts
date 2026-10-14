@@ -1,5 +1,6 @@
-import { userInputSchema, userUpdateSchema } from '@/schemas/user-schema'
 import { describe, expect, it } from 'vitest'
+
+import { userInputSchema, userUpdateSchema } from '@/schemas/user-schema'
 
 describe('User Schema Validation', () => {
   it('validates correct user input schema', () => {

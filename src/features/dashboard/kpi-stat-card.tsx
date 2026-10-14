@@ -55,7 +55,7 @@ export function KpiStatCard({ title, value, tooltip, description, icon, variant 
   return (
     <Card className={cn('border-border shadow-2xs transition-shadow hover:shadow-xs', borderLeftVariants[variant], className)}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="line-clamp-2 flex min-h-[2rem] items-center pr-2 text-xs leading-snug font-semibold tracking-wider text-muted-foreground uppercase">
+        <CardTitle className="text-muted-foreground line-clamp-2 flex min-h-[2rem] items-center pr-2 text-xs leading-snug font-semibold tracking-wider uppercase">
           {title}
         </CardTitle>
         <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg', iconVariants[variant])}>{renderedIcon}</div>
@@ -66,7 +66,7 @@ export function KpiStatCard({ title, value, tooltip, description, icon, variant 
             <TooltipProvider delayDuration={150}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="inline-block cursor-help border-b border-dashed border-muted-foreground/40 pb-0.5">{valueDisplay}</div>
+                  <div className="border-muted-foreground/40 inline-block cursor-help border-b border-dashed pb-0.5">{valueDisplay}</div>
                 </TooltipTrigger>
                 <TooltipContent side="top" className="text-xs font-semibold">
                   {tooltip}
@@ -78,7 +78,7 @@ export function KpiStatCard({ title, value, tooltip, description, icon, variant 
           )}
           {miniChart && <div className="shrink-0">{miniChart}</div>}
         </div>
-        <p className="text-xs leading-normal text-muted-foreground">{description}</p>
+        <p className="text-muted-foreground text-xs leading-normal">{description}</p>
       </CardContent>
     </Card>
   )

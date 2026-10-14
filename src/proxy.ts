@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
+import { NextResponse } from 'next/server'
 
 import { routing } from './i18n/routing'
 import { updateSession } from './lib/supabase/middleware'
@@ -37,20 +37,16 @@ export default async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl
   const locale = extractLocale(pathname)
 
-  // Protected route check: /dashboard, /inventory, /movements or /(id|en)/(dashboard|inventory|movements)(/.*)?
-  const isProtectedAppRoute =
-    pathname === '/dashboard' ||
-    pathname.startsWith('/dashboard/') ||
-    pathname === `/${locale}/dashboard` ||
-    pathname.startsWith(`/${locale}/dashboard/`) ||
-    pathname === '/inventory' ||
-    pathname.startsWith('/inventory/') ||
-    pathname === `/${locale}/inventory` ||
-    pathname.startsWith(`/${locale}/inventory/`) ||
-    pathname === '/movements' ||
-    pathname.startsWith('/movements/') ||
-    pathname === `/${locale}/movements` ||
-    pathname.startsWith(`/${locale}/movements/`)
+  // Protected route check: encompass all dashboard segments
+  const PROTECTED_SEGMENTS = ['dashboard', 'inventory', 'movements', 'transactions', 'reports', 'assistant', 'categories', 'users', 'settings']
+
+  const isProtectedAppRoute = PROTECTED_SEGMENTS.some(
+    (segment) =>
+      pathname === `/${segment}` ||
+      pathname.startsWith(`/${segment}/`) ||
+      pathname === `/${locale}/${segment}` ||
+      pathname.startsWith(`/${locale}/${segment}/`)
+  )
 
   // Auth route check: /login or /(id|en)/login
   const isLoginRoute = pathname === '/login' || pathname === `/${locale}/login`

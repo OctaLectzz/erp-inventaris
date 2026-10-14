@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useTransition } from 'react'
 import {
   Bell,
   Check,
@@ -20,7 +21,6 @@ import {
 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useTheme } from 'next-themes'
-import { useState, useTransition } from 'react'
 
 import { updateProfileNameAction } from '@/app/actions/auth-actions'
 import { Badge } from '@/components/ui/badge'
