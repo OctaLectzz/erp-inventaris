@@ -1,25 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { Boxes, ChevronRight, Menu, Package, Shield, UserCheck } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import {
-  ArrowDownUp,
-  ArrowLeftRight,
-  BarChart3,
-  Boxes,
-  ChevronRight,
-  LayoutDashboard,
-  Menu,
-  Package,
-  Shield,
-  Sparkles,
-  Tag,
-  UserCheck
-} from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
+import { getSidebarMenuGroups } from '@/components/shared/sidebar-nav-items'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
@@ -42,12 +30,25 @@ export function AppHeader({ locale, profile, isCollapsed = false, onToggleSideba
   const tSidebar = useTranslations('sidebar')
   const tAuth = useTranslations('auth')
 
+  const isOwner = profile.role === 'owner'
   const isAdministrator = profile.role === 'administrator' || profile.role === 'admin_gudang'
   const isStaff = profile.role === 'staff_gudang'
 
-  const roleTitle = isAdministrator ? tAuth('roles.administrator') : isStaff ? tAuth('roles.staff_gudang') : tAuth('roles.auditor')
+  const roleTitle = isAdministrator
+    ? tAuth('roles.administrator')
+    : isStaff
+      ? tAuth('roles.staff_gudang')
+      : isOwner
+        ? tAuth('roles.owner')
+        : tAuth('roles.auditor')
 
-  const roleDesc = isAdministrator ? tAuth('roles.adminDesc') : isStaff ? tAuth('roles.staffDesc') : tAuth('roles.auditorDesc')
+  const roleDesc = isAdministrator
+    ? tAuth('roles.adminDesc')
+    : isStaff
+      ? tAuth('roles.staffDesc')
+      : isOwner
+        ? tAuth('roles.ownerDesc')
+        : tAuth('roles.auditorDesc')
 
   // Determine current active section for dynamic breadcrumb
   let currentSection = tNav('links.dashboard')
@@ -63,68 +64,23 @@ export function AppHeader({ locale, profile, isCollapsed = false, onToggleSideba
     currentSection = tNav('links.productAnalysis')
   } else if (pathname.includes('/reports')) {
     currentSection = tNav('links.reports')
+  } else if (pathname.includes('/assistant/draft')) {
+    currentSection = tNav('links.aiDraft')
+  } else if (pathname.includes('/assistant/refine')) {
+    currentSection = tNav('links.aiRefine')
+  } else if (pathname.includes('/assistant/qa')) {
+    currentSection = tNav('links.aiQa')
   } else if (pathname.includes('/assistant')) {
     currentSection = tNav('links.assistant')
+  } else if (pathname.includes('/users')) {
+    currentSection = tNav('links.users')
+  } else if (pathname.includes('/settings/website')) {
+    currentSection = tNav('links.websiteSettings')
   } else if (pathname.includes('/settings')) {
     currentSection = tNav('links.settings')
   }
 
-  const navItems = [
-    {
-      href: `/${locale}/dashboard`,
-      label: tSidebar('items.dashboard'),
-      icon: LayoutDashboard,
-      isActive: pathname === `/${locale}/dashboard` || pathname === '/dashboard'
-    },
-    {
-      href: `/${locale}/inventory`,
-      label: tSidebar('items.catalog'),
-      icon: Package,
-      isActive: pathname.startsWith(`/${locale}/inventory`) || pathname.startsWith('/inventory')
-    },
-    {
-      href: `/${locale}/categories`,
-      label: tSidebar('items.categories'),
-      icon: Tag,
-      isActive: pathname.startsWith(`/${locale}/categories`) || pathname.startsWith('/categories')
-    },
-    {
-      href: `/${locale}/transactions`,
-      label: tSidebar('items.transactions'),
-      icon: ArrowDownUp,
-      isActive: pathname.startsWith(`/${locale}/transactions`) || pathname.startsWith('/transactions')
-    },
-    {
-      href: `/${locale}/movements`,
-      label: tSidebar('items.history'),
-      icon: ArrowLeftRight,
-      isActive: pathname.startsWith(`/${locale}/movements`) || pathname.startsWith('/movements')
-    },
-    {
-      href: `/${locale}/reports`,
-      label: tSidebar('items.reports'),
-      icon: BarChart3,
-      isActive: (pathname.startsWith(`/${locale}/reports`) || pathname.startsWith('/reports')) && !pathname.includes('/reports/products')
-    },
-    {
-      href: `/${locale}/reports/products`,
-      label: tSidebar('items.productAnalysis'),
-      icon: BarChart3,
-      isActive: pathname.includes('/reports/products')
-    },
-    {
-      href: `/${locale}/assistant`,
-      label: tSidebar('items.assistant'),
-      icon: Sparkles,
-      isActive: pathname.startsWith(`/${locale}/assistant`) || pathname.startsWith('/assistant')
-    },
-    {
-      href: `/${locale}/settings`,
-      label: tSidebar('items.settings'),
-      icon: Tag,
-      isActive: pathname.startsWith(`/${locale}/settings`) || pathname.startsWith('/settings')
-    }
-  ]
+  const menuGroups = getSidebarMenuGroups({ locale, pathname, tSidebar, role: profile.role })
 
   return (
     <header className="border-border bg-background/95 sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b px-4 backdrop-blur-xs sm:px-6 lg:px-8">
@@ -191,24 +147,43 @@ export function AppHeader({ locale, profile, isCollapsed = false, onToggleSideba
             </div>
 
             {/* Mobile Nav Links */}
-            <nav className="flex-1 space-y-1 overflow-y-auto p-3" aria-label="Menu navigasi mobile">
-              {navItems.map((item) => {
-                const Icon = item.icon
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={cn(
-                      'flex items-center gap-3 rounded-lg px-3 py-2.5 text-xs font-semibold transition-colors',
-                      item.isActive ? 'bg-primary text-primary-foreground shadow-xs' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                    )}
-                  >
-                    <Icon className="h-4 w-4 shrink-0" />
-                    <span>{item.label}</span>
-                  </Link>
-                )
-              })}
+            <nav className="flex-1 space-y-4 overflow-y-auto p-3" aria-label="Menu navigasi mobile">
+              {menuGroups.map((group) => (
+                <div key={group.id} className="space-y-1">
+                  <h3 className="text-muted-foreground/80 px-2 text-[10px] font-bold tracking-wider uppercase">{group.label}</h3>
+                  <div className="space-y-1">
+                    {group.items.map((item) => {
+                      const Icon = item.icon
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setMobileOpen(false)}
+                          className={cn(
+                            'flex items-center gap-3 rounded-lg px-3 py-2 text-xs font-medium transition-colors',
+                            item.isActive
+                              ? 'bg-primary text-primary-foreground font-semibold shadow-xs'
+                              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                          )}
+                        >
+                          <Icon className="h-4 w-4 shrink-0" />
+                          <span className="flex-1 truncate">{item.label}</span>
+                          {item.badge && (
+                            <span
+                              className={cn(
+                                'rounded px-1.5 py-0.5 text-[9px] font-bold',
+                                item.isActive ? 'bg-primary-foreground text-primary' : 'bg-muted text-muted-foreground'
+                              )}
+                            >
+                              {item.badge}
+                            </span>
+                          )}
+                        </Link>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
             </nav>
 
             {/* Mobile Drawer Footer */}

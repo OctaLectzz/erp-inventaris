@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:unit": "vitest run --exclude \"**/*live*\"",
     "test:live": "vitest run live",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "seed:comprehensive": "npx tsx scripts/seed-comprehensive.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

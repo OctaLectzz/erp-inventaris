@@ -88,17 +88,46 @@ export function isAuditorRole(role?: string | null): boolean {
 }
 
 /**
- * Checks if a user can manage system users / administrative settings.
- * Allowed: 'administrator'
+ * Checks if a user can manage system users (CRUD users).
+ * Allowed: 'administrator', 'owner'
+ * Denied: 'staff_gudang', 'auditor', 'admin_gudang'
  */
 export function canManageUsers(role?: string | null): boolean {
-  return role === 'administrator'
+  return role === 'administrator' || role === 'owner'
+}
+
+/**
+ * Checks if a user can manage website branding and enterprise settings.
+ * Allowed: 'administrator', 'owner'
+ * Denied: 'staff_gudang', 'auditor', 'admin_gudang'
+ */
+export function canManageWebsiteSettings(role?: string | null): boolean {
+  return role === 'administrator' || role === 'owner'
 }
 
 /**
  * Checks if a user has read access to analytics and movement reports.
- * Allowed: All valid authenticated roles ('administrator', 'staff_gudang', 'auditor', 'admin_gudang', 'owner')
+ * Allowed: 'administrator', 'owner', 'auditor'
+ * Denied: 'staff_gudang', 'admin_gudang' (warehouse staff is restricted from analytics)
  */
 export function canViewReports(role?: string | null): boolean {
-  return isValidRole(role)
+  return isValidRole(role) && role !== 'staff_gudang' && role !== 'admin_gudang'
+}
+
+/**
+ * Checks if a user can access the AI Inventory Q&A chatbot.
+ * Allowed: 'administrator', 'owner', 'auditor'
+ * Denied: 'staff_gudang', 'admin_gudang' (warehouse staff is restricted from strategic inventory Q&A)
+ */
+export function canUseAiQa(role?: string | null): boolean {
+  return isValidRole(role) && role !== 'staff_gudang' && role !== 'admin_gudang'
+}
+
+/**
+ * Checks if a user can use operational AI tools (Product Draft Generator, Description Studio).
+ * Allowed: 'administrator', 'owner', 'staff_gudang', 'admin_gudang'
+ * Denied: 'auditor'
+ */
+export function canUseAiOps(role?: string | null): boolean {
+  return isValidRole(role) && role !== 'auditor'
 }

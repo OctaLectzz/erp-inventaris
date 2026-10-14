@@ -3,15 +3,12 @@ import { describe, expect, it } from 'vitest'
 import { canManageCatalog, canMutateStock, canViewReports, isAuditorRole } from '@/types/auth'
 
 describe('RBAC Reports Authorization Matrix', () => {
-  it('allows all 3 final roles to view reports', () => {
+  it('allows administrator, owner, and auditor to view reports; denies warehouse staff', () => {
     expect(canViewReports('administrator')).toBe(true)
-    expect(canViewReports('staff_gudang')).toBe(true)
-    expect(canViewReports('auditor')).toBe(true)
-  })
-
-  it('allows legacy roles to view reports for backward compatibility', () => {
-    expect(canViewReports('admin_gudang')).toBe(true)
     expect(canViewReports('owner')).toBe(true)
+    expect(canViewReports('auditor')).toBe(true)
+    expect(canViewReports('staff_gudang')).toBe(false)
+    expect(canViewReports('admin_gudang')).toBe(false)
   })
 
   it('denies anonymous or undefined roles from viewing reports', () => {

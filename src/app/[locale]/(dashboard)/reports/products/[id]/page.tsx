@@ -1,6 +1,6 @@
 import { ArrowDownRight, ArrowUpRight, Boxes, RefreshCw } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { connection } from 'next/server'
 
 import { MovementFlowChart } from '@/components/shared/charts/movement-flow-chart'
@@ -12,6 +12,7 @@ import { formatNumber } from '@/lib/formatters'
 import { createClient } from '@/lib/supabase/server'
 import { getProductMovementAnalytics } from '@/services/analytics-service'
 import { requireAuth } from '@/services/auth-service'
+import { canViewReports } from '@/types/auth'
 import { toProduct } from '@/types/inventory'
 
 import type { PeriodKey } from '@/lib/date-boundaries'
@@ -42,7 +43,10 @@ export default async function ProductDetailPage({ params, searchParams }: Produc
   const { locale, id } = await params
   setRequestLocale(locale)
 
-  await requireAuth(locale)
+  const { profile } = await requireAuth(locale)
+  if (!canViewReports(profile.role)) {
+    redirect(`/${locale}/dashboard`)
+  }
   const tDashboard = await getTranslations({ locale, namespace: 'dashboard' })
 
   const resolvedSearchParams = searchParams ? await searchParams : {}

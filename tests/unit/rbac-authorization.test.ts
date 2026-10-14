@@ -78,11 +78,11 @@ describe('RBAC Authorization Helpers & Matrix Verification', () => {
   })
 
   describe('Permission: canManageUsers', () => {
-    it('strictly allows only administrator', () => {
+    it('allows administrator and owner, denies staff and auditor', () => {
       expect(canManageUsers('administrator')).toBe(true)
+      expect(canManageUsers('owner')).toBe(true)
       expect(canManageUsers('staff_gudang')).toBe(false)
       expect(canManageUsers('auditor')).toBe(false)
-      expect(canManageUsers('owner')).toBe(false)
       expect(canManageUsers('admin_gudang')).toBe(false)
     })
   })

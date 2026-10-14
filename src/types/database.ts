@@ -157,6 +157,54 @@ export type Database = {
           }
         ]
       }
+      website_settings: {
+        Row: {
+          id: string
+          site_name: string
+          tagline: string
+          company_name: string
+          description: string | null
+          about: string | null
+          logo_url: string | null
+          favicon_url: string | null
+          contact_email: string
+          contact_phone: string
+          contact_address: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          site_name: string
+          tagline: string
+          company_name: string
+          description?: string | null
+          about?: string | null
+          logo_url?: string | null
+          favicon_url?: string | null
+          contact_email: string
+          contact_phone: string
+          contact_address: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          site_name?: string
+          tagline?: string
+          company_name?: string
+          description?: string | null
+          about?: string | null
+          logo_url?: string | null
+          favicon_url?: string | null
+          contact_email?: string
+          contact_phone?: string
+          contact_address?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

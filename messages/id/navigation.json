@@ -18,6 +18,11 @@
     "reports": "Laporan & Analisis",
     "productAnalysis": "Analisis Produk",
     "assistant": "AI Assistant",
-    "settings": "Pengaturan"
+    "aiDraft": "Draf Produk AI",
+    "aiRefine": "Penyusun Deskripsi AI",
+    "aiQa": "Tanya Inventaris AI",
+    "users": "Manajemen Pengguna",
+    "settings": "Pengaturan",
+    "websiteSettings": "Pengaturan Website"
   }
 }

@@ -27,12 +27,19 @@ export function AppSidebar({ locale, profile, isCollapsed = false, className }: 
   const tSidebar = useTranslations('sidebar')
   const tAuth = useTranslations('auth')
 
+  const isOwner = profile.role === 'owner'
   const isAdministrator = profile.role === 'administrator' || profile.role === 'admin_gudang'
   const isStaff = profile.role === 'staff_gudang'
 
-  const roleTitle = isAdministrator ? tAuth('roles.administrator') : isStaff ? tAuth('roles.staff_gudang') : tAuth('roles.auditor')
+  const roleTitle = isAdministrator
+    ? tAuth('roles.administrator')
+    : isStaff
+      ? tAuth('roles.staff_gudang')
+      : isOwner
+        ? tAuth('roles.owner')
+        : tAuth('roles.auditor')
 
-  const menuGroups = getSidebarMenuGroups({ locale, pathname, tSidebar })
+  const menuGroups = getSidebarMenuGroups({ locale, pathname, tSidebar, role: profile.role })
 
   return (
     <TooltipProvider delayDuration={200}>

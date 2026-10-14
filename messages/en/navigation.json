@@ -18,6 +18,11 @@
     "reports": "Reports & Analytics",
     "productAnalysis": "Product Analysis",
     "assistant": "AI Assistant",
-    "settings": "Settings"
+    "aiDraft": "AI Product Draft",
+    "aiRefine": "AI Description Studio",
+    "aiQa": "AI Inventory Q&A",
+    "users": "User Management",
+    "settings": "Settings",
+    "websiteSettings": "Website Settings"
   }
 }

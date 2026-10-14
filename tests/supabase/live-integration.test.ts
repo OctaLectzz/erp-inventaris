@@ -1,6 +1,6 @@
+import { createClient } from '@supabase/supabase-js'
 import * as fs from 'fs'
 import * as path from 'path'
-import { createClient } from '@supabase/supabase-js'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import type { Database } from '@/types/database'
@@ -461,7 +461,7 @@ describe.runIf(hasLiveCredentials)('Live Supabase Integration & Security Gates',
 
       expect(error).toBeNull()
       expect(products).not.toBeNull()
-      expect(products!.length).toBe(30)
+      expect(products!.length).toBeGreaterThanOrEqual(30)
 
       const skuSet = new Set<string>()
       for (const p of products!) {

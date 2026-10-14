@@ -13,6 +13,8 @@
     "main": "MAIN",
     "management": "MANAGEMENT",
     "reports": "REPORTS",
+    "ai": "AI COPILOT",
+    "settings": "SETTINGS",
     "other": "OTHER"
   },
   "status": {
@@ -30,6 +32,7 @@
   },
   "items": {
     "dashboard": "Dashboard",
+    "users": "User Management",
     "catalog": "Product Catalog",
     "categories": "Product Categories",
     "transactions": "Stock Transactions",
@@ -37,7 +40,11 @@
     "reports": "Analytics & Reports",
     "productAnalysis": "Product Analysis",
     "assistant": "AI Assistant",
+    "aiDraft": "AI Product Draft",
+    "aiRefine": "AI Description Studio",
+    "aiQa": "AI Inventory Q&A",
     "settings": "Settings",
+    "websiteSettings": "Website Settings",
     "stockIn": "Stock IN",
     "stockOut": "Stock OUT"
   }

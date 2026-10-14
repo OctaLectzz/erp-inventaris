@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useTransition } from 'react'
 import {
   Bell,
   Check,
@@ -21,6 +20,7 @@ import {
 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useTheme } from 'next-themes'
+import { useState, useTransition } from 'react'
 
 import { updateProfileNameAction } from '@/app/actions/auth-actions'
 import { Badge } from '@/components/ui/badge'
@@ -55,9 +55,16 @@ export function SettingsView({ profile, locale }: SettingsViewProps) {
   const [profileError, setProfileError] = useState<string | null>(null)
   const [isSavingName, startTransition] = useTransition()
 
+  const isOwner = profile.role === 'owner'
   const isAdministrator = profile.role === 'administrator' || profile.role === 'admin_gudang'
   const isStaff = profile.role === 'staff_gudang'
-  const roleTitle = isAdministrator ? tAuth('roles.administrator') : isStaff ? tAuth('roles.staff_gudang') : tAuth('roles.auditor')
+  const roleTitle = isAdministrator
+    ? tAuth('roles.administrator')
+    : isStaff
+      ? tAuth('roles.staff_gudang')
+      : isOwner
+        ? tAuth('roles.owner')
+        : tAuth('roles.auditor')
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault()

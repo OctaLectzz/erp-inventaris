@@ -13,6 +13,8 @@
     "main": "MAIN",
     "management": "MANAGEMENT",
     "reports": "REPORTS",
+    "ai": "ASISTEN AI",
+    "settings": "PENGATURAN",
     "other": "OTHER"
   },
   "status": {
@@ -30,6 +32,7 @@
   },
   "items": {
     "dashboard": "Dashboard",
+    "users": "Kelola Pengguna",
     "catalog": "Katalog Produk",
     "categories": "Kategori Produk",
     "transactions": "Transaksi Stok",
@@ -37,7 +40,11 @@
     "reports": "Analitik & Laporan",
     "productAnalysis": "Analisis Produk",
     "assistant": "AI Assistant",
+    "aiDraft": "Draf Produk AI",
+    "aiRefine": "Penyusun Deskripsi AI",
+    "aiQa": "Tanya Inventaris AI",
     "settings": "Pengaturan",
+    "websiteSettings": "Pengaturan Website",
     "stockIn": "Stok Masuk",
     "stockOut": "Stok Keluar"
   }

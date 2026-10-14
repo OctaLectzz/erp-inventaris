@@ -1,6 +1,7 @@
 import { ArrowLeft, LineChart, Package } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
 
 import { Button } from '@/components/ui/button'
@@ -8,6 +9,7 @@ import { ProductReportTable } from '@/features/reports/product-report-table'
 import { createClient } from '@/lib/supabase/server'
 import { requireAuth } from '@/services/auth-service'
 import { getCatalogCategories, getInventoryCatalogData } from '@/services/product-service'
+import { canViewReports } from '@/types/auth'
 
 import type { Metadata } from 'next'
 
@@ -32,7 +34,10 @@ export default async function ProductAnalysisPage({ params }: ProductAnalysisPag
   const { locale } = await params
   setRequestLocale(locale)
 
-  await requireAuth(locale)
+  const { profile } = await requireAuth(locale)
+  if (!canViewReports(profile.role)) {
+    redirect(`/${locale}/dashboard`)
+  }
   const tDashboard = await getTranslations({ locale, namespace: 'dashboard' })
 
   const supabase = await createClient()
