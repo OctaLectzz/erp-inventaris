@@ -1,0 +1,78 @@
+{
+  "title": "AI Assistant",
+  "subtitle": "Asisten cerdas berbasis AI untuk draf produk dan wawasan inventaris",
+  "tabs": {
+    "draft": "Draf Produk",
+    "refine": "Penyusun Deskripsi",
+    "qa": "Tanya Inventaris"
+  },
+  "banner": {
+    "connected": "9Router AI Terhubung",
+    "notConfigured": "Kredensial 9Router Belum Dikonfigurasi",
+    "notConfiguredNotice": "Tambahkan NINE_ROUTER_API_KEY dan NINE_ROUTER_MODEL pada .env.local untuk mengaktifkan AI.",
+    "modelLabel": "Model",
+    "endpointLabel": "Endpoint"
+  },
+  "draftTab": {
+    "inputLabel": "Nama atau Catatan Produk Mentah",
+    "inputPlaceholder": "Contoh: Minyak Atsiri Nilam 50ml kemasan botol kaca amber dropper tahan panas...",
+    "categoryHintLabel": "Petunjuk Kategori (Opsional)",
+    "categoryHintPlaceholder": "Pilih atau ketik kategori...",
+    "generateButton": "Buat Draf Produk",
+    "generatingButton": "Membuat Draf...",
+    "quickStarters": "Contoh Cepat:",
+    "reviewTitle": "Tinjauan Draf Produk",
+    "factsTitle": "Fakta Pengguna",
+    "assumptionsTitle": "Saran & Asumsi AI",
+    "skuLabel": "Kode SKU",
+    "nameLabel": "Nama Produk",
+    "categoryLabel": "Kategori",
+    "unitLabel": "Satuan",
+    "priceLabel": "Harga Referensi (IDR)",
+    "descLabel": "Deskripsi Produk",
+    "specsLabel": "Spesifikasi Teknis",
+    "copyDraft": "Salin Draf",
+    "copied": "Draf tersalin ke clipboard!",
+    "saveToCatalog": "Simpan ke Katalog",
+    "saving": "Menyimpan...",
+    "saveSuccess": "Produk berhasil ditambahkan ke katalog dengan stok awal 0.",
+    "saveConfirmTitle": "Konfirmasi Simpan Produk ke Katalog",
+    "saveConfirmDescription": "Produk ini akan dibuat dengan stok awal 0 unit sesuai kebijakan integritas gudang. Stok hanya dapat ditambah melalui transaksi stok fisik.",
+    "saveConfirmButton": "Ya, Simpan ke Katalog",
+    "cancel": "Batal",
+    "staffNotice": "Peran Anda (Staff Gudang) dapat membuat dan menyalin draf, namun penyimpanan ke katalog memerlukan persetujuan Administrator.",
+    "auditorNotice": "Peran Auditor memiliki akses baca saja."
+  },
+  "refineTab": {
+    "inputLabel": "Teks atau Deskripsi Mentah",
+    "inputPlaceholder": "Ketik atau tempel deskripsi produk di sini...",
+    "modeLabel": "Pilihan Mode",
+    "modes": {
+      "expand": "Lengkapi Deskripsi",
+      "specifications": "Ekstrak Spesifikasi",
+      "shorten": "Ringkas Singkat",
+      "translate": "Terjemahkan ke Bahasa Inggris"
+    },
+    "actionButton": "Proses dengan AI",
+    "processingButton": "Memproses...",
+    "resultTitle": "Hasil Penyempurnaan AI",
+    "copyResult": "Salin Teks",
+    "copied": "Teks tersalin ke clipboard!"
+  },
+  "qaTab": {
+    "title": "Tanya Inventaris Gudang",
+    "subtitle": "Ajukan pertanyaan seputar status stok, produk menipis, atau ringkasan gudang.",
+    "disclaimer": "Asisten AI beroperasi dalam mode baca (read-only). Semua jawaban bersumber dari data faktual inventaris.",
+    "inputPlaceholder": "Ketik pertanyaan seputar inventaris gudang...",
+    "sendButton": "Kirim Pertanyaan",
+    "sending": "Menganalisis...",
+    "suggestedChips": "Pertanyaan Umum:",
+    "chipLowStock": "Berapa produk yang stoknya menipis?",
+    "chipCategories": "Kategori apa saja yang terdaftar?",
+    "chipValuation": "Berapa estimasi nilai total inventaris?",
+    "chipSummary": "Ringkasan kondisi gudang hari ini",
+    "clearChat": "Hapus Riwayat",
+    "emptyChat": "Belum ada riwayat pertanyaan. Pilih opsi di atas atau ketik pertanyaan baru.",
+    "sourcesLabel": "Sumber Data Faktual"
+  }
+}

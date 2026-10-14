@@ -47,6 +47,10 @@ FROM public.categories c
 WHERE lower(trim(p.category)) = lower(c.name)
   AND p.category_id IS NULL;
 
+-- Grant column-level privileges to authenticated role (preserves stock immutability)
+GRANT INSERT (category_id) ON public.products TO authenticated;
+GRANT UPDATE (category_id, updated_at) ON public.products TO authenticated;
+
 -- ------------------------------------------------------------------------------
 -- 4. Enable Row-Level Security (RLS) on public.categories
 -- ------------------------------------------------------------------------------

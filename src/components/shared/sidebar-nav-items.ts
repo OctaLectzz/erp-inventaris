@@ -91,8 +91,7 @@ export function getSidebarMenuGroups({ locale, pathname, tSidebar }: GetMenuGrou
           href: `/${locale}/assistant`,
           label: tSidebar('items.assistant'),
           icon: Sparkles,
-          badge: tSidebar('status.batch4'),
-          notice: tSidebar('status.batch4Notice'),
+          badge: 'AI',
           isActive: pathname.startsWith(`/${locale}/assistant`) || pathname.startsWith('/assistant')
         },
         {

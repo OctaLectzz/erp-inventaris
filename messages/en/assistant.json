@@ -1,0 +1,78 @@
+{
+  "title": "AI Assistant",
+  "subtitle": "Intelligent AI copilot for product drafting and inventory insights",
+  "tabs": {
+    "draft": "Product Draft",
+    "refine": "Description Refiner",
+    "qa": "Inventory Q&A"
+  },
+  "banner": {
+    "connected": "9Router AI Connected",
+    "notConfigured": "9Router Credentials Not Configured",
+    "notConfiguredNotice": "Add NINE_ROUTER_API_KEY and NINE_ROUTER_MODEL to .env.local to activate AI features.",
+    "modelLabel": "Model",
+    "endpointLabel": "Endpoint"
+  },
+  "draftTab": {
+    "inputLabel": "Raw Product Name or Notes",
+    "inputPlaceholder": "Example: Patchouli Essential Oil 50ml amber glass bottle heat-resistant dropper...",
+    "categoryHintLabel": "Category Hint (Optional)",
+    "categoryHintPlaceholder": "Select or type category...",
+    "generateButton": "Generate Product Draft",
+    "generatingButton": "Generating Draft...",
+    "quickStarters": "Quick Starters:",
+    "reviewTitle": "Product Draft Review",
+    "factsTitle": "User-Provided Facts",
+    "assumptionsTitle": "AI Suggestions & Assumptions",
+    "skuLabel": "SKU Code",
+    "nameLabel": "Product Name",
+    "categoryLabel": "Category",
+    "unitLabel": "Unit",
+    "priceLabel": "Reference Price (IDR)",
+    "descLabel": "Product Description",
+    "specsLabel": "Technical Specifications",
+    "copyDraft": "Copy Draft",
+    "copied": "Draft copied to clipboard!",
+    "saveToCatalog": "Save to Catalog",
+    "saving": "Saving...",
+    "saveSuccess": "Product successfully added to catalog with initial stock of 0.",
+    "saveConfirmTitle": "Confirm Product Catalog Creation",
+    "saveConfirmDescription": "This product will be created with an initial stock of 0 units per warehouse integrity rules. Stock can only be added through physical stock transactions.",
+    "saveConfirmButton": "Yes, Save to Catalog",
+    "cancel": "Cancel",
+    "staffNotice": "Your role (Staff Gudang) can create and copy drafts, but saving to catalog requires Administrator authorization.",
+    "auditorNotice": "Auditor role has read-only access."
+  },
+  "refineTab": {
+    "inputLabel": "Raw Text or Description",
+    "inputPlaceholder": "Type or paste product description here...",
+    "modeLabel": "Refine Mode",
+    "modes": {
+      "expand": "Expand Description",
+      "specifications": "Extract Specifications",
+      "shorten": "Shorten Summary",
+      "translate": "Translate to Indonesian"
+    },
+    "actionButton": "Process with AI",
+    "processingButton": "Processing...",
+    "resultTitle": "AI Refined Output",
+    "copyResult": "Copy Text",
+    "copied": "Text copied to clipboard!"
+  },
+  "qaTab": {
+    "title": "Inventory Q&A",
+    "subtitle": "Ask questions about stock levels, low-stock items, or warehouse overview.",
+    "disclaimer": "AI assistant operates in read-only mode. All answers are grounded in factual inventory data.",
+    "inputPlaceholder": "Ask a question about warehouse inventory...",
+    "sendButton": "Send Question",
+    "sending": "Analyzing...",
+    "suggestedChips": "Common Questions:",
+    "chipLowStock": "How many products are running low on stock?",
+    "chipCategories": "What product categories are active?",
+    "chipValuation": "What is the estimated total inventory valuation?",
+    "chipSummary": "Warehouse summary overview for today",
+    "clearChat": "Clear History",
+    "emptyChat": "No conversation history yet. Choose an option above or type a new question.",
+    "sourcesLabel": "Factual Sources"
+  }
+}

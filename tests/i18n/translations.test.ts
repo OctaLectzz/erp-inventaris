@@ -6,7 +6,16 @@ const messagesDir = path.resolve(__dirname, '../../messages')
 const idDir = path.join(messagesDir, 'id')
 const enDir = path.join(messagesDir, 'en')
 
-const expectedNamespaces = ['index.json', 'common.json', 'navigation.json', 'sidebar.json', 'auth.json', 'dashboard.json', 'validation.json']
+const expectedNamespaces = [
+  'index.json',
+  'common.json',
+  'navigation.json',
+  'sidebar.json',
+  'auth.json',
+  'dashboard.json',
+  'validation.json',
+  'assistant.json'
+]
 
 function getNestedKeys(obj: Record<string, unknown>, prefix = ''): string[] {
   let keys: string[] = []

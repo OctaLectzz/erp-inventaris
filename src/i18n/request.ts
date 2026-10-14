@@ -11,7 +11,8 @@ const messageLoaders = {
     sidebar: (await import('../../messages/id/sidebar.json')).default,
     auth: (await import('../../messages/id/auth.json')).default,
     dashboard: (await import('../../messages/id/dashboard.json')).default,
-    validation: (await import('../../messages/id/validation.json')).default
+    validation: (await import('../../messages/id/validation.json')).default,
+    assistant: (await import('../../messages/id/assistant.json')).default
   }),
   en: async () => ({
     index: (await import('../../messages/en/index.json')).default,
@@ -20,7 +21,8 @@ const messageLoaders = {
     sidebar: (await import('../../messages/en/sidebar.json')).default,
     auth: (await import('../../messages/en/auth.json')).default,
     dashboard: (await import('../../messages/en/dashboard.json')).default,
-    validation: (await import('../../messages/en/validation.json')).default
+    validation: (await import('../../messages/en/validation.json')).default,
+    assistant: (await import('../../messages/en/assistant.json')).default
   })
 } as const
 

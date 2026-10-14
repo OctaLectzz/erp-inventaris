@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, CheckCircle2, Info, Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { createProductAction, updateProductAction } from '@/app/actions/product-actions'
@@ -202,7 +202,12 @@ export function ProductFormDialog({ open, onOpenChange, product, categories = []
               <Input
                 id="sku"
                 placeholder={t('dialog.fields.skuPlaceholder')}
-                {...register('sku')}
+                {...register('sku', {
+                  onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                    const upper = (e.target.value || '').toUpperCase()
+                    setValue('sku', upper, { shouldValidate: true })
+                  }
+                })}
                 className="font-mono text-xs uppercase"
                 disabled={isSubmitting}
                 aria-invalid={Boolean(errors.sku)}
