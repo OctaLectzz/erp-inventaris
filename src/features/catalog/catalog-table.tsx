@@ -1,9 +1,9 @@
 'use client'
 
-import { useMemo, useState } from 'react'
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
-import { AlertTriangle, CheckCircle2, Filter, Package, PackageX, Pencil, Plus, RotateCcw, Search, ShieldAlert } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Filter, Package, PackageX, Pencil, Plus, RotateCcw, Search, ShieldAlert, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useMemo, useState } from 'react'
 
 import { DataTablePagination } from '@/components/shared/data-table/data-table-pagination'
 import { DataTableViewOptions } from '@/components/shared/data-table/data-table-view-options'
@@ -13,6 +13,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { getCatalogColumns } from '@/features/catalog/catalog-columns'
+import { ProductDeleteDialog } from '@/features/catalog/product-delete-dialog'
 import { ProductFormDialog } from '@/features/catalog/product-form-dialog'
 import { LOW_STOCK_THRESHOLD } from '@/services/inventory-domain'
 
@@ -48,6 +49,7 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
   // Modal dialog states
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null)
 
   const handleOpenAddDialog = () => {
     setEditingProduct(null)
@@ -57,6 +59,14 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
   const handleOpenEditDialog = (product: Product) => {
     setEditingProduct(product)
     setIsDialogOpen(true)
+  }
+
+  const handleOpenDeleteDialog = (product: Product) => {
+    setDeletingProduct(product)
+  }
+
+  const handleDeleteSuccess = (deletedProductId: string) => {
+    setProducts((prev) => prev.filter((p) => p.id !== deletedProductId))
   }
 
   const handleFormSuccess = (updatedOrNewProduct: Product) => {
@@ -78,6 +88,7 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
         locale,
         isAdmin,
         onEditProduct: handleOpenEditDialog,
+        onDeleteProduct: handleOpenDeleteDialog,
         t: (key: string, values?: Record<string, unknown>) => t(`catalog.${key}`, values as never)
       }),
     [locale, isAdmin, t]
@@ -346,10 +357,19 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
                     </div>
 
                     {isAdmin && (
-                      <div className="border-border flex justify-end border-t pt-2">
+                      <div className="border-border flex justify-end gap-1.5 border-t pt-2">
                         <Button variant="outline" size="xs" onClick={() => handleOpenEditDialog(p)} className="h-7 gap-1 text-xs">
                           <Pencil className="h-3 w-3" aria-hidden="true" />
                           <span>{t('catalog.editProduct')}</span>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="xs"
+                          onClick={() => handleOpenDeleteDialog(p)}
+                          className="text-destructive hover:bg-destructive/10 hover:text-destructive h-7 gap-1 text-xs"
+                        >
+                          <Trash2 className="h-3 w-3" aria-hidden="true" />
+                          <span>{locale === 'en' ? 'Delete' : 'Hapus'}</span>
                         </Button>
                       </div>
                     )}
@@ -372,6 +392,15 @@ export function CatalogTable({ initialProducts, categories, userRole, locale }: 
         categories={categories}
         locale={locale}
         onSuccess={handleFormSuccess}
+      />
+
+      {/* Embedded Delete Confirmation Dialog */}
+      <ProductDeleteDialog
+        open={Boolean(deletingProduct)}
+        onOpenChange={(open) => !open && setDeletingProduct(null)}
+        product={deletingProduct}
+        locale={locale}
+        onSuccess={handleDeleteSuccess}
       />
     </div>
   )

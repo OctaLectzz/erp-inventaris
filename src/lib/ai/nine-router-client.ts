@@ -42,7 +42,7 @@ export function getNineRouterConfig(): NineRouterConfig {
 export async function callNineRouterChatCompletion(
   messages: NineRouterMessage[],
   options: NineRouterOptions = {}
-): Promise<{ content: string; model: string }> {
+): Promise<{ content: string; thinking?: string; model: string }> {
   const config = getNineRouterConfig()
 
   if (!config.isConfigured) {
@@ -111,6 +111,7 @@ export async function callNineRouterChatCompletion(
       message?: {
         role?: string
         content?: string
+        reasoning_content?: string
       }
       finish_reason?: string
     }>
@@ -121,16 +122,26 @@ export async function callNineRouterChatCompletion(
     throw new Error('AI_PARSE_ERROR: Format respon penyedia AI tidak valid.')
   }
 
-  const choiceContent = data?.choices?.[0]?.message?.content
+  const rawMsg = data?.choices?.[0]?.message
+  const choiceContent = rawMsg?.content
   if (typeof choiceContent !== 'string') {
     throw new Error('AI_EMPTY_RESPONSE: Penyedia AI tidak menghasilkan teks.')
   }
 
-  // Strip <thinking>...</thinking> tags if returned by reasoning models
-  const cleanContent = choiceContent.replace(/<thinking>[\s\S]*?<\/thinking>/gi, '').trim()
+  // Extract thinking / reasoning from <think>...</think>, <thinking>...</thinking>, or message.reasoning_content
+  let extractedThinking = rawMsg?.reasoning_content?.trim() || ''
+  const thinkMatch = choiceContent.match(/<(?:think|thinking)>([\s\S]*?)<\/(?:think|thinking)>/i)
+  if (thinkMatch && thinkMatch[1]) {
+    const matchedText = thinkMatch[1].trim()
+    extractedThinking = extractedThinking ? `${extractedThinking}\n\n${matchedText}` : matchedText
+  }
+
+  // Strip <think>...</think> and <thinking>...</thinking> tags from final text
+  const cleanContent = choiceContent.replace(/<(?:think|thinking)>[\s\S]*?<\/(?:think|thinking)>/gi, '').trim()
 
   return {
     content: cleanContent || choiceContent,
+    thinking: extractedThinking || undefined,
     model: data.model || config.model
   }
 }

@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import { Bot, HelpCircle, Loader2, Send, Trash2, User } from 'lucide-react'
+import { Bot, Brain, CheckCircle2, ChevronDown, HelpCircle, Loader2, Send, Sparkles, Trash2, User } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
 
 import { askInventoryQuestionAction } from '@/app/actions/ai-actions'
+import { MarkdownRenderer } from '@/components/shared/markdown-renderer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -14,11 +15,28 @@ interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
   sources?: string[]
+  thinking?: string
 }
 
 interface InventoryQaTabProps {
   locale: string
 }
+
+const THINKING_STEPS_ID = [
+  'Mengidentifikasi maksud pertanyaan dan parameter inventaris...',
+  'Mengambil snapshot faktual (katalog produk, stok fisik, kategori)...',
+  'Menghitung ringkasan metrik, valuasi total, dan ambang batas stok...',
+  'Menjalankan penalaran model AI 9Router & memverifikasi guardrails...',
+  'Menyusun jawaban faktual terverifikasi...'
+]
+
+const THINKING_STEPS_EN = [
+  'Identifying query intent and inventory parameters...',
+  'Fetching factual snapshot (products, stock levels, categories)...',
+  'Calculating metric summaries, total valuation, and stock alerts...',
+  'Executing 9Router model inference & verifying guardrails...',
+  'Formulating verified factual answer...'
+]
 
 export function InventoryQaTab({ locale }: InventoryQaTabProps) {
   const t = useTranslations('assistant.qaTab')
@@ -26,13 +44,24 @@ export function InventoryQaTab({ locale }: InventoryQaTabProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputQuestion, setInputQuestion] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [thinkingStep, setThinkingStep] = useState(0)
 
+  const steps = locale === 'en' ? THINKING_STEPS_EN : THINKING_STEPS_ID
   const SUGGESTIONS = [t('chipLowStock'), t('chipCategories'), t('chipValuation'), t('chipSummary')]
+
+  useEffect(() => {
+    if (!isLoading) return
+    const interval = setInterval(() => {
+      setThinkingStep((prev) => (prev < steps.length - 1 ? prev + 1 : prev))
+    }, 1400)
+    return () => clearInterval(interval)
+  }, [isLoading, steps.length])
 
   const handleSend = async (questionText: string) => {
     const q = questionText.trim()
     if (!q || isLoading) return
 
+    setThinkingStep(0)
     setMessages((prev) => [
       ...prev,
       {
@@ -70,7 +99,8 @@ export function InventoryQaTab({ locale }: InventoryQaTabProps) {
           id: `a-${prev.length + 1}`,
           role: 'assistant',
           content: res.data.answer,
-          sources: res.data.sources
+          sources: res.data.sources,
+          thinking: res.data.thinking
         }
       ])
     }
@@ -83,7 +113,7 @@ export function InventoryQaTab({ locale }: InventoryQaTabProps) {
         <span>{t('disclaimer')}</span>
       </div>
 
-      <Card className="border-border flex h-[520px] flex-col shadow-xs">
+      <Card className="border-border flex h-[580px] flex-col shadow-xs">
         <CardHeader className="border-border flex flex-row items-center justify-between border-b pb-3">
           <div>
             <CardTitle className="text-base font-bold">{t('title')}</CardTitle>
@@ -139,7 +169,24 @@ export function InventoryQaTab({ locale }: InventoryQaTabProps) {
                     m.role === 'user' ? 'bg-primary text-primary-foreground rounded-br-xs' : 'bg-muted/60 border-border rounded-bl-xs border'
                   }`}
                 >
-                  <p className="whitespace-pre-wrap">{m.content}</p>
+                  {m.role === 'user' ? <p className="whitespace-pre-wrap">{m.content}</p> : <MarkdownRenderer content={m.content} />}
+
+                  {/* Collapsible AI Thinking & Reasoning Details */}
+                  {m.thinking && (
+                    <details className="group border-border/80 bg-background/60 mt-2.5 rounded-lg border p-2 text-[11px]">
+                      <summary className="text-muted-foreground hover:text-foreground flex cursor-pointer items-center justify-between gap-1.5 font-semibold select-none">
+                        <span className="flex items-center gap-1.5">
+                          <Brain className="text-accent h-3.5 w-3.5" aria-hidden="true" />
+                          <span>Detail Proses Penalaran & Analisis AI</span>
+                        </span>
+                        <ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" aria-hidden="true" />
+                      </summary>
+                      <div className="border-border/60 text-muted-foreground mt-2 max-h-48 overflow-y-auto border-t pt-2 font-mono text-[10px] leading-relaxed whitespace-pre-wrap">
+                        {m.thinking}
+                      </div>
+                    </details>
+                  )}
+
                   {m.sources && m.sources.length > 0 && (
                     <div className="border-border/60 text-muted-foreground mt-2 border-t pt-1.5 text-[10px]">
                       <span className="font-semibold">{t('sourcesLabel')}: </span>
@@ -155,10 +202,34 @@ export function InventoryQaTab({ locale }: InventoryQaTabProps) {
               </div>
             ))
           )}
+
+          {/* Real-time Thinking & Analysis Progress Indicator */}
           {isLoading && (
-            <div className="text-muted-foreground flex items-center gap-2 pl-2 text-xs">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              <span>{t('sending')}</span>
+            <div className="flex justify-start gap-2.5">
+              <div className="bg-primary/10 text-primary flex h-7 w-7 shrink-0 animate-pulse items-center justify-center rounded-lg">
+                <Bot className="h-4 w-4" />
+              </div>
+              <div className="border-primary/20 bg-primary/5 max-w-[85%] space-y-2.5 rounded-2xl rounded-bl-xs border p-3.5 shadow-2xs">
+                <div className="text-primary flex items-center gap-2 text-xs font-bold">
+                  <Sparkles className="text-accent h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                  <span>AI sedang berpikir & menganalisis inventaris...</span>
+                </div>
+                <div className="space-y-1.5 pl-0.5">
+                  {steps.slice(0, thinkingStep + 1).map((stepText, idx) => {
+                    const isCurrent = idx === thinkingStep
+                    return (
+                      <div key={idx} className="flex items-start gap-2 text-[11px] leading-relaxed">
+                        {isCurrent ? (
+                          <Loader2 className="text-accent mt-0.5 h-3.5 w-3.5 shrink-0 animate-spin" aria-hidden="true" />
+                        ) : (
+                          <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" aria-hidden="true" />
+                        )}
+                        <span className={isCurrent ? 'text-foreground font-semibold' : 'text-muted-foreground/75'}>{stepText}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
           )}
         </CardContent>

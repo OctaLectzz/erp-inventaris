@@ -143,7 +143,7 @@ export async function answerInventoryQuestion(
     locale
   })
 
-  const { content } = await callNineRouterChatCompletion(messages, {
+  const { content, thinking } = await callNineRouterChatCompletion(messages, {
     temperature: 0.1,
     maxTokens: 1000
   })
@@ -152,6 +152,7 @@ export async function answerInventoryQuestion(
     question: sanitizedQuestion,
     answer: content.trim(),
     contextSummary: 'Ringkasan KPI gudang, kategori terdaftar, dan 10 produk low stock teratas.',
-    sources: ['Katalog Produk (public.products)', 'Kategori (public.categories)']
+    sources: ['Katalog Produk (public.products)', 'Kategori (public.categories)'],
+    thinking
   }
 }

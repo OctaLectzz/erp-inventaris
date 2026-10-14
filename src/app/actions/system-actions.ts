@@ -10,8 +10,7 @@ import { canManageCatalog } from '@/types/auth'
 import type { CatalogSyncResult } from '@/types/inventory'
 
 export type SystemActionResult<T = CatalogSyncResult> =
-  | { success: true; data: T; message: string }
-  | { success: false; error: string; message: string }
+  { success: true; data: T; message: string } | { success: false; error: string; message: string }
 
 /**
  * Server Action for Administrator to synchronize or reset catalog products from DummyJSON.

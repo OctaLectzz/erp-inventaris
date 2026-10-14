@@ -35,6 +35,7 @@ export interface AiInventoryAnswer {
   answer: string
   contextSummary: string
   sources: string[]
+  thinking?: string
 }
 
 export interface AiConfigStatus {

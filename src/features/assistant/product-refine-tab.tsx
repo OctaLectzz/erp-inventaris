@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import { AlertCircle, Check, Copy, Loader2, Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 
 import { refineProductDescriptionAction } from '@/app/actions/ai-actions'
+import { MarkdownRenderer } from '@/components/shared/markdown-renderer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
@@ -149,7 +150,9 @@ export function ProductRefineTab({ locale, isAuditor }: ProductRefineTabProps) {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="bg-muted/40 rounded-lg border p-4 text-xs leading-relaxed whitespace-pre-wrap">{refinedOutput}</div>
+            <div className="bg-muted/40 rounded-lg border p-4 text-xs">
+              <MarkdownRenderer content={refinedOutput} />
+            </div>
           </CardContent>
         </Card>
       )}

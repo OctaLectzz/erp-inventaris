@@ -1,6 +1,6 @@
 'use client'
 
-import { AlertTriangle, CheckCircle2, Package, Pencil } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Package, Pencil, Trash2 } from 'lucide-react'
 
 import { DataTableColumnHeader } from '@/components/shared/data-table/data-table-column-header'
 import { Badge } from '@/components/ui/badge'
@@ -14,10 +14,11 @@ interface ColumnOptions {
   locale: string
   isAdmin: boolean
   onEditProduct: (product: Product) => void
+  onDeleteProduct?: (product: Product) => void
   t?: (key: string, values?: Record<string, unknown>) => string
 }
 
-export function getCatalogColumns({ locale, isAdmin, onEditProduct, t }: ColumnOptions): ColumnDef<Product>[] {
+export function getCatalogColumns({ locale, isAdmin, onEditProduct, onDeleteProduct, t }: ColumnOptions): ColumnDef<Product>[] {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat(locale === 'id' ? 'id-ID' : 'en-US', {
       style: 'currency',
@@ -153,11 +154,23 @@ export function getCatalogColumns({ locale, isAdmin, onEditProduct, t }: ColumnO
       id: 'actions',
       header: () => <div className="text-right">{t ? t('columns.actions') : locale === 'en' ? 'Actions' : 'Aksi'}</div>,
       cell: ({ row }) => (
-        <div className="text-right whitespace-nowrap">
+        <div className="flex items-center justify-end gap-1 whitespace-nowrap">
           <Button variant="ghost" size="xs" onClick={() => onEditProduct(row.original)} className="gap-1 text-xs" title={t ? t('edit') : 'Edit'}>
             <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{t ? t('edit') : 'Edit'}</span>
           </Button>
+          {onDeleteProduct && (
+            <Button
+              variant="ghost"
+              size="xs"
+              onClick={() => onDeleteProduct(row.original)}
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive gap-1 text-xs"
+              title={locale === 'en' ? 'Delete' : 'Hapus'}
+            >
+              <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>{locale === 'en' ? 'Delete' : 'Hapus'}</span>
+            </Button>
+          )}
         </div>
       )
     })

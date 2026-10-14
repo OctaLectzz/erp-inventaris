@@ -1,8 +1,8 @@
+import { ArrowDownRight, ArrowLeftRight, ArrowRight, ArrowUpRight, BarChart3, LineChart, Package, RefreshCw } from 'lucide-react'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
-import { ArrowDownRight, ArrowLeftRight, ArrowRight, ArrowUpRight, BarChart3, LineChart, Package, RefreshCw } from 'lucide-react'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { MovementFlowChart } from '@/components/shared/charts/movement-flow-chart'
 import { Button } from '@/components/ui/button'
@@ -49,7 +49,7 @@ export default async function ReportsPage({ params, searchParams }: ReportsPageP
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const rawPeriod = resolvedSearchParams.period as PeriodKey | undefined
   const validPeriods: PeriodKey[] = ['today', 'week', 'month', 'year', 'all', 'custom']
-  const period: PeriodKey = rawPeriod && validPeriods.includes(rawPeriod) ? rawPeriod : 'month'
+  const period: PeriodKey = rawPeriod && validPeriods.includes(rawPeriod) ? rawPeriod : 'week'
 
   const supabase = await createClient()
   const analyticsData = await getPeriodStockAnalytics(supabase, period, resolvedSearchParams.startDate, resolvedSearchParams.endDate)

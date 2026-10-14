@@ -249,3 +249,91 @@ export async function updateProductAction(input: ProductCatalogUpdate, locale = 
     }
   }
 }
+
+/**
+ * Server Action to delete a product from catalog.
+ * Strictly restricted to 'administrator' / 'admin_gudang' role.
+ * Invariant: Prevents deletion if product has existing stock movements.
+ */
+export async function deleteProductAction(productId: string, locale = 'id'): Promise<ProductActionResult<{ id: string; name: string }>> {
+  let profile
+  try {
+    const authContext = await requireAuth(locale)
+    profile = authContext.profile
+  } catch {
+    return {
+      success: false,
+      error: 'UNAUTHORIZED',
+      message: 'Sesi Anda tidak valid atau telah berakhir. Silakan masuk kembali.'
+    }
+  }
+
+  if (!canManageCatalog(profile.role)) {
+    return {
+      success: false,
+      error: 'FORBIDDEN',
+      message: 'Hanya peran Administrator yang memiliki izin untuk menghapus produk.'
+    }
+  }
+
+  if (!productId || typeof productId !== 'string') {
+    return {
+      success: false,
+      error: 'INVALID_ID',
+      message: 'ID produk tidak valid.'
+    }
+  }
+
+  try {
+    const supabase = await createClient()
+
+    // 1. Check if product exists
+    const { data: product, error: fetchError } = await supabase.from('products').select('id, name, sku, stock').eq('id', productId).maybeSingle()
+
+    if (fetchError || !product) {
+      return {
+        success: false,
+        error: 'PRODUCT_NOT_FOUND',
+        message: 'Produk yang ingin dihapus tidak ditemukan dalam sistem.'
+      }
+    }
+
+    // 2. Check for existing stock movement history (Foreign Key Integrity)
+    const { count: movementCount } = await supabase.from('stock_movements').select('*', { count: 'exact', head: true }).eq('product_id', productId)
+
+    if (movementCount && movementCount > 0) {
+      return {
+        success: false,
+        error: 'HAS_MOVEMENTS',
+        message: `Produk "${product.name}" (${product.sku}) tidak dapat dihapus karena sudah memiliki ${movementCount} catatan riwayat mutasi stok. Riwayat mutasi dilindungi untuk menjaga keabsahan buku besar audit inventaris.`
+      }
+    }
+
+    // 3. Delete product safely
+    const { error: deleteError } = await supabase.from('products').delete().eq('id', productId)
+
+    if (deleteError) {
+      return {
+        success: false,
+        error: 'DATABASE_ERROR',
+        message: deleteError.message || 'Gagal menghapus produk dari basis data.'
+      }
+    }
+
+    revalidatePath(`/${locale}/dashboard`)
+    revalidatePath(`/${locale}/inventory`)
+    revalidatePath(`/${locale}/reports`)
+
+    return {
+      success: true,
+      data: { id: product.id, name: product.name }
+    }
+  } catch (err) {
+    console.error('Error in deleteProductAction:', err)
+    return {
+      success: false,
+      error: 'INTERNAL_ERROR',
+      message: 'Terjadi kesalahan sistem saat menghapus produk. Silakan coba kembali.'
+    }
+  }
+}

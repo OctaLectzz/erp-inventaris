@@ -1,11 +1,68 @@
 'use client'
 
+import { BarChart3, TrendingDown, TrendingUp } from 'lucide-react'
 import * as React from 'react'
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useIsMounted } from '@/hooks/use-is-mounted'
 import { cn } from '@/lib/utils'
 
 import type { MovementChartProps } from './chart-types'
+
+interface CustomTooltipProps {
+  active?: boolean
+  payload?: Array<{
+    value: number
+    dataKey: string
+    color: string
+    name: string
+  }>
+  label?: string
+}
+
+function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
+  if (!active || !payload || payload.length === 0) return null
+
+  const inVal = payload.find((p) => p.dataKey === 'inQuantity')?.value ?? 0
+  const outVal = payload.find((p) => p.dataKey === 'outQuantity')?.value ?? 0
+  const netFlow = inVal - outVal
+
+  return (
+    <div className="border-border bg-card/95 text-foreground z-50 min-w-[180px] rounded-xl border p-3 shadow-lg backdrop-blur-md">
+      <p className="border-border text-foreground mb-2 border-b pb-1 text-xs font-bold">{label}</p>
+      <div className="space-y-1.5 text-xs">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-1.5 text-teal-600 dark:text-teal-400">
+            <span className="h-2 w-2 rounded-full bg-teal-500" />
+            <span className="font-medium">Stok Masuk (IN):</span>
+          </div>
+          <span className="font-mono font-bold text-teal-600 dark:text-teal-400">+{inVal}</span>
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
+            <span className="h-2 w-2 rounded-full bg-rose-500" />
+            <span className="font-medium">Stok Keluar (OUT):</span>
+          </div>
+          <span className="font-mono font-bold text-rose-600 dark:text-rose-400">-{outVal}</span>
+        </div>
+
+        <div className="border-border/60 flex items-center justify-between gap-3 border-t pt-1.5 text-[11px]">
+          <span className="text-muted-foreground">Arus Bersih (Net):</span>
+          <span
+            className={cn(
+              'font-mono font-bold',
+              netFlow > 0 ? 'text-teal-600 dark:text-teal-400' : netFlow < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-muted-foreground'
+            )}
+          >
+            {netFlow > 0 ? `+${netFlow}` : netFlow}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export function MovementFlowChart({
   data,
@@ -14,149 +71,100 @@ export function MovementFlowChart({
   inLabel = 'Stok Masuk (IN)',
   outLabel = 'Stok Keluar (OUT)',
   emptyMessage = 'Belum ada data pergerakan stok pada periode ini.',
+  height = 280,
   className
 }: MovementChartProps) {
-  const [activeIdx, setActiveIdx] = React.useState<number | null>(null)
+  const mounted = useIsMounted()
 
   const hasData = React.useMemo(() => {
-    return data.some((d) => d.inQuantity > 0 || d.outQuantity > 0)
+    return Array.isArray(data) && data.some((d) => (d.inQuantity ?? 0) > 0 || (d.outQuantity ?? 0) > 0)
   }, [data])
 
-  const maxVal = React.useMemo(() => {
-    let m = 1
-    for (const d of data) {
-      if (d.inQuantity > m) m = d.inQuantity
-      if (d.outQuantity > m) m = d.outQuantity
-    }
-    return Math.ceil(m * 1.15) // 15% headroom
+  const chartData = React.useMemo(() => {
+    return (data || []).map((item) => ({
+      key: item.key,
+      label: item.label,
+      inQuantity: item.inQuantity ?? 0,
+      outQuantity: item.outQuantity ?? 0,
+      netFlow: item.netFlow ?? (item.inQuantity ?? 0) - (item.outQuantity ?? 0)
+    }))
   }, [data])
 
-  const chartW = 540
-  const chartH = 140
-  const marginL = 40
-  const marginT = 15
-
-  const barGroupWidth = data.length > 0 ? chartW / data.length : 0
-  const singleBarW = Math.max(3, Math.min(14, barGroupWidth * 0.35))
-
-  const activeBucket = activeIdx !== null && data[activeIdx] ? data[activeIdx] : null
+  const totalIn = React.useMemo(() => chartData.reduce((acc, cur) => acc + cur.inQuantity, 0), [chartData])
+  const totalOut = React.useMemo(() => chartData.reduce((acc, cur) => acc + cur.outQuantity, 0), [chartData])
 
   return (
     <Card className={cn('border-border shadow-2xs', className)}>
       <CardHeader className="flex flex-col gap-2 pb-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <CardTitle className="text-foreground text-sm font-bold">{title}</CardTitle>
+        <div className="space-y-0.5">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary/10 text-primary flex h-7 w-7 items-center justify-center rounded-lg">
+              <BarChart3 className="h-4 w-4" aria-hidden="true" />
+            </div>
+            <CardTitle className="text-foreground text-sm font-bold sm:text-base">{title}</CardTitle>
+          </div>
           <CardDescription className="text-xs">{subtitle}</CardDescription>
         </div>
 
-        {/* Legend */}
-        <div className="flex items-center gap-4 text-xs">
-          <div className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-xs bg-teal-500 dark:bg-teal-400" />
-            <span className="text-muted-foreground">{inLabel}</span>
+        {/* Quick Aggregation Summary Badges */}
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <div className="flex items-center gap-1.5 rounded-lg border border-teal-500/20 bg-teal-500/10 px-2.5 py-1 font-semibold text-teal-700 dark:text-teal-300">
+            <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{inLabel}:</span>
+            <span className="font-mono font-bold">+{totalIn.toLocaleString('id-ID')}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-xs bg-rose-500 dark:bg-rose-400" />
-            <span className="text-muted-foreground">{outLabel}</span>
+          <div className="flex items-center gap-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 px-2.5 py-1 font-semibold text-rose-700 dark:text-rose-300">
+            <TrendingDown className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{outLabel}:</span>
+            <span className="font-mono font-bold">-{totalOut.toLocaleString('id-ID')}</span>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent>
-        {/* Active Tooltip Banner */}
-        <div className="min-h-[1.75rem] pb-2 text-xs">
-          {activeBucket ? (
-            <div className="border-border bg-muted/40 inline-flex items-center gap-3 rounded-md border px-2.5 py-1">
-              <span className="text-foreground font-semibold">{activeBucket.label}:</span>
-              <span className="font-medium text-teal-600 dark:text-teal-400">+{activeBucket.inQuantity} IN</span>
-              <span className="font-medium text-rose-600 dark:text-rose-400">-{activeBucket.outQuantity} OUT</span>
-              <span className="text-muted-foreground">(Net: {activeBucket.netFlow > 0 ? `+${activeBucket.netFlow}` : activeBucket.netFlow})</span>
-            </div>
-          ) : (
-            <p className="text-muted-foreground text-[11px]">Arahkan kursor pada batang grafik untuk rincian kuantitas.</p>
-          )}
-        </div>
-
+      <CardContent className="pt-2">
         {!hasData ? (
-          <div className="text-muted-foreground flex h-[160px] flex-col items-center justify-center rounded-lg border border-dashed text-xs">
-            <p>{emptyMessage}</p>
+          <div className="border-border text-muted-foreground flex h-[220px] flex-col items-center justify-center gap-2 rounded-xl border border-dashed text-xs">
+            <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
+              <BarChart3 className="h-5 w-5 opacity-50" aria-hidden="true" />
+            </div>
+            <p className="font-medium">{emptyMessage}</p>
           </div>
+        ) : !mounted ? (
+          <div className="bg-muted/20 flex h-[260px] w-full animate-pulse items-center justify-center rounded-xl" />
         ) : (
-          <div className="overflow-x-auto pb-1">
-            <svg viewBox="0 0 600 190" className="h-auto w-full min-w-[500px]" role="img" aria-label={title}>
-              {/* Horizontal Grid Lines & Y-Axis Labels */}
-              {[0, 0.5, 1].map((pct, i) => {
-                const y = marginT + chartH * (1 - pct)
-                const val = Math.round(maxVal * pct)
-                return (
-                  <g key={i}>
-                    <line
-                      x1={marginL}
-                      y1={y}
-                      x2={marginL + chartW}
-                      y2={y}
-                      className="stroke-border/50"
-                      strokeDasharray={pct > 0 ? '3 3' : undefined}
-                      strokeWidth={1}
-                    />
-                    <text x={marginL - 6} y={y + 3} textAnchor="end" className="fill-muted-foreground font-mono text-[9px]">
-                      {val}
-                    </text>
-                  </g>
-                )
-              })}
-
-              {/* Data Bars */}
-              {data.map((d, idx) => {
-                const groupX = marginL + idx * barGroupWidth
-                const centerX = groupX + barGroupWidth / 2
-                const inHeight = (d.inQuantity / maxVal) * chartH
-                const outHeight = (d.outQuantity / maxVal) * chartH
-                const inY = marginT + (chartH - inHeight)
-                const outY = marginT + (chartH - outHeight)
-                const isHovered = activeIdx === idx
-
-                return (
-                  <g
-                    key={d.key || idx}
-                    onMouseEnter={() => setActiveIdx(idx)}
-                    onMouseLeave={() => setActiveIdx(null)}
-                    className="cursor-pointer transition-opacity"
-                    opacity={activeIdx === null || isHovered ? 1 : 0.45}
-                  >
-                    {/* IN Bar */}
-                    <rect
-                      x={centerX - singleBarW - 1}
-                      y={inY}
-                      width={singleBarW}
-                      height={Math.max(1, inHeight)}
-                      rx={2}
-                      className="fill-teal-500 transition-all hover:fill-teal-400 dark:fill-teal-400"
-                    />
-
-                    {/* OUT Bar */}
-                    <rect
-                      x={centerX + 1}
-                      y={outY}
-                      width={singleBarW}
-                      height={Math.max(1, outHeight)}
-                      rx={2}
-                      className="fill-rose-500 transition-all hover:fill-rose-400 dark:fill-rose-400"
-                    />
-
-                    {/* X-Axis Date Label */}
-                    <text
-                      x={centerX}
-                      y={marginT + chartH + 16}
-                      textAnchor="middle"
-                      className={cn('fill-muted-foreground text-[9px]', isHovered && 'fill-primary font-bold')}
-                    >
-                      {d.label}
-                    </text>
-                  </g>
-                )
-              })}
-            </svg>
+          <div className="w-full" style={{ height }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 12, right: 12, left: -16, bottom: 4 }} barGap={3} barCategoryGap="25%">
+                <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-border/40" />
+                <XAxis
+                  dataKey="label"
+                  axisLine={{ stroke: 'currentColor' }}
+                  tickLine={false}
+                  className="text-muted-foreground text-[10px] sm:text-xs"
+                  dy={4}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  className="text-muted-foreground text-[10px] sm:text-xs"
+                  tickFormatter={(val: number) => (val >= 1000 ? `${(val / 1000).toFixed(0)}k` : String(val))}
+                  allowDecimals={false}
+                />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'currentColor', opacity: 0.05 }} />
+                <Legend
+                  verticalAlign="top"
+                  align="right"
+                  height={32}
+                  formatter={(value: string) => (
+                    <span className="text-foreground text-xs font-medium">{value === 'inQuantity' ? inLabel : outLabel}</span>
+                  )}
+                  iconType="circle"
+                  iconSize={8}
+                />
+                <Bar dataKey="inQuantity" name="inQuantity" fill="#0d9488" radius={[4, 4, 0, 0]} maxBarSize={32} />
+                <Bar dataKey="outQuantity" name="outQuantity" fill="#e11d48" radius={[4, 4, 0, 0]} maxBarSize={32} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         )}
       </CardContent>

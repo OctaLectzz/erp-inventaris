@@ -1,56 +1,39 @@
 'use client'
 
+import { Line, LineChart, ResponsiveContainer } from 'recharts'
+
+import { useIsMounted } from '@/hooks/use-is-mounted'
 import { cn } from '@/lib/utils'
 
 import type { MiniSparklineProps } from './chart-types'
 
-export function MiniSparkline({
-  data,
-  width = 80,
-  height = 24,
-  color = 'stroke-accent',
-  className,
-  ariaLabel = 'Tren data mutasi'
-}: MiniSparklineProps) {
+export function MiniSparkline({ data, width = 80, height = 24, color = '#0d9488', className, ariaLabel = 'Tren data mutasi' }: MiniSparklineProps) {
+  const mounted = useIsMounted()
+
   if (!Array.isArray(data) || data.length === 0) {
     return null
   }
 
-  const max = Math.max(...data, 1)
-  const min = Math.min(...data, 0)
-  const range = max - min || 1
+  const chartData = data.map((val, idx) => ({ idx, val }))
+  const strokeColor = color.startsWith('#')
+    ? color
+    : color.includes('accent')
+      ? '#0d9488'
+      : color.includes('rose') || color.includes('destructive')
+        ? '#e11d48'
+        : '#0d9488'
 
-  const padding = 2
-  const effectiveW = width - padding * 2
-  const effectiveH = height - padding * 2
-
-  const points = data.map((val, i) => {
-    const x = padding + (i / Math.max(1, data.length - 1)) * effectiveW
-    const y = padding + effectiveH - ((val - min) / range) * effectiveH
-    return `${x.toFixed(1)},${y.toFixed(1)}`
-  })
-
-  const pointsStr = points.join(' ')
+  if (!mounted) {
+    return <div style={{ width, height }} className={cn('shrink-0', className)} aria-label={ariaLabel} />
+  }
 
   return (
-    <svg
-      width={width}
-      height={height}
-      viewBox={`0 0 ${width} ${height}`}
-      className={cn('shrink-0 overflow-visible', className)}
-      role="img"
-      aria-label={ariaLabel}
-    >
-      <polyline fill="none" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" points={pointsStr} className={color} />
-      {/* End dot for latest value */}
-      {points.length > 0 && (
-        <circle
-          cx={points[points.length - 1].split(',')[0]}
-          cy={points[points.length - 1].split(',')[1]}
-          r={2}
-          className={cn('fill-current', color.replace('stroke-', 'text-'))}
-        />
-      )}
-    </svg>
+    <div style={{ width, height }} className={cn('shrink-0 overflow-hidden', className)} aria-label={ariaLabel} role="img">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={chartData} margin={{ top: 2, right: 2, left: 2, bottom: 2 }}>
+          <Line type="monotone" dataKey="val" stroke={strokeColor} strokeWidth={1.75} dot={false} isAnimationActive={false} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
   )
 }

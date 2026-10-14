@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import {
   ArrowLeftRight,
   ArrowRight,
@@ -15,6 +14,7 @@ import {
   UserCheck
 } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import Link from 'next/link'
 
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
@@ -34,37 +34,55 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       key: 'modulA',
       icon: ShieldCheck,
       color: 'text-primary bg-primary/10 border-primary/20',
-      badgeVariant: 'default' as const
+      badgeVariant: 'default' as const,
+      tag: tIndex('modulesSection.modules.modulA.tag'),
+      title: tIndex('modulesSection.modules.modulA.title'),
+      desc: tIndex('modulesSection.modules.modulA.desc')
     },
     {
       key: 'modulB',
       icon: Boxes,
       color: 'text-accent bg-accent/10 border-accent/20',
-      badgeVariant: 'default' as const
+      badgeVariant: 'default' as const,
+      tag: tIndex('modulesSection.modules.modulB.tag'),
+      title: tIndex('modulesSection.modules.modulB.title'),
+      desc: tIndex('modulesSection.modules.modulB.desc')
     },
     {
       key: 'modulC',
       icon: ArrowLeftRight,
       color: 'text-emerald-600 bg-emerald-500/10 border-emerald-500/20 dark:text-emerald-400',
-      badgeVariant: 'default' as const
+      badgeVariant: 'default' as const,
+      tag: tIndex('modulesSection.modules.modulC.tag'),
+      title: tIndex('modulesSection.modules.modulC.title'),
+      desc: tIndex('modulesSection.modules.modulC.desc')
     },
     {
       key: 'modulD',
       icon: History,
       color: 'text-indigo-600 bg-indigo-500/10 border-indigo-500/20 dark:text-indigo-400',
-      badgeVariant: 'default' as const
+      badgeVariant: 'default' as const,
+      tag: tIndex('modulesSection.modules.modulD.tag'),
+      title: tIndex('modulesSection.modules.modulD.title'),
+      desc: tIndex('modulesSection.modules.modulD.desc')
     },
     {
       key: 'modulE',
       icon: BarChart3,
       color: 'text-amber-600 bg-amber-500/10 border-amber-500/20 dark:text-amber-400',
-      badgeVariant: 'default' as const
+      badgeVariant: 'default' as const,
+      tag: tIndex('modulesSection.modules.modulE.tag'),
+      title: tIndex('modulesSection.modules.modulE.title'),
+      desc: tIndex('modulesSection.modules.modulE.desc')
     },
     {
       key: 'modulF',
       icon: Sparkles,
       color: 'text-purple-600 bg-purple-500/10 border-purple-500/20 dark:text-purple-400',
-      badgeVariant: 'secondary' as const
+      badgeVariant: 'secondary' as const,
+      tag: tIndex('modulesSection.modules.modulF.tag'),
+      title: tIndex('modulesSection.modules.modulF.title'),
+      desc: tIndex('modulesSection.modules.modulF.desc')
     }
   ]
 
@@ -73,19 +91,55 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       key: 'admin',
       icon: Shield,
       accent: 'border-l-primary',
-      badgeClass: 'bg-primary/10 text-primary border-primary/20'
+      badgeClass: 'bg-primary/10 text-primary border-primary/20',
+      title: tIndex('demoSection.roles.admin.title'),
+      email: tIndex('demoSection.roles.admin.email'),
+      desc: tIndex('demoSection.roles.admin.desc')
     },
     {
       key: 'staff',
       icon: Package,
       accent: 'border-l-accent',
-      badgeClass: 'bg-accent/10 text-accent border-accent/20'
+      badgeClass: 'bg-accent/10 text-accent border-accent/20',
+      title: tIndex('demoSection.roles.staff.title'),
+      email: tIndex('demoSection.roles.staff.email'),
+      desc: tIndex('demoSection.roles.staff.desc')
     },
     {
       key: 'auditor',
       icon: UserCheck,
       accent: 'border-l-emerald-500',
-      badgeClass: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+      badgeClass: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+      title: tIndex('demoSection.roles.auditor.title'),
+      email: tIndex('demoSection.roles.auditor.email'),
+      desc: tIndex('demoSection.roles.auditor.desc')
+    }
+  ]
+
+  const businessRules = [
+    {
+      title: tIndex('rulesSection.rules.0.title'),
+      desc: tIndex('rulesSection.rules.0.desc')
+    },
+    {
+      title: tIndex('rulesSection.rules.1.title'),
+      desc: tIndex('rulesSection.rules.1.desc')
+    },
+    {
+      title: tIndex('rulesSection.rules.2.title'),
+      desc: tIndex('rulesSection.rules.2.desc')
+    },
+    {
+      title: tIndex('rulesSection.rules.3.title'),
+      desc: tIndex('rulesSection.rules.3.desc')
+    },
+    {
+      title: tIndex('rulesSection.rules.4.title'),
+      desc: tIndex('rulesSection.rules.4.desc')
+    },
+    {
+      title: tIndex('rulesSection.rules.5.title'),
+      desc: tIndex('rulesSection.rules.5.desc')
     }
   ]
 
@@ -163,35 +217,34 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              {demoRoles.map((role) => (
-                <Card key={role.key} className={`border-border border-l-4 shadow-xs transition-shadow hover:shadow-md ${role.accent}`}>
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <role.icon className="text-primary h-4 w-4" aria-hidden="true" />
-                        <CardTitle className="text-foreground text-base font-bold">{tIndex(`demoSection.roles.${role.key}.title` as any)}</CardTitle>
+              {demoRoles.map((role) => {
+                const RoleIcon = role.icon
+                return (
+                  <Card key={role.key} className={`border-border border-l-4 shadow-xs transition-shadow hover:shadow-md ${role.accent}`}>
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <RoleIcon className="text-primary h-4 w-4" aria-hidden="true" />
+                          <CardTitle className="text-foreground text-base font-bold">{role.title}</CardTitle>
+                        </div>
+                        <Badge variant="outline" className={`font-mono text-[10px] ${role.badgeClass}`}>
+                          {role.key}
+                        </Badge>
                       </div>
-                      <Badge variant="outline" className={`font-mono text-[10px] ${role.badgeClass}`}>
-                        {role.key}
-                      </Badge>
-                    </div>
-                    <CardDescription className="font-mono text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                      {tIndex(`demoSection.roles.${role.key}.email` as any)}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4 pt-2">
-                    <p className="text-muted-foreground min-h-[48px] text-xs leading-relaxed">
-                      {tIndex(`demoSection.roles.${role.key}.desc` as any)}
-                    </p>
-                    <Button variant="secondary" size="sm" asChild className="w-full gap-1.5 text-xs font-semibold">
-                      <Link href={`/${locale}/login`}>
-                        <span>{tIndex('demoSection.actionButton')}</span>
-                        <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+                      <CardDescription className="font-mono text-xs font-medium text-emerald-600 dark:text-emerald-400">{role.email}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4 pt-2">
+                      <p className="text-muted-foreground min-h-[48px] text-xs leading-relaxed">{role.desc}</p>
+                      <Button variant="secondary" size="sm" asChild className="w-full gap-1.5 text-xs font-semibold">
+                        <Link href={`/${locale}/login`}>
+                          <span>{tIndex('demoSection.actionButton')}</span>
+                          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )
+              })}
             </div>
           </section>
 
@@ -208,26 +261,27 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {modules.map((mod) => (
-                <Card key={mod.key} className="border-border shadow-xs transition-shadow hover:shadow-md">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <div className={`flex h-9 w-9 items-center justify-center rounded-lg border ${mod.color}`}>
-                        <mod.icon className="h-5 w-5" aria-hidden="true" />
+              {modules.map((mod) => {
+                const ModIcon = mod.icon
+                return (
+                  <Card key={mod.key} className="border-border shadow-xs transition-shadow hover:shadow-md">
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center justify-between">
+                        <div className={`flex h-9 w-9 items-center justify-center rounded-lg border ${mod.color}`}>
+                          <ModIcon className="h-5 w-5" aria-hidden="true" />
+                        </div>
+                        <Badge variant={mod.badgeVariant} className="text-[10px]">
+                          {mod.tag}
+                        </Badge>
                       </div>
-                      <Badge variant={mod.badgeVariant} className="text-[10px]">
-                        {tIndex(`modulesSection.modules.${mod.key}.tag` as any)}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-foreground pt-3 text-base font-bold">
-                      {tIndex(`modulesSection.modules.${mod.key}.title` as any)}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-xs leading-relaxed">{tIndex(`modulesSection.modules.${mod.key}.desc` as any)}</p>
-                  </CardContent>
-                </Card>
-              ))}
+                      <CardTitle className="text-foreground pt-3 text-base font-bold">{mod.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground text-xs leading-relaxed">{mod.desc}</p>
+                    </CardContent>
+                  </Card>
+                )
+              })}
             </div>
           </section>
 
@@ -245,12 +299,12 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {[0, 1, 2, 3, 4, 5].map((idx) => (
+              {businessRules.map((rule, idx) => (
                 <div key={idx} className="border-border bg-background/80 flex items-start gap-3 rounded-xl border p-4">
                   <CheckCircle2 className="text-accent mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                   <div className="space-y-1">
-                    <p className="text-foreground text-xs font-bold">{tIndex(`rulesSection.rules.${idx}.title` as any)}</p>
-                    <p className="text-muted-foreground text-[11px] leading-relaxed">{tIndex(`rulesSection.rules.${idx}.desc` as any)}</p>
+                    <p className="text-foreground text-xs font-bold">{rule.title}</p>
+                    <p className="text-muted-foreground text-[11px] leading-relaxed">{rule.desc}</p>
                   </div>
                 </div>
               ))}

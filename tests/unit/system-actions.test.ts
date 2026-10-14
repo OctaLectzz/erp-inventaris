@@ -2,14 +2,33 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { syncDummyJsonCatalogAction } from '@/app/actions/system-actions'
 
+import type { UserProfile } from '@/types/auth'
+import type { User } from '@supabase/supabase-js'
+
+const mockAdminUser = { id: 'mock-admin-id' } as unknown as User
+const mockAdminProfile: UserProfile = {
+  id: 'mock-admin-id',
+  email: 'admin@inventra.demo',
+  fullName: 'Administrator Inventra',
+  role: 'administrator',
+  createdAt: '2026-10-15T00:00:00Z',
+  updatedAt: '2026-10-15T00:00:00Z'
+}
+
+const mockStaffUser = { id: 'mock-staff-id' } as unknown as User
+const mockStaffProfile: UserProfile = {
+  id: 'mock-staff-id',
+  email: 'staff@inventra.demo',
+  fullName: 'Staf Gudang',
+  role: 'staff_gudang',
+  createdAt: '2026-10-15T00:00:00Z',
+  updatedAt: '2026-10-15T00:00:00Z'
+}
+
 vi.mock('@/services/auth-service', () => ({
   requireAuth: vi.fn(async () => ({
-    user: { id: 'mock-admin-id' } as any,
-    profile: {
-      id: 'mock-admin-id',
-      email: 'admin@inventra.demo',
-      role: 'administrator'
-    } as any
+    user: mockAdminUser,
+    profile: mockAdminProfile
   }))
 }))
 
@@ -44,12 +63,8 @@ describe('System Actions Unit Tests', () => {
   it('rejects non-administrator roles from synchronizing catalog', async () => {
     const { requireAuth } = await import('@/services/auth-service')
     vi.mocked(requireAuth).mockResolvedValueOnce({
-      user: { id: 'mock-staff-id' } as any,
-      profile: {
-        id: 'mock-staff-id',
-        email: 'staff@inventra.demo',
-        role: 'staff_gudang'
-      } as any
+      user: mockStaffUser,
+      profile: mockStaffProfile
     })
 
     const result = await syncDummyJsonCatalogAction('id')

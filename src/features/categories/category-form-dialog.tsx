@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, CheckCircle2, Loader2, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { createCategoryAction, deleteCategoryAction, updateCategoryAction } from '@/app/actions/category-actions'
@@ -53,7 +53,6 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
     reset,
     setError,
     setValue,
-    watch,
     formState: { errors, isSubmitting }
   } = useForm<CategoryInput>({
     resolver: zodResolver(categoryInputSchema),
@@ -64,20 +63,8 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
     }
   })
 
-  const watchedName = watch('name')
-
-  // Auto-generate slug while typing name in create mode if user hasn't edited slug manually
-  useEffect(() => {
-    if (!isEditMode && !isDeleteMode && !isSlugManuallyEdited && watchedName) {
-      setValue('slug', slugify(watchedName), { shouldValidate: false })
-    }
-  }, [watchedName, isEditMode, isDeleteMode, isSlugManuallyEdited, setValue])
-
   useEffect(() => {
     if (open) {
-      setServerError(null)
-      setServerSuccess(null)
-      setIsSlugManuallyEdited(false)
       if (category && (isEditMode || isDeleteMode)) {
         reset({
           name: category.name,
@@ -95,10 +82,9 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
   }, [open, category, isEditMode, isDeleteMode, reset])
 
   const handleDialogChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      setServerError(null)
-      setServerSuccess(null)
-    }
+    setServerError(null)
+    setServerSuccess(null)
+    setIsSlugManuallyEdited(false)
     onOpenChange(nextOpen)
   }
 
@@ -106,14 +92,19 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
     setServerError(null)
     setServerSuccess(null)
 
+    const payload: CategoryInput = {
+      ...values,
+      slug: slugify(values.slug || values.name)
+    }
+
     try {
       if (isEditMode && category) {
         const res = await updateCategoryAction(
           {
             id: category.id,
-            name: values.name,
-            slug: values.slug,
-            description: values.description || null
+            name: payload.name,
+            slug: payload.slug,
+            description: payload.description || null
           },
           locale
         )
@@ -134,7 +125,7 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
           onSuccess?.(res.data)
         }, 500)
       } else {
-        const res = await createCategoryAction(values, locale)
+        const res = await createCategoryAction(payload, locale)
 
         if (!res.success) {
           if (res.fieldErrors) {
@@ -286,7 +277,13 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
             <Input
               id="category-name"
               placeholder={t('categories.dialog.namePlaceholder')}
-              {...register('name')}
+              {...register('name', {
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                  if (!isEditMode && !isDeleteMode && !isSlugManuallyEdited) {
+                    setValue('slug', slugify(e.target.value), { shouldValidate: true })
+                  }
+                }
+              })}
               className="text-xs"
               disabled={isSubmitting}
               aria-invalid={Boolean(errors.name)}
@@ -303,9 +300,13 @@ export function CategoryFormDialog({ open, onOpenChange, category, mode = 'creat
               id="category-slug"
               placeholder={t('categories.dialog.slugPlaceholder')}
               {...register('slug', {
-                onChange: () => setIsSlugManuallyEdited(true)
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                  setIsSlugManuallyEdited(true)
+                  const sanitized = slugify(e.target.value)
+                  setValue('slug', sanitized, { shouldValidate: true })
+                }
               })}
-              className="font-mono text-xs lowercase"
+              className="font-mono text-xs"
               disabled={isSubmitting}
               aria-invalid={Boolean(errors.slug)}
             />

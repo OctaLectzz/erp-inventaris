@@ -136,9 +136,15 @@ export const categoryInputSchema = z.object({
   slug: z
     .string()
     .trim()
-    .min(2, { message: 'categorySlugTooShort' })
-    .max(100, { message: 'categorySlugTooLong' })
-    .regex(/^[a-z0-9-]+$/, { message: 'categorySlugInvalidFormat' }),
+    .toLowerCase()
+    .transform((val) => val.replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, ''))
+    .pipe(
+      z
+        .string()
+        .min(2, { message: 'categorySlugTooShort' })
+        .max(100, { message: 'categorySlugTooLong' })
+        .regex(/^[a-z0-9-]+$/, { message: 'categorySlugInvalidFormat' })
+    ),
   description: z.string().trim().max(500, { message: 'categoryDescTooLong' }).nullable().optional()
 })
 

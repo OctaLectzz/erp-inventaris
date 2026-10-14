@@ -20,7 +20,7 @@ describe('Category Schema & Domain Unit Tests', () => {
       }
     })
 
-    it('should reject slug with invalid characters or uppercase', () => {
+    it('should reject slug with invalid characters such as exclamation marks', () => {
       const invalid = {
         name: 'Elektronik',
         slug: 'Elektronik_Gadget!',
@@ -29,6 +29,19 @@ describe('Category Schema & Domain Unit Tests', () => {
 
       const res = categoryInputSchema.safeParse(invalid)
       expect(res.success).toBe(false)
+    })
+
+    it('should normalize uppercase, spaces, and underscores in slug automatically', () => {
+      const input = {
+        name: 'Health & Beauty',
+        slug: 'Health Beauty_Care'
+      }
+
+      const res = categoryInputSchema.safeParse(input)
+      expect(res.success).toBe(true)
+      if (res.success) {
+        expect(res.data.slug).toBe('health-beauty-care')
+      }
     })
 
     it('should reject names shorter than 2 characters', () => {
